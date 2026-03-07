@@ -84,7 +84,13 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-12 bg-muted/50 border-border-subtle focus:border-gold text-white placeholder:text-muted-foreground"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.50)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  borderColor: 'rgba(212, 175, 55, 0.20)',
+                }}
+                className="h-12 text-white placeholder:text-muted-foreground border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)]"
                 required
               />
             </div>
@@ -100,7 +106,13 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 bg-muted/50 border-border-subtle focus:border-gold text-white placeholder:text-muted-foreground pr-12"
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.50)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    borderColor: 'rgba(212, 175, 55, 0.20)',
+                  }}
+                  className="h-12 text-white placeholder:text-muted-foreground pr-12 border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)]"
                   required
                 />
                 <button
@@ -119,10 +131,10 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
             <Button
               type="submit"
-              className="w-full h-12 text-black font-semibold rounded-xl relative overflow-hidden"
+              className="w-full h-12 font-semibold rounded-xl relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(255,223,0,0.45)]"
               style={{
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 20%, #C0C0C0 50%, #FFD700 80%, #FFC700 100%)',
-                backgroundSize: '200% 200%',
+                background: 'linear-gradient(135deg, oklch(0.94 0.22 95) 0%, oklch(0.90 0.20 88) 35%, oklch(0.95 0.23 93) 100%)',
+                color: '#1a1a1a',
               }}
             >
               Sign In
