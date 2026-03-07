@@ -3,9 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Eye, EyeSlash, CheckCircle } from '@phosphor-icons/react'
+import { Eye, EyeSlash } from '@phosphor-icons/react'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
 
 interface LoginPageProps {
@@ -45,17 +44,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     }
   }
 
-  const getStatusColor = (status: 'optimal' | 'good' | 'warning') => {
-    switch (status) {
-      case 'optimal':
-        return 'text-success'
-      case 'good':
-        return 'text-gold'
-      case 'warning':
-        return 'text-warning'
-    }
-  }
-
   return (
     <div className="h-screen w-screen flex items-center justify-center relative overflow-hidden" style={{ background: '#000000' }}>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(212,175,55,0.12),transparent_50%)] pointer-events-none" />
@@ -65,31 +53,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,175,55,0.03)_0%,transparent_30%,rgba(192,192,192,0.02)_60%,transparent_100%)] pointer-events-none" />
       
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 rounded-2xl"
-        style={{
-          background: 'rgba(0, 0, 0, 0.60)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(212, 175, 55, 0.15)',
-        }}
-      >
-        <Badge 
-          variant="outline" 
-          className="bg-gradient-gold text-foreground font-semibold border-0 px-3 py-1"
-        >
-          Enterprise
-        </Badge>
-        <div className="h-4 w-px bg-border-subtle" />
-        <div className="flex items-center gap-1.5 text-success">
-          <CheckCircle size={16} weight="fill" />
-          <span className="text-xs font-medium">All Systems Operational</span>
-        </div>
-      </motion.div>
-
-      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
@@ -98,10 +61,11 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         <div 
           className="glass-card rounded-3xl p-8 sm:p-10"
           style={{
-            background: 'linear-gradient(135deg, rgba(255, 223, 0, 0.08) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 223, 0, 0.04) 100%)',
-            backdropFilter: 'blur(32px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-            border: '1px solid var(--border-subtle)',
+            background: 'rgba(0, 0, 0, 0.60)',
+            backdropFilter: 'blur(40px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+            border: '1px solid rgba(212, 175, 55, 0.20)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
           }}
         >
           <div className="flex flex-col items-center mb-8">
