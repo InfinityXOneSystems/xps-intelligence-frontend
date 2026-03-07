@@ -69,7 +69,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           }}
         >
           <div className="flex flex-col items-center mb-8">
-            <div className="relative w-24 h-24 mb-6">
+            <div className="relative mb-6" style={{ width: '102px', height: '102px' }}>
               <div 
                 className="absolute inset-0 rounded-xl"
                 style={{
