@@ -61,11 +61,11 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         <div 
           className="glass-card rounded-3xl p-8 sm:p-10"
           style={{
-            background: 'rgba(0, 0, 0, 0.60)',
-            backdropFilter: 'blur(40px) saturate(200%)',
-            WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-            border: '1px solid rgba(212, 175, 55, 0.20)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+            background: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(50px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(50px) saturate(180%)',
+            border: '1px solid rgba(212, 175, 55, 0.15)',
+            boxShadow: '0 12px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.03)',
           }}
         >
           <div className="flex flex-col items-center mb-8">
@@ -185,23 +185,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
             </Button>
           </form>
         </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-xl text-xs"
-        style={{
-          background: 'rgba(0, 0, 0, 0.50)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          border: '1px solid rgba(212, 175, 55, 0.12)',
-        }}
-      >
-        <span className="text-muted-foreground">XPS Intelligence Platform</span>
-        <div className="h-3 w-px bg-border-subtle" />
-        <span className="text-gold font-medium">v4.2.0</span>
       </motion.div>
     </div>
   )
