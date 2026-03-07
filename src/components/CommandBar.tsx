@@ -108,7 +108,7 @@ export function CommandBar({ onCommand }: CommandBarProps) {
             onKeyDown={handleKeyDown}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholder="Execute command... (⌘K to focus)"
+            placeholder="Type command... (⌘K to focus)"
             className="flex-1 font-mono text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
           />
           
