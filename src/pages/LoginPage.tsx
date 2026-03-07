@@ -58,16 +58,24 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
         className="relative w-full max-w-md mx-4"
       >
-        <div 
-          className="glass-card rounded-3xl p-10 sm:p-12"
-          style={{
-            background: 'rgba(0, 0, 0, 0.85)',
-            backdropFilter: 'blur(60px) saturate(200%)',
-            WebkitBackdropFilter: 'blur(60px) saturate(200%)',
-            border: '2px solid rgba(212, 175, 55, 0.20)',
-            boxShadow: '0 16px 48px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(0, 0, 0, 0.90) inset, 0 2px 0 rgba(255, 255, 255, 0.02) inset',
-          }}
-        >
+        <div className="relative rounded-3xl p-[1px]">
+          <div 
+            className="absolute inset-0 rounded-3xl opacity-100"
+            style={{
+              background: 'linear-gradient(135deg, oklch(0.92 0.22 95) 0%, oklch(0.88 0.01 0) 25%, oklch(0.92 0.22 95) 50%, oklch(0.88 0.01 0) 75%, oklch(0.92 0.22 95) 100%)',
+              backgroundSize: '200% 200%',
+              animation: 'gradient-shift 3s linear infinite',
+            }}
+          />
+          <div 
+            className="glass-card rounded-3xl p-10 sm:p-12 relative"
+            style={{
+              background: 'rgba(0, 0, 0, 0.85)',
+              backdropFilter: 'blur(60px) saturate(200%)',
+              WebkitBackdropFilter: 'blur(60px) saturate(200%)',
+              boxShadow: '0 16px 48px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(0, 0, 0, 0.90) inset, 0 2px 0 rgba(255, 255, 255, 0.02) inset',
+            }}
+          >
           <div className="flex flex-col items-center mb-8">
             <div className="relative mb-6" style={{ width: '118px', height: '118px' }}>
               <div 
@@ -192,6 +200,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               {isLoading ? 'Signing In...' : 'Sign In'}
             </Button>
           </form>
+          </div>
         </div>
       </motion.div>
     </div>
