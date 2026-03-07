@@ -45,12 +45,12 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   }
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center relative overflow-hidden" style={{ background: '#000000' }}>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(212,175,55,0.12),transparent_50%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_70%,rgba(192,192,192,0.09),transparent_50%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_90%,rgba(183,112,40,0.08),transparent_45%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_10%_80%,rgba(139,0,35,0.06),transparent_40%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,175,55,0.03)_0%,transparent_30%,rgba(192,192,192,0.02)_60%,transparent_100%)] pointer-events-none" />
+    <div className="h-screen w-screen flex items-center justify-center relative overflow-hidden bg-background">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(212,175,55,0.12),transparent_50%)] pointer-events-none dark:opacity-100 opacity-40" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_70%,rgba(192,192,192,0.09),transparent_50%)] pointer-events-none dark:opacity-100 opacity-40" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_90%,rgba(183,112,40,0.08),transparent_45%)] pointer-events-none dark:opacity-100 opacity-40" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_10%_80%,rgba(139,0,35,0.06),transparent_40%)] pointer-events-none dark:opacity-100 opacity-40" />
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,175,55,0.03)_0%,transparent_30%,rgba(192,192,192,0.02)_60%,transparent_100%)] pointer-events-none dark:opacity-100 opacity-40" />
       
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -70,10 +70,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           <div 
             className="glass-card rounded-3xl p-10 sm:p-12 relative"
             style={{
-              background: 'rgba(0, 0, 0, 0.85)',
+              background: 'var(--card)',
               backdropFilter: 'blur(60px) saturate(200%)',
               WebkitBackdropFilter: 'blur(60px) saturate(200%)',
-              boxShadow: '0 16px 48px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(0, 0, 0, 0.90) inset, 0 2px 0 rgba(255, 255, 255, 0.02) inset',
             }}
           >
           <div className="flex flex-col items-center mb-8">
@@ -104,7 +103,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 />
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight mb-2">
+            <h1 className="text-2xl font-bold text-foreground tracking-tight mb-2">
               XPS INTELLIGENCE
             </h1>
             <p className="text-muted-foreground text-center text-sm">
@@ -114,7 +113,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white font-medium text-center block">
+              <Label htmlFor="email" className="text-foreground font-medium text-center block">
                 Email
               </Label>
               <Input
@@ -125,18 +124,18 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
                 style={{
-                  background: 'rgba(0, 0, 0, 0.50)',
+                  background: 'var(--input)',
                   backdropFilter: 'blur(16px)',
                   WebkitBackdropFilter: 'blur(16px)',
-                  borderColor: 'rgba(212, 175, 55, 0.20)',
+                  borderColor: 'var(--border)',
                 }}
-                className="h-12 text-white text-center placeholder:text-muted-foreground border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
+                className="h-12 text-foreground text-center placeholder:text-muted-foreground border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white font-medium text-center block">
+              <Label htmlFor="password" className="text-foreground font-medium text-center block">
                 Password
               </Label>
               <div className="relative">
@@ -148,12 +147,12 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                   style={{
-                    background: 'rgba(0, 0, 0, 0.50)',
+                    background: 'var(--input)',
                     backdropFilter: 'blur(16px)',
                     WebkitBackdropFilter: 'blur(16px)',
-                    borderColor: 'rgba(212, 175, 55, 0.20)',
+                    borderColor: 'var(--border)',
                   }}
-                  className="h-12 text-white text-center placeholder:text-muted-foreground pr-12 border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
+                  className="h-12 text-foreground text-center placeholder:text-muted-foreground pr-12 border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
                   required
                 />
                 <button

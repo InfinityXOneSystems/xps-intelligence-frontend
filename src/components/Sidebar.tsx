@@ -71,7 +71,7 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <h1 className="text-xs font-bold text-white tracking-tight leading-tight">
+              <h1 className="text-xs font-bold text-foreground tracking-tight leading-tight">
                 XPS INTELLIGENCE
               </h1>
             </motion.div>
