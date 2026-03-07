@@ -45,107 +45,25 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
     >
       <div className="relative p-6 border-b border-border-subtle">
         <div className="flex items-center gap-4">
-          <motion.div 
-            className="relative flex-shrink-0 w-20 h-20"
-            animate={{
-              scale: [1, 1.05, 1],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            <motion.div 
+          <div className="relative flex-shrink-0 w-20 h-20">
+            <div 
               className="absolute inset-0 rounded-xl"
-              animate={{
-                background: [
-                  'radial-gradient(circle, rgba(212,175,55,0.25) 0%, rgba(192,192,192,0.15) 50%, rgba(212,175,55,0.25) 100%)',
-                  'radial-gradient(circle, rgba(192,192,192,0.25) 0%, rgba(212,175,55,0.15) 50%, rgba(192,192,192,0.25) 100%)',
-                  'radial-gradient(circle, rgba(212,175,55,0.25) 0%, rgba(192,192,192,0.15) 50%, rgba(212,175,55,0.25) 100%)',
-                ],
-                opacity: [0.6, 0.8, 0.6],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
               style={{
-                filter: 'blur(16px)',
+                background: 'radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(192,192,192,0.1) 50%, transparent 100%)',
+                filter: 'blur(12px)',
               }}
             />
-            <motion.div 
-              className="absolute inset-[-4px] rounded-xl"
-              animate={{
-                boxShadow: [
-                  '0 0 20px rgba(212,175,55,0.4), 0 0 40px rgba(212,175,55,0.2)',
-                  '0 0 25px rgba(192,192,192,0.4), 0 0 45px rgba(192,192,192,0.2)',
-                  '0 0 20px rgba(212,175,55,0.4), 0 0 40px rgba(212,175,55,0.2)',
-                ],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-            <motion.div 
-              className="relative z-10 flex items-center justify-center w-full h-full"
-              animate={{
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            >
-              <motion.img 
+            <div className="relative z-10 flex items-center justify-center w-full h-full">
+              <img 
                 src={logoImage}
                 alt="XPS XPRESS Logo"
                 className="w-full h-full object-contain"
                 style={{
-                  filter: 'drop-shadow(0 0 8px rgba(212,175,55,0.4)) drop-shadow(0 0 4px rgba(192,192,192,0.3))'
-                }}
-                animate={{
-                  filter: [
-                    'drop-shadow(0 0 8px rgba(212,175,55,0.4)) drop-shadow(0 0 4px rgba(192,192,192,0.3))',
-                    'drop-shadow(0 0 10px rgba(192,192,192,0.5)) drop-shadow(0 0 6px rgba(212,175,55,0.3))',
-                    'drop-shadow(0 0 8px rgba(212,175,55,0.4)) drop-shadow(0 0 4px rgba(192,192,192,0.3))',
-                  ],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
+                  filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.3)) drop-shadow(0 0 3px rgba(192,192,192,0.2))'
                 }}
               />
-            </motion.div>
-            <Sparkle 
-              className="absolute -top-1 -right-1 text-gold"
-              size={14}
-              weight="fill"
-            />
-            <motion.div
-              className="absolute -bottom-1 -left-1"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.7, 1, 0.7],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              <Sparkle 
-                className="text-silver"
-                size={12}
-                weight="fill"
-              />
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
           {!collapsed && (
             <motion.div 
               className="flex-1"
@@ -153,23 +71,9 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <motion.h1 
-                className="text-lg font-bold text-white tracking-tight leading-tight"
-                animate={{
-                  textShadow: [
-                    '0 0 10px rgba(212,175,55,0.3)',
-                    '0 0 15px rgba(192,192,192,0.4)',
-                    '0 0 10px rgba(212,175,55,0.3)',
-                  ],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
+              <h1 className="text-lg font-bold text-white tracking-tight leading-tight">
                 XPS Intelligence
-              </motion.h1>
+              </h1>
             </motion.div>
           )}
         </div>
