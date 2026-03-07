@@ -88,7 +88,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 />
               </div>
             </div>
-            <h1 className="text-3xl font-bold text-white tracking-tight mb-2">
+            <h1 className="text-2xl font-bold text-white tracking-tight mb-2">
               XPS INTELLIGENCE
             </h1>
             <p className="text-muted-foreground text-center text-sm">
