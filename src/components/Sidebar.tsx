@@ -45,29 +45,40 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
       
       <div className="relative p-6 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="relative flex items-center justify-center w-12 h-12">
-            <svg viewBox="0 0 40 40" className="w-full h-full">
+        <div className="flex items-center gap-4">
+          <div className="relative flex items-center justify-center w-16 h-16">
+            <div className="absolute inset-0 rounded-lg" style={{ boxShadow: 'var(--glow-gold)' }} />
+            <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 drop-shadow-[0_0_8px_rgba(217,179,66,0.6)]">
               <defs>
                 <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#D9B342" />
-                  <stop offset="100%" stopColor="#C4A136" />
+                  <stop offset="0%" stopColor="oklch(0.82 0.15 70)" />
+                  <stop offset="50%" stopColor="oklch(0.75 0.14 55)" />
+                  <stop offset="100%" stopColor="oklch(0.68 0.12 45)" />
                 </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
               </defs>
               <path
-                d="M20 4 L32 10 L32 20 C32 28 26 34 20 36 C14 34 8 28 8 20 L8 10 Z"
+                d="M100 20 L160 50 L160 110 C160 150 130 180 100 190 C70 180 40 150 40 110 L40 50 Z"
                 fill="url(#shield-gradient)"
-                stroke="#1A1A1A"
-                strokeWidth="1"
+                stroke="oklch(0.90 0.18 75)"
+                strokeWidth="3"
+                filter="url(#glow)"
               />
               <text
-                x="20"
-                y="24"
+                x="100"
+                y="125"
                 textAnchor="middle"
-                fill="#1A1A1A"
-                fontSize="14"
-                fontWeight="bold"
+                fill="oklch(0.1 0 0)"
+                fontSize="48"
+                fontWeight="900"
                 fontFamily="Impact, sans-serif"
+                letterSpacing="-2"
               >
                 XPS
               </text>
@@ -78,7 +89,7 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
               <h1 className="text-xl font-bold text-white tracking-tight">
                 XPS Intelligence
               </h1>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              <p className="text-[10px] text-white/60 uppercase tracking-wider">
                 AI Operating System
               </p>
             </div>
@@ -105,7 +116,7 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
                 'text-sm font-medium',
                 isActive
                   ? 'gradient-gold-animated text-background shadow-[0_0_25px_rgba(217,179,66,0.4)]'
-                  : 'text-secondary hover:text-foreground hover:bg-white/5'
+                  : 'text-white hover:text-white hover:bg-white/5'
               )}
             >
               {isActive && (
@@ -140,8 +151,8 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
           <div className="w-2 h-2 bg-primary rounded-full animate-pulse-glow" />
           {!collapsed && (
             <div className="flex-1">
-              <div className="text-xs font-medium text-foreground">System Active</div>
-              <div className="text-[10px] text-muted-foreground">v2.0.0 • Elite Mode</div>
+              <div className="text-xs font-medium text-white">System Active</div>
+              <div className="text-[10px] text-white/60">v2.0.0 • Elite Mode</div>
             </div>
           )}
         </div>

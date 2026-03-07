@@ -56,12 +56,12 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
   }, [])
 
   const COLORS = [
-    'oklch(0.85 0.15 85)',
-    'oklch(0.7 0.12 120)',
-    'oklch(0.65 0.15 200)',
-    'oklch(0.6 0.10 280)',
-    'oklch(0.55 0.15 340)',
-    'oklch(0.5 0.10 60)'
+    'oklch(0.78 0.15 65)',
+    'oklch(0.72 0.05 240)',
+    'oklch(0.68 0.12 45)',
+    'oklch(0.75 0.14 55)',
+    'oklch(0.68 0.04 250)',
+    'oklch(0.65 0.12 40)'
   ]
 
   return (
@@ -93,7 +93,7 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
                 color: 'oklch(0.98 0 0)'
               }}
             />
-            <Bar dataKey="count" fill="oklch(0.85 0.15 85)" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="count" fill="oklch(0.78 0.15 65)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </motion.div>
@@ -144,8 +144,8 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
           <AreaChart data={revenueData}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="oklch(0.85 0.15 85)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="oklch(0.85 0.15 85)" stopOpacity={0} />
+                <stop offset="5%" stopColor="oklch(0.78 0.15 65)" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="oklch(0.78 0.15 65)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.25 0.01 250)" />
@@ -171,7 +171,7 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="oklch(0.85 0.15 85)"
+              stroke="oklch(0.78 0.15 65)"
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorRevenue)"
