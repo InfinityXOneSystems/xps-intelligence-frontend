@@ -70,7 +70,14 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="bg-card border border-border rounded-[18px] p-6 hover:border-border-hover hover:shadow-[0_0_14px_rgba(212,175,55,0.2)] transition-all duration-150"
+        className="rounded-[18px] p-6 transition-all duration-150 backdrop-blur-[24px]"
+        style={{
+          background: 'rgba(255, 255, 255, 0.03)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+        whileHover={{
+          boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)',
+        }}
       >
         <h3 className="text-[22px] font-semibold mb-6 text-foreground">Opportunity Score Distribution</h3>
         <ResponsiveContainer width="100%" height={300}>
@@ -102,7 +109,14 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3 }}
-        className="bg-card border border-border rounded-[18px] p-6 hover:border-border-hover hover:shadow-[0_0_14px_rgba(212,175,55,0.2)] transition-all duration-150"
+        className="rounded-[18px] p-6 transition-all duration-150 backdrop-blur-[24px]"
+        style={{
+          background: 'rgba(255, 255, 255, 0.03)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+        whileHover={{
+          boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)',
+        }}
       >
         <h3 className="text-[22px] font-semibold mb-6 text-foreground">Lead Pipeline</h3>
         <ResponsiveContainer width="100%" height={300}>
@@ -137,7 +151,14 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.4 }}
-        className="bg-card border border-border rounded-[18px] p-6 hover:border-border-hover hover:shadow-[0_0_14px_rgba(212,175,55,0.2)] transition-all duration-150 lg:col-span-2"
+        className="rounded-[18px] p-6 transition-all duration-150 lg:col-span-2 backdrop-blur-[24px]"
+        style={{
+          background: 'rgba(255, 255, 255, 0.03)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+        whileHover={{
+          boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)',
+        }}
       >
         <h3 className="text-[22px] font-semibold mb-6 text-foreground">Revenue Pipeline</h3>
         <ResponsiveContainer width="100%" height={300}>

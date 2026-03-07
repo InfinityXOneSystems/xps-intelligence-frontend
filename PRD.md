@@ -3,7 +3,7 @@
 A futuristic AI operating system interface for managing scored contractor leads with real-time visualization, intelligent agent assistance, and mission control-grade command execution.
 
 **Experience Qualities**:
-1. **Futuristic** - Cutting-edge interface with glassmorphic panels, animated gradients, and metallic effects that feel like mission control technology
+1. **Futuristic** - Cutting-edge interface with glassmorphic cards, animated gradients, and metallic effects that feel like mission control technology
 2. **Powerful** - Command-driven workflows and AI assistance that makes users feel they have unfair advantages in lead generation
 3. **Elite** - Premium aesthetic with gold accents, liquid silver highlights, and bronze secondary tones that communicate high-value intelligence operations
 
@@ -81,7 +81,7 @@ This is an enterprise-grade AI operating system with glassmorphic UI, animated s
 
 ## Design Direction
 
-The design should evoke a sense of **futuristic AI mission control** - like an elite intelligence agency's command center. The interface must feel alive with animated gradients, pulsing indicators, and glassmorphic panels that suggest sophisticated AI working seamlessly. Deep black backgrounds (#050505) provide maximum contrast for electric gold accents and liquid silver highlights. Every interaction should feel precise and powerful, with metallic effects and glowing borders reinforcing the premium, cutting-edge aesthetic. Think high-tech military operations meets luxury automotive interfaces.
+The design should evoke a sense of **futuristic AI mission control** - like an elite intelligence agency's command center. The interface must feel alive with animated gradients, pulsing indicators, and glassmorphic cards that suggest sophisticated AI working seamlessly. Deep black backgrounds (#000000) provide maximum contrast for electric gold accents and liquid silver highlights. Every interaction should feel precise and powerful, with glassmorphic blurred effects and glowing borders reinforcing the premium, cutting-edge aesthetic. Think high-tech military operations meets luxury automotive interfaces.
 
 ## Color Selection
 
@@ -97,7 +97,7 @@ The color scheme establishes a futuristic, elite intelligence aesthetic with ani
   - Deep Black Background `oklch(0.02 0 0)`: White text `oklch(0.98 0 0)` - Ratio 21:1 ✓
   - Electric Gold `oklch(0.85 0.15 85)`: Deep Black text `oklch(0.02 0 0)` - Ratio 15:1 ✓
   - Liquid Silver `oklch(0.65 0.08 220)`: White text `oklch(0.98 0 0)` - Ratio 9.5:1 ✓
-  - Glass Panels `oklch(0.98 0 0 / 0.05)` with 16px blur: White text `oklch(0.98 0 0)` - Ratio 18:1 ✓
+  - Glassmorphic Cards `rgba(255, 255, 255, 0.03)` with 24px blur: White text `oklch(0.98 0 0)` - Ratio 18:1 ✓
 
 ## Font Selection
 
@@ -121,7 +121,7 @@ Animations should feel **futuristic and alive** - like sophisticated AI systems 
 
 - **Components**:
   - Sidebar: Custom component with collapsed/expanded states using framer-motion
-  - Card: shadcn Card with custom glassmorphic styling via Tailwind backdrop-blur and borders
+  - Card: shadcn Card with glassmorphic styling (rgba(255, 255, 255, 0.03) background, 24px backdrop-blur, subtle borders)
   - Table: shadcn Table with custom row hover states and virtual scrolling for performance
   - Dialog/Sheet: shadcn Sheet for lead profile panels with slide-in animations
   - Button: shadcn Button with custom gold gradient variant and glow hover effects
@@ -134,11 +134,11 @@ Animations should feel **futuristic and alive** - like sophisticated AI systems 
   - Charts: Recharts (BarChart, PieChart, AreaChart) with custom dark theme and gold accents
   
 - **Customizations**:
-  - Glassmorphic card component with backdrop-blur-xl and border-gold/20
+  - Glassmorphic card component with 24px backdrop-blur and rgba(255, 255, 255, 0.03) background
   - Glow button variant with box-shadow animation on hover
   - Custom table component with striped rows and selection states
   - AI chat message components with streaming text animation
-  - Metric card component with animated number counting
+  - Metric card component with animated number counting and glassmorphic background
   - Command palette with fuzzy search and keyboard navigation
   
 - **States**:
