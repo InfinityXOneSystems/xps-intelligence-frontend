@@ -8,7 +8,8 @@ import {
   ChartLine,
   UserList,
   GearSix,
-  Sparkle
+  Sparkle,
+  Square
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
@@ -22,6 +23,7 @@ const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: ChartBar },
   { id: 'leads', label: 'Leads', icon: Users },
   { id: 'scraper', label: 'Scraper Control', icon: Robot },
+  { id: 'canvas', label: 'Execution Canvas', icon: Square },
   { id: 'pipeline', label: 'Sales Pipeline', icon: FunnelSimple },
   { id: 'outreach', label: 'Outreach', icon: PaperPlaneTilt },
   { id: 'analytics', label: 'Analytics', icon: ChartLine },

@@ -8,6 +8,7 @@ import { CommandBar } from '@/components/CommandBar'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { LeadsPage } from '@/pages/LeadsPage'
 import { ScraperPage } from '@/pages/ScraperPage'
+import { CanvasPage } from '@/pages/CanvasPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
 import { mockLeads } from '@/lib/mockData'
 import type { Lead } from '@/types/lead'
@@ -37,6 +38,8 @@ function App() {
         return <LeadsPage leads={safeLeads} onUpdateLead={handleUpdateLead} onDeleteLead={handleDeleteLead} />
       case 'scraper':
         return <ScraperPage />
+      case 'canvas':
+        return <CanvasPage />
       case 'pipeline':
         return <PlaceholderPage title="Sales Pipeline" description="Track deals through your sales funnel" />
       case 'outreach':
