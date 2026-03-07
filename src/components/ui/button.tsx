@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-gradient-to-r from-[oklch(0.85_0.18_85)] via-[oklch(0.82_0.16_75)] to-[oklch(0.78_0.15_65)] text-black shadow-[0_0_20px_rgba(230,198,92,0.4)] hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(230,198,92,0.6)] hover:brightness-110",
+          "bg-gradient-to-r from-[oklch(0.88_0.20_95)] via-[oklch(0.85_0.19_88)] to-[oklch(0.82_0.18_80)] text-black shadow-[0_0_20px_rgba(255,223,0,0.45)] hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,223,0,0.65)] hover:brightness-110",
         destructive:
           "bg-destructive text-white shadow-sm hover:bg-destructive/90 focus-visible:ring-destructive/20",
         outline:
@@ -22,6 +22,8 @@ const buttonVariants = cva(
         link: "text-gold underline-offset-4 hover:underline",
         maroon:
           "bg-gradient-to-r from-[oklch(0.45_0.15_25)] to-[oklch(0.38_0.13_20)] text-white shadow-sm hover:scale-[1.02] hover:brightness-110 border border-[rgba(139,0,35,0.4)]",
+        silver:
+          "bg-gradient-to-r from-[oklch(0.78_0.02_240)] via-[oklch(0.68_0.04_250)] to-[oklch(0.58_0.03_260)] text-white shadow-[0_0_20px_rgba(192,192,192,0.4)] hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(192,192,192,0.6)] hover:brightness-110",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",
