@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Lightning, Database, Envelope, Robot, Users, ChartLineUp } from '@phosphor-icons/react'
+import { Lightning, Database, Envelope, Robot, Users } from '@phosphor-icons/react'
 
 interface SystemIndicator {
   label: string
@@ -26,79 +26,41 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="bg-surface border-b border-border-subtle px-6 py-4"
+      className="bg-surface/50 backdrop-blur-xl border-b border-border-subtle px-8 py-3"
     >
-      <div className="flex items-center justify-between gap-6">
-        <div className="flex items-center gap-6 flex-1">
-          {indicators.map((indicator, index) => {
-            const Icon = indicator.icon
-            const statusColor = 
-              indicator.status === 'active' ? 'text-gold' :
-              indicator.status === 'warning' ? 'text-warning' :
-              'text-muted-foreground'
-            
-            return (
-              <motion.div
-                key={indicator.label}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-card border border-border hover:border-border-hover transition-all duration-150"
-              >
-                <div className="relative">
-                  <Icon size={16} className={statusColor} weight="regular" strokeWidth={1.5} />
-                  {indicator.status === 'active' && (
-                    <motion.div
-                      className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gold rounded-full"
-                      animate={{
-                        scale: [1, 1.3, 1],
-                        opacity: [1, 0.6, 1]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  )}
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] leading-none font-semibold">
-                    {indicator.label}
-                  </span>
-                  <span className="text-xs font-semibold text-foreground mt-0.5">
-                    {indicator.value}
-                  </span>
-                </div>
-              </motion.div>
-            )
-          })}
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <motion.div
-            className="px-4 py-2 rounded-xl border border-gold/40 bg-[rgba(212,175,55,0.08)]"
-            animate={{
-              boxShadow: [
-                '0 0 14px rgba(212, 175, 55, 0.2)',
-                '0 0 20px rgba(212, 175, 55, 0.3)',
-                '0 0 14px rgba(212, 175, 55, 0.2)',
-              ]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <Lightning size={16} className="text-gold" weight="fill" />
-              <span className="text-xs font-semibold text-foreground">
-                Mission Control Active
-              </span>
-            </div>
-          </motion.div>
-        </div>
+      <div className="flex items-center justify-center gap-3 max-w-5xl mx-auto">
+        {indicators.map((indicator, index) => {
+          const Icon = indicator.icon
+          const statusColor = 
+            indicator.status === 'active' ? 'text-gold' :
+            indicator.status === 'warning' ? 'text-warning' :
+            'text-muted-foreground'
+          
+          return (
+            <motion.div
+              key={indicator.label}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.05 }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-card/50 backdrop-blur-sm border border-border-subtle hover:border-gold/30 hover:bg-card/70 transition-all duration-200 group"
+            >
+              <div className="relative">
+                <Icon size={18} className={`${statusColor} transition-transform duration-200 group-hover:scale-110`} weight="duotone" />
+                {indicator.status === 'active' && (
+                  <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gold rounded-full shadow-[0_0_6px_rgba(212,175,55,0.6)]" />
+                )}
+              </div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xs text-muted-foreground font-medium">
+                  {indicator.label}
+                </span>
+                <span className="text-xs font-bold text-foreground">
+                  {indicator.value}
+                </span>
+              </div>
+            </motion.div>
+          )
+        })}
       </div>
     </motion.div>
   )

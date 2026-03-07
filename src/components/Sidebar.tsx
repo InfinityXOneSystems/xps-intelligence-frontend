@@ -43,40 +43,26 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
         collapsed ? 'w-20' : 'w-72'
       )}
     >
-      <div className="relative p-6 border-b border-border-subtle">
-        <div className="flex flex-col gap-4">
-          <div className="relative flex items-center justify-center w-full h-40">
-            <div className="absolute inset-0 bg-gradient-to-br from-gradient-gold-start via-gradient-silver-mid to-gradient-gold-end opacity-60 blur-3xl animate-pulse-glow" />
-            <div className="absolute inset-0 bg-gradient-to-tr from-gradient-silver-start via-gradient-gold-mid to-gradient-silver-end opacity-50 blur-2xl animate-[spin_8s_linear_infinite]" />
-            <div className="absolute inset-0">
-              <div className="absolute top-2 left-8 w-2 h-2 rounded-full bg-gold animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0s' }} />
-              <div className="absolute top-6 right-12 w-1.5 h-1.5 rounded-full bg-silver animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0.4s' }} />
-              <div className="absolute bottom-4 left-12 w-1.5 h-1.5 rounded-full bg-gold-muted animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0.8s' }} />
-              <div className="absolute bottom-2 right-8 w-2 h-2 rounded-full bg-silver animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '1.2s' }} />
-              <div className="absolute top-1/2 left-4 w-1.5 h-1.5 rounded-full bg-gold animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '1.6s' }} />
-              <div className="absolute top-1/2 right-4 w-1.5 h-1.5 rounded-full bg-silver animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0.6s' }} />
-              <div className="absolute top-8 right-16 w-1 h-1 rounded-full bg-gold animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '1s' }} />
-              <div className="absolute bottom-8 left-16 w-1 h-1 rounded-full bg-silver animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0.2s' }} />
-            </div>
-            <div className="relative z-10 flex items-center justify-center w-full h-full p-3">
+      <div className="relative p-4 border-b border-border-subtle">
+        <div className="flex items-center gap-3">
+          <div className="relative flex-shrink-0 w-12 h-12">
+            <div className="absolute inset-0 bg-gradient-to-br from-gradient-gold-start to-gradient-gold-end opacity-20 blur-lg" />
+            <div className="relative z-10 flex items-center justify-center w-full h-full">
               <img 
                 src={logoImage}
                 alt="XPS XPRESS Logo"
                 className="w-full h-full object-contain"
                 style={{
-                  filter: 'drop-shadow(0 0 25px rgba(212,175,55,0.7)) drop-shadow(0 0 45px rgba(192,192,192,0.4))'
+                  filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.25))'
                 }}
               />
             </div>
           </div>
           {!collapsed && (
-            <div className="text-center">
-              <h1 className="text-xl font-bold text-white tracking-tight">
+            <div className="flex-1">
+              <h1 className="text-base font-bold text-white tracking-tight leading-tight">
                 XPS Intelligence
               </h1>
-              <p className="text-[10px] text-secondary uppercase tracking-[0.15em]">
-                Intelligence v4.2
-              </p>
             </div>
           )}
         </div>
