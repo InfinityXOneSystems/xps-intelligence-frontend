@@ -49,8 +49,8 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
             <div 
               className="absolute inset-0 rounded-xl"
               style={{
-                background: 'radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(192,192,192,0.1) 50%, transparent 100%)',
-                filter: 'blur(12px)',
+                background: 'radial-gradient(circle, rgba(212,175,55,0.08) 0%, rgba(192,192,192,0.05) 50%, transparent 100%)',
+                filter: 'blur(10px)',
               }}
             />
             <div className="relative z-10 flex items-center justify-center w-full h-full">
