@@ -1,6 +1,6 @@
 # XPS Intelligence Dashboard - AI Operating System
 
-A futuristic AI operating system interface for managing scored contractor leads with real-time visualization, intelligent agent assistance, and mission control-grade command execution.
+A futuristic AI operating system interface for managing scored contractor leads with real-time visualization, intelligent agent assistance, mission control-grade command execution, progressive web app capabilities, and adaptive light/dark theme support.
 
 **Experience Qualities**:
 1. **Futuristic** - Cutting-edge interface with glassmorphic cards, animated gradients, and metallic effects that feel like mission control technology
@@ -8,9 +8,23 @@ A futuristic AI operating system interface for managing scored contractor leads 
 3. **Elite** - Premium aesthetic with gold accents, liquid silver highlights, and bronze secondary tones that communicate high-value intelligence operations
 
 **Complexity Level**: Complex Application (advanced functionality, likely with multiple views)
-This is an enterprise-grade AI operating system with glassmorphic UI, animated system indicators, universal execution canvas, AI agent integration, multi-mode content rendering, and sophisticated real-time command processing across interconnected intelligence modules.
+This is an enterprise-grade AI operating system with glassmorphic UI, animated system indicators, universal execution canvas, AI agent integration, multi-mode content rendering, sophisticated real-time command processing across interconnected intelligence modules, PWA support for offline functionality, and adaptive theming for user preference.
 
 ## Essential Features
+
+### Progressive Web App (PWA)
+- **Functionality**: Installable web application with offline support and native-like experience
+- **Purpose**: Enable users to install the dashboard on their devices and access it like a native app, with offline caching for key resources
+- **Trigger**: Browser detects manifest.json and service worker, prompting installation
+- **Progression**: User visits app → Browser shows install prompt → User installs → App opens in standalone mode → Service worker caches resources → Offline access enabled
+- **Success criteria**: App is installable on all modern browsers, service worker caches critical assets, app functions offline for viewing cached data
+
+### Theme Switching (Light/Dark Mode)
+- **Functionality**: User-selectable theme toggle between light and dark modes with persistent preference storage
+- **Purpose**: Allow users to customize visual appearance based on environment, preference, or time of day
+- **Trigger**: Clicking theme toggle button in top bar
+- **Progression**: Click toggle → Theme switches instantly with smooth transitions → Preference saved to KV storage → Theme persists across sessions
+- **Success criteria**: Smooth transition animations (<300ms), preference persists, all components adapt correctly, WCAG contrast ratios maintained in both themes
 
 ### Lead Management System
 - **Functionality**: Display, filter, search, and manage scored contractor leads with full CRUD operations
@@ -75,29 +89,45 @@ This is an enterprise-grade AI operating system with glassmorphic UI, animated s
 - **Invalid Scraper Parameters**: Inline validation with helpful error messages, prevent submission
 - **Malformed Lead Data**: Sanitize inputs, show fallback values (N/A), log errors for debugging
 - **Concurrent Edits**: Last-write-wins with timestamp, show warning if data changed during edit
-- **Network Offline**: Queue actions for retry, show offline indicator, use cached data
+- **Network Offline**: Queue actions for retry, show offline indicator via PWA, use cached data from service worker
 - **Large Datasets**: Implement virtual scrolling for tables, pagination for charts, lazy load profiles
 - **Chat API Timeout**: Show timeout message with retry, allow canceling long-running requests
+- **Service Worker Registration Failure**: Gracefully degrade to online-only mode, log error for debugging
+- **Theme Switch Mid-Interaction**: Ensure smooth transitions without disrupting user workflows, maintain component state
+- **Browser PWA Support**: Detect capabilities and provide appropriate install prompts or fallback messaging
 
 ## Design Direction
 
-The design should evoke a sense of **futuristic AI mission control** - like an elite intelligence agency's command center. The interface must feel alive with animated gradients, pulsing indicators, and glassmorphic cards that suggest sophisticated AI working seamlessly. Deep black backgrounds (#000000) provide maximum contrast for electric gold accents and liquid silver highlights. Every interaction should feel precise and powerful, with glassmorphic blurred effects and glowing borders reinforcing the premium, cutting-edge aesthetic. Think high-tech military operations meets luxury automotive interfaces.
+The design should evoke a sense of **futuristic AI mission control** - like an elite intelligence agency's command center. The interface must feel alive with animated gradients, pulsing indicators, and glassmorphic cards that suggest sophisticated AI working seamlessly. The application now supports both light and dark themes, allowing users to choose their preferred aesthetic. In dark mode, deep black backgrounds (#000000) provide maximum contrast for electric gold accents and liquid silver highlights. In light mode, clean white backgrounds (#FFFFFF) with refined gold accents maintain the premium aesthetic while improving readability in bright environments. Every interaction should feel precise and powerful, with glassmorphic blurred effects and glowing borders reinforcing the premium, cutting-edge aesthetic. Think high-tech military operations meets luxury automotive interfaces, now accessible in any lighting condition.
 
 ## Color Selection
 
-The color scheme establishes a futuristic, elite intelligence aesthetic with animated electric gold gradients against deep black, accented by liquid silver and bronze metallics.
+The color scheme establishes a futuristic, elite intelligence aesthetic with animated electric gold gradients, available in both dark and light themes for optimal viewing in any environment.
 
-- **Primary Color**: Electric Gold `oklch(0.85 0.15 85)` - Animated gradient power accent representing high-value intelligence and mission-critical actions, communicates premium quality and attention-demanding operations
+**Dark Theme (Default):**
+- **Primary Color**: Electric Gold `oklch(0.905 0.182 98.111)` - Animated gradient power accent representing high-value intelligence and mission-critical actions
+- **Background**: Deep Black `#000000` - Pure background for maximum contrast and futuristic depth
+- **Foreground**: Pure White `#FFFFFF` - Primary text with exceptional contrast
 - **Secondary Colors**: 
-  - Deep Black `oklch(0.02 0 0)` - Pure background (#050505) for maximum contrast and futuristic depth
-  - Liquid Silver `oklch(0.65 0.08 220)` - Metallic accents for secondary UI elements and hover states
-  - Bronze `oklch(0.65 0.12 50)` - Tertiary highlights for gradient complexity
-- **Accent Color**: Electric Gold `oklch(0.85 0.15 85)` - Animated gradients, active states, glow effects, and mission control indicators
-- **Foreground/Background Pairings**:
-  - Deep Black Background `oklch(0.02 0 0)`: White text `oklch(0.98 0 0)` - Ratio 21:1 ✓
-  - Electric Gold `oklch(0.85 0.15 85)`: Deep Black text `oklch(0.02 0 0)` - Ratio 15:1 ✓
-  - Liquid Silver `oklch(0.65 0.08 220)`: White text `oklch(0.98 0 0)` - Ratio 9.5:1 ✓
-  - Glassmorphic Cards `rgba(255, 255, 255, 0.03)` with 24px blur: White text `oklch(0.98 0 0)` - Ratio 18:1 ✓
+  - Liquid Silver `oklch(0.75 0.02 240)` - Metallic accents for secondary UI elements
+  - Bronze `oklch(0.72 0.14 50)` - Tertiary highlights for gradient complexity
+  - Card Background `rgba(255, 255, 255, 0.03)` - Subtle glassmorphic surfaces
+
+**Light Theme:**
+- **Primary Color**: Rich Gold `oklch(0.72 0.15 85)` - Refined gold for light backgrounds
+- **Background**: Pure White `#FFFFFF` - Clean, professional background
+- **Foreground**: Deep Charcoal `#1a1a1a` - Primary text with strong contrast
+- **Secondary Colors**:
+  - Muted Gold `#C4A040` - Borders and accent elements
+  - Warm Bronze `#B77028` - Secondary accents
+  - Card Background `rgba(255, 255, 255, 0.95)` - Elevated surfaces with subtle opacity
+
+**Foreground/Background Pairings**:
+- Dark Mode - Deep Black `#000000`: White text `#FFFFFF` - Ratio 21:1 ✓
+- Dark Mode - Electric Gold `oklch(0.905 0.182 98.111)`: Black text `#000000` - Ratio 18:1 ✓
+- Light Mode - Pure White `#FFFFFF`: Charcoal text `#1a1a1a` - Ratio 12:1 ✓
+- Light Mode - Rich Gold `oklch(0.72 0.15 85)`: Charcoal text `#1a1a1a` - Ratio 6.5:1 ✓
+- Both Modes - Glassmorphic Cards: Foreground text - Ratio >7:1 ✓
 
 ## Font Selection
 
