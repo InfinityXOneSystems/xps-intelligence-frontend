@@ -76,12 +76,12 @@ function App() {
 
   return (
     <ThemeProvider>
-      <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden relative transition-colors duration-300">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(212,175,55,0.10),transparent_50%)] pointer-events-none dark:opacity-100 opacity-60" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_80%,rgba(192,192,192,0.08),transparent_50%)] pointer-events-none dark:opacity-90 opacity-50" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_90%_40%,rgba(183,112,40,0.07),transparent_45%)] pointer-events-none dark:opacity-80 opacity-45" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_15%_70%,rgba(139,0,35,0.06),transparent_40%)] pointer-events-none dark:opacity-70 opacity-40" />
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,175,55,0.04)_0%,transparent_25%,rgba(192,192,192,0.03)_50%,transparent_75%,rgba(183,112,40,0.02)_100%)] pointer-events-none" />
+      <div className="h-screen w-screen flex flex-col overflow-hidden relative transition-colors duration-300" style={{ background: '#000000', color: '#FFFFFF' }}>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(212,175,55,0.06),transparent_50%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_80%,rgba(192,192,192,0.04),transparent_50%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_90%_40%,rgba(183,112,40,0.03),transparent_45%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_15%_70%,rgba(139,0,35,0.03),transparent_40%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,175,55,0.02)_0%,transparent_25%,rgba(192,192,192,0.015)_50%,transparent_75%,rgba(183,112,40,0.01)_100%)] pointer-events-none" />
         
         <div className="relative flex-1 flex overflow-hidden">
           {!isMobile && <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />}

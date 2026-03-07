@@ -48,19 +48,24 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
       whileHover={{ scale: 1.02, y: -4 }}
       className="rounded-[18px] p-6 cursor-pointer relative overflow-hidden group transition-all duration-300"
       style={{
-        background: 'var(--card)',
+        background: 'rgba(0, 0, 0, 0.6)',
         backdropFilter: 'blur(40px) saturate(200%)',
         WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-        border: '1px solid var(--border-subtle)',
+        border: '2px solid var(--border-subtle)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
         transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       <div 
-        className="absolute inset-0 rounded-[18px] pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300" 
+        className="absolute inset-[-2px] rounded-[18px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
         style={{ 
-          border: '1px solid var(--border-hover)',
-          boxShadow: 'var(--glow-gold), 0 12px 40px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(212, 175, 55, 0.15)',
+          background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
+          backgroundSize: '200% 200%',
+          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+          padding: '2px',
+          animation: 'gradient-shift 3s linear infinite',
         }}
       />
       <div 
