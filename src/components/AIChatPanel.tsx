@@ -181,8 +181,11 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
               }
             }}
             placeholder="Ask Lead Sniper..."
-            className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-offset-0 px-4 py-3 rounded-xl"
+            className="flex-1 text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-offset-0 px-4 py-3 rounded-xl"
             style={{
+              background: 'rgba(0, 0, 0, 0.4)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
               border: '1px solid oklch(0.42 0.14 20)',
             }}
             disabled={isLoading}
