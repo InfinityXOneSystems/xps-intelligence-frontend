@@ -172,10 +172,10 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
       <div className="p-4 border-t border-border-subtle">
         <div className="flex gap-2 items-center">
           <div
-            className="flex-1 rounded-xl px-4 py-3 border-2"
+            className="flex-1 rounded-xl px-4 py-3"
             style={{
-              background: 'linear-gradient(135deg, oklch(0.45 0.15 25) 0%, oklch(0.38 0.13 20) 50%, oklch(0.32 0.11 15) 100%)',
-              borderColor: 'oklch(0.42 0.14 20)',
+              background: 'transparent',
+              border: '1px solid oklch(0.42 0.14 20)',
             }}
           >
             <Input
@@ -188,7 +188,7 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
                 }
               }}
               placeholder="Ask Lead Sniper..."
-              className="flex-1 bg-transparent border-0 text-white placeholder:text-white/70 focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
+              className="flex-1 bg-transparent border-0 text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
               disabled={isLoading}
             />
           </div>
