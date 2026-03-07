@@ -45,7 +45,7 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
     >
       <div className="relative p-6 border-b border-border-subtle">
         <div className="flex items-center gap-4">
-          <div className="relative flex-shrink-0 w-20 h-20">
+          <div className="relative flex-shrink-0 w-12 h-12">
             <div 
               className="absolute inset-0 rounded-xl"
               style={{
