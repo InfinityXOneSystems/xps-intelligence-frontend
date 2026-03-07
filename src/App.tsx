@@ -4,7 +4,6 @@ import { Toaster } from '@/components/ui/sonner'
 import { Sidebar } from '@/components/Sidebar'
 import { TopBar } from '@/components/TopBar'
 import { AIChatPanel } from '@/components/AIChatPanel'
-import { CommandBar } from '@/components/CommandBar'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { LeadsPage } from '@/pages/LeadsPage'
 import { ScraperPage } from '@/pages/ScraperPage'
@@ -17,7 +16,6 @@ function App() {
   const [currentPage, setCurrentPage] = useState('dashboard')
   const [showChat, setShowChat] = useState(true)
   const [leads, setLeads] = useKV<Lead[]>('leads-data', mockLeads)
-  const [commandMessage, setCommandMessage] = useState<string | null>(null)
 
   const handleUpdateLead = (updatedLead: Lead) => {
     setLeads((currentLeads) => 
@@ -27,13 +25,6 @@ function App() {
 
   const handleDeleteLead = (id: string) => {
     setLeads((currentLeads) => (currentLeads || []).filter((lead) => lead.id !== id))
-  }
-
-  const handleCommand = (command: string) => {
-    setCommandMessage(command)
-    if (!showChat) {
-      setShowChat(true)
-    }
   }
 
   const renderPage = () => {
@@ -83,14 +74,11 @@ function App() {
 
         {showChat && (
           <AIChatPanel 
-            onClose={() => setShowChat(false)} 
-            commandMessage={commandMessage}
-            onCommandProcessed={() => setCommandMessage(null)}
+            onClose={() => setShowChat(false)}
           />
         )}
       </div>
 
-      <CommandBar onCommand={handleCommand} />
       <Toaster position="top-right" />
     </div>
   )
