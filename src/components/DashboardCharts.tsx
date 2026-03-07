@@ -57,7 +57,7 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
 
   const COLORS = [
     'oklch(0.82 0.15 70)',
-    'oklch(0.78 0.02 240)',
+    'oklch(0.75 0 0)',
     'oklch(0.72 0.14 50)',
     'oklch(0.42 0.14 20)',
     'oklch(0.38 0.13 20)',
