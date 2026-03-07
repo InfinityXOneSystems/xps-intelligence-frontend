@@ -72,7 +72,7 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
               transition={{ delay: 0.2 }}
             >
               <h1 className="text-lg font-bold text-white tracking-tight leading-tight">
-                XPS Intelligence
+                XPS INTELLIGENCE
               </h1>
             </motion.div>
           )}
