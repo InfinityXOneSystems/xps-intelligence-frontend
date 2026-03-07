@@ -59,13 +59,13 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         className="relative w-full max-w-md mx-4"
       >
         <div 
-          className="glass-card rounded-3xl p-8 sm:p-10"
+          className="glass-card rounded-3xl p-10 sm:p-12"
           style={{
-            background: 'rgba(0, 0, 0, 0.75)',
-            backdropFilter: 'blur(50px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(50px) saturate(180%)',
-            border: '1px solid rgba(212, 175, 55, 0.15)',
-            boxShadow: '0 12px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.03)',
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(60px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(60px) saturate(200%)',
+            border: '2px solid rgba(212, 175, 55, 0.20)',
+            boxShadow: '0 16px 48px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(0, 0, 0, 0.90) inset, 0 2px 0 rgba(255, 255, 255, 0.02) inset',
           }}
         >
           <div className="flex flex-col items-center mb-8">
@@ -98,7 +98,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white font-medium">
+              <Label htmlFor="email" className="text-white font-medium text-center block">
                 Email
               </Label>
               <Input
@@ -114,13 +114,13 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                   WebkitBackdropFilter: 'blur(16px)',
                   borderColor: 'rgba(212, 175, 55, 0.20)',
                 }}
-                className="h-12 text-white placeholder:text-muted-foreground border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
+                className="h-12 text-white text-center placeholder:text-muted-foreground border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white font-medium">
+              <Label htmlFor="password" className="text-white font-medium text-center block">
                 Password
               </Label>
               <div className="relative">
@@ -137,7 +137,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                     WebkitBackdropFilter: 'blur(16px)',
                     borderColor: 'rgba(212, 175, 55, 0.20)',
                   }}
-                  className="h-12 text-white placeholder:text-muted-foreground pr-12 border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
+                  className="h-12 text-white text-center placeholder:text-muted-foreground pr-12 border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
                   required
                 />
                 <button
