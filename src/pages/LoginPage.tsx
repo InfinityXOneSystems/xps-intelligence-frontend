@@ -39,7 +39,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         <div 
           className="glass-card rounded-3xl p-8 sm:p-10"
           style={{
-            background: 'var(--card)',
+            background: 'linear-gradient(135deg, rgba(255, 223, 0, 0.08) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 223, 0, 0.04) 100%)',
             backdropFilter: 'blur(32px) saturate(180%)',
             WebkitBackdropFilter: 'blur(32px) saturate(180%)',
             border: '1px solid var(--border-subtle)',
@@ -119,7 +119,11 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
             <Button
               type="submit"
-              className="w-full h-12 text-black font-semibold rounded-xl"
+              className="w-full h-12 text-black font-semibold rounded-xl relative overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 20%, #C0C0C0 50%, #FFD700 80%, #FFC700 100%)',
+                backgroundSize: '200% 200%',
+              }}
             >
               Sign In
             </Button>
