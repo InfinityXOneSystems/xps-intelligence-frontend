@@ -117,7 +117,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
             <Button
               type="submit"
-              className="w-full h-12 gradient-gold text-foreground font-semibold rounded-xl hover:scale-[1.02] transition-transform"
+              className="w-full h-12 text-black font-semibold rounded-xl"
             >
               Sign In
             </Button>
