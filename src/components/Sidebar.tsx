@@ -44,9 +44,18 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
     >
       <div className="relative p-6 border-b border-border-subtle">
         <div className="flex items-center gap-4">
-          <div className="relative flex items-center justify-center w-16 h-16">
-            <div className="absolute inset-0 rounded-lg" style={{ boxShadow: 'var(--glow-gold)' }} />
-            <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]">
+          <div className="relative flex items-center justify-center w-20 h-20">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gradient-gold-start via-gradient-silver-mid to-gradient-gold-end opacity-40 blur-xl animate-pulse-glow" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-gradient-silver-start via-gradient-gold-mid to-gradient-silver-end opacity-30 blur-lg animate-[spin_8s_linear_infinite]" />
+            <div className="absolute inset-0">
+              <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-gold animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0s' }} />
+              <div className="absolute top-4 right-3 w-1 h-1 rounded-full bg-silver animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0.4s' }} />
+              <div className="absolute bottom-3 left-4 w-1 h-1 rounded-full bg-gold-muted animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0.8s' }} />
+              <div className="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-silver animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '1.2s' }} />
+              <div className="absolute top-1/2 left-1 w-1 h-1 rounded-full bg-gold animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '1.6s' }} />
+              <div className="absolute top-1/2 right-1 w-1 h-1 rounded-full bg-silver animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0.6s' }} />
+            </div>
+            <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 drop-shadow-[0_0_12px_rgba(212,175,55,0.8)]">
               <defs>
                 <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="oklch(0.82 0.15 70)" />
