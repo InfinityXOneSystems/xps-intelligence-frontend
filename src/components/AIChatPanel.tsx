@@ -171,27 +171,22 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
 
       <div className="p-4 border-t border-border-subtle">
         <div className="flex gap-2 items-center">
-          <div
-            className="flex-1 rounded-xl px-4 py-3"
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSend()
+              }
+            }}
+            placeholder="Ask Lead Sniper..."
+            className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-offset-0 px-4 py-3 rounded-xl"
             style={{
-              background: 'transparent',
               border: '1px solid oklch(0.42 0.14 20)',
             }}
-          >
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault()
-                  handleSend()
-                }
-              }}
-              placeholder="Ask Lead Sniper..."
-              className="flex-1 bg-transparent border-0 text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
-              disabled={isLoading}
-            />
-          </div>
+            disabled={isLoading}
+          />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}

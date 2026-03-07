@@ -59,9 +59,9 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
     'oklch(0.82 0.15 70)',
     'oklch(0.78 0.02 240)',
     'oklch(0.72 0.14 50)',
-    'oklch(0.45 0.15 25)',
     'oklch(0.42 0.14 20)',
-    'oklch(0.38 0.13 20)'
+    'oklch(0.38 0.13 20)',
+    'oklch(0.35 0.12 15)'
   ]
 
   return (
@@ -175,8 +175,8 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
           <AreaChart data={revenueData}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="oklch(0.82 0.15 70)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="oklch(0.82 0.15 70)" stopOpacity={0} />
+                <stop offset="5%" stopColor="oklch(0.42 0.14 20)" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="oklch(0.42 0.14 20)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
@@ -204,7 +204,7 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="oklch(0.82 0.15 70)"
+              stroke="oklch(0.42 0.14 20)"
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorRevenue)"
