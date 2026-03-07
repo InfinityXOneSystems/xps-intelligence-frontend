@@ -1,10 +1,22 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { PaperPlaneTilt, X, Sparkle } from '@phosphor-icons/react'
+import { PaperPlaneTilt, X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
+
+const CrosshairIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="9" stroke="#800000" strokeWidth="2" fill="none" />
+    <circle cx="12" cy="12" r="5" stroke="#FFFFFF" strokeWidth="1.5" fill="none" />
+    <line x1="12" y1="1" x2="12" y2="7" stroke="#800000" strokeWidth="2" />
+    <line x1="12" y1="17" x2="12" y2="23" stroke="#800000" strokeWidth="2" />
+    <line x1="1" y1="12" x2="7" y2="12" stroke="#800000" strokeWidth="2" />
+    <line x1="17" y1="12" x2="23" y2="12" stroke="#800000" strokeWidth="2" />
+    <circle cx="12" cy="12" r="2" fill="#FFFFFF" />
+  </svg>
+)
 
 interface Message {
   id: string
@@ -94,7 +106,7 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
     >
       <div className="p-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkle size={20} className="text-gold" weight="fill" />
+          <CrosshairIcon />
           <h2 className="font-bold text-foreground">Lead Sniper</h2>
         </div>
         {onClose && (
