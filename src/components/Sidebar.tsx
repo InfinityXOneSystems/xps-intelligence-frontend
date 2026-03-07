@@ -46,38 +46,36 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
       
       <div className="relative p-6 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="relative">
-            <motion.div
-              animate={{
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary via-bronze to-secondary p-[1px]"
-            >
-              <div className="w-full h-full rounded-lg bg-background flex items-center justify-center">
-                <Sparkle size={20} className="text-primary" weight="fill" />
-              </div>
-            </motion.div>
-            <motion.div
-              className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"
-              animate={{
-                scale: [1, 1.5, 1],
-                opacity: [1, 0.5, 1]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
+          <div className="relative flex items-center justify-center w-12 h-12">
+            <svg viewBox="0 0 40 40" className="w-full h-full">
+              <defs>
+                <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#D9B342" />
+                  <stop offset="100%" stopColor="#C4A136" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M20 4 L32 10 L32 20 C32 28 26 34 20 36 C14 34 8 28 8 20 L8 10 Z"
+                fill="url(#shield-gradient)"
+                stroke="#1A1A1A"
+                strokeWidth="1"
+              />
+              <text
+                x="20"
+                y="24"
+                textAnchor="middle"
+                fill="#1A1A1A"
+                fontSize="14"
+                fontWeight="bold"
+                fontFamily="Impact, sans-serif"
+              >
+                XPS
+              </text>
+            </svg>
           </div>
           {!collapsed && (
             <div>
-              <h1 className="text-xl font-bold text-primary glow-text-gold tracking-tight">
+              <h1 className="text-xl font-bold text-white tracking-tight">
                 XPS Intelligence
               </h1>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">

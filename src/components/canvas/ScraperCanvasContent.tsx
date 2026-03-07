@@ -2,6 +2,9 @@ import { motion } from 'framer-motion'
 import { Globe, Pulse, Monitor } from '@phosphor-icons/react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
 import type { ScraperCanvasData } from '@/types/canvas'
 
 interface ScraperCanvasContentProps {
@@ -9,38 +12,47 @@ interface ScraperCanvasContentProps {
 }
 
 export function ScraperCanvasContent({ data }: ScraperCanvasContentProps) {
+  const [urlInput, setUrlInput] = useState(data.browserUrl || 'https://example.com')
+  const [currentUrl, setCurrentUrl] = useState(data.browserUrl || 'https://example.com')
+
+  const handleNavigate = () => {
+    setCurrentUrl(urlInput)
+  }
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1 bg-black/40 relative overflow-hidden">
-        {data.screenshot ? (
-          <img 
-            src={data.screenshot} 
-            alt="Browser Screenshot" 
-            className="w-full h-full object-contain"
-          />
-        ) : (
-          <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
-            <Monitor size={64} weight="duotone" className="mb-4 opacity-50" />
-            <p className="text-sm">Browser viewport will appear here</p>
-            <p className="text-xs mt-1">Start the scraper to see live activity</p>
+        <div className="absolute inset-0 flex flex-col">
+          <div className="flex items-center gap-2 p-3 bg-black/60 backdrop-blur-sm border-b border-border/50">
+            <Globe size={16} className="text-muted-foreground" />
+            <Input
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleNavigate()}
+              className="flex-1 h-8 text-xs font-mono bg-black/40"
+              placeholder="Enter URL to preview..."
+            />
+            <Button size="sm" onClick={handleNavigate} className="h-8 text-xs">
+              Go
+            </Button>
           </div>
-        )}
+          
+          <div className="flex-1 relative bg-white">
+            <iframe
+              src={currentUrl}
+              className="w-full h-full border-none"
+              title="Browser Preview"
+              sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+            />
+          </div>
+        </div>
         
         {data.isActive && (
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-16 right-4 z-10">
             <Badge className="bg-primary text-primary-foreground animate-pulse-glow">
               <Pulse size={12} weight="fill" className="mr-1.5" />
               Scraping
             </Badge>
-          </div>
-        )}
-
-        {data.browserUrl && (
-          <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-border/50 px-4 py-2">
-            <div className="flex items-center gap-2 text-xs">
-              <Globe size={14} className="text-muted-foreground" />
-              <span className="text-muted-foreground font-mono">{data.browserUrl}</span>
-            </div>
           </div>
         )}
       </div>

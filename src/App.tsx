@@ -17,6 +17,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('dashboard')
   const [showChat, setShowChat] = useState(true)
   const [leads, setLeads] = useKV<Lead[]>('leads-data', mockLeads)
+  const [commandMessage, setCommandMessage] = useState<string | null>(null)
 
   const handleUpdateLead = (updatedLead: Lead) => {
     setLeads((currentLeads) => 
@@ -26,6 +27,13 @@ function App() {
 
   const handleDeleteLead = (id: string) => {
     setLeads((currentLeads) => (currentLeads || []).filter((lead) => lead.id !== id))
+  }
+
+  const handleCommand = (command: string) => {
+    setCommandMessage(command)
+    if (!showChat) {
+      setShowChat(true)
+    }
   }
 
   const renderPage = () => {
@@ -73,10 +81,16 @@ function App() {
           </main>
         </div>
 
-        {showChat && <AIChatPanel onClose={() => setShowChat(false)} />}
+        {showChat && (
+          <AIChatPanel 
+            onClose={() => setShowChat(false)} 
+            commandMessage={commandMessage}
+            onCommandProcessed={() => setCommandMessage(null)}
+          />
+        )}
       </div>
 
-      <CommandBar onCommand={(cmd) => console.log('Command:', cmd)} />
+      <CommandBar onCommand={handleCommand} />
       <Toaster position="top-right" />
     </div>
   )

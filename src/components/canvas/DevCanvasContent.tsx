@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Code, Terminal, GitDiff, Scroll } from '@phosphor-icons/react'
+import { Textarea } from '@/components/ui/textarea'
+import { Code, Terminal, GitDiff, Scroll, Play, FloppyDisk } from '@phosphor-icons/react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { toast } from 'sonner'
 import type { DevCanvasData } from '@/types/canvas'
 
 interface DevCanvasContentProps {
@@ -26,7 +28,32 @@ const modeTitles = {
 
 export function DevCanvasContent({ data }: DevCanvasContentProps) {
   const [activeTab, setActiveTab] = useState<string>(data.mode)
+  const [code, setCode] = useState<string>(data.content || '')
+  const [terminalInput, setTerminalInput] = useState('')
+  const [terminalOutput, setTerminalOutput] = useState<string[]>([
+    '$ XPS Intelligence Dev Console',
+    '$ Ready for commands...'
+  ])
   const Icon = modeIcons[data.mode]
+
+  const handleSave = () => {
+    toast.success('Code saved successfully!')
+  }
+
+  const handleRun = () => {
+    toast.success('Code execution started...')
+  }
+
+  const handleTerminalCommand = () => {
+    if (!terminalInput.trim()) return
+    
+    setTerminalOutput((prev) => [
+      ...prev,
+      `$ ${terminalInput}`,
+      `Executed: ${terminalInput}`
+    ])
+    setTerminalInput('')
+  }
 
   return (
     <div className="h-full flex flex-col bg-black/40">
@@ -42,11 +69,21 @@ export function DevCanvasContent({ data }: DevCanvasContentProps) {
               </>
             )}
           </div>
-          {data.language && (
-            <Badge variant="outline" className="text-xs">
-              {data.language}
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {data.language && (
+              <Badge variant="outline" className="text-xs">
+                {data.language}
+              </Badge>
+            )}
+            <Button size="sm" variant="ghost" onClick={handleSave} className="h-8">
+              <FloppyDisk size={14} className="mr-1.5" />
+              Save
+            </Button>
+            <Button size="sm" onClick={handleRun} className="h-8">
+              <Play size={14} weight="fill" className="mr-1.5" />
+              Run
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -74,11 +111,12 @@ export function DevCanvasContent({ data }: DevCanvasContentProps) {
 
         <div className="flex-1 overflow-hidden">
           <TabsContent value="editor" className="h-full m-0">
-            <ScrollArea className="h-full">
-              <pre className="p-4 text-xs font-mono leading-relaxed">
-                <code className="text-green-400">{data.content || '// Code will appear here...'}</code>
-              </pre>
-            </ScrollArea>
+            <Textarea
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="h-full w-full resize-none font-mono text-sm bg-transparent border-none focus-visible:ring-0 text-green-400 p-4 leading-relaxed"
+              placeholder="// Start coding..."
+            />
           </TabsContent>
 
           <TabsContent value="diff" className="h-full m-0">
@@ -109,24 +147,22 @@ export function DevCanvasContent({ data }: DevCanvasContentProps) {
             <div className="h-full flex flex-col">
               <ScrollArea className="flex-1">
                 <div className="p-4 space-y-1 text-xs font-mono">
-                  {data.mode === 'terminal' && data.content ? (
-                    data.content.split('\n').map((line, i) => (
-                      <div key={i} className="text-foreground">{line}</div>
-                    ))
-                  ) : (
-                    <>
-                      <div className="text-green-500">$ ready</div>
-                      <div className="text-muted-foreground">Terminal ready for commands...</div>
-                    </>
-                  )}
+                  {terminalOutput.map((line, i) => (
+                    <div key={i} className={line.startsWith('$') ? 'text-primary' : 'text-foreground'}>
+                      {line}
+                    </div>
+                  ))}
                 </div>
               </ScrollArea>
-              <div className="border-t border-border/30 bg-black/40 px-4 py-2 flex items-center gap-2">
-                <span className="text-primary text-xs">$</span>
-                <input 
-                  type="text" 
+              <div className="border-t border-border/30 bg-black/40 px-4 py-3 flex items-center gap-2">
+                <span className="text-primary text-sm font-mono">$</span>
+                <input
+                  type="text"
+                  value={terminalInput}
+                  onChange={(e) => setTerminalInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleTerminalCommand()}
                   placeholder="Type command..."
-                  className="flex-1 bg-transparent text-xs outline-none text-foreground"
+                  className="flex-1 bg-transparent text-sm outline-none text-foreground font-mono"
                 />
               </div>
             </div>

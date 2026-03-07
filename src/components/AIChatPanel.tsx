@@ -15,14 +15,16 @@ interface Message {
 
 interface AIChatPanelProps {
   onClose?: () => void
+  commandMessage?: string | null
+  onCommandProcessed?: () => void
 }
 
-export function AIChatPanel({ onClose }: AIChatPanelProps) {
+export function AIChatPanel({ onClose, commandMessage, onCommandProcessed }: AIChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: 'Hello! I\'m Lead Sniper, your AI sales assistant. I can help you find leads, generate outreach emails, and answer contractor sales questions. Try asking me something!',
+      content: 'Hello! I\'m Lead Sniper, your AI sales assistant. I can help you find leads, generate outreach emails, answer contractor sales questions, and execute any command you need. Try asking me something!',
       timestamp: new Date()
     }
   ])
@@ -35,6 +37,54 @@ export function AIChatPanel({ onClose }: AIChatPanelProps) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
   }, [messages])
+
+  useEffect(() => {
+    if (commandMessage) {
+      handleCommandMessage(commandMessage)
+      onCommandProcessed?.()
+    }
+  }, [commandMessage])
+
+  const handleCommandMessage = async (cmd: string) => {
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: cmd,
+      timestamp: new Date()
+    }
+
+    setMessages((prev) => [...prev, userMessage])
+    setIsLoading(true)
+
+    try {
+      const prompt = window.spark.llmPrompt`You are Lead Sniper, an AI assistant for the XPS Intelligence System. The user has executed a command from the command palette.
+
+Command: ${cmd}
+
+Process this command and provide a helpful response. If it's a scraper command, acknowledge it and explain what you would do. If it's about leads or data, provide relevant insights. If it's about code editing or functionality, explain the action. Be concise and actionable.`
+
+      const response = await window.spark.llm(prompt, 'gpt-4o-mini')
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: response,
+        timestamp: new Date()
+      }
+
+      setMessages((prev) => [...prev, assistantMessage])
+    } catch (error) {
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Sorry, I encountered an error processing that command. Please try again.',
+        timestamp: new Date()
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return
