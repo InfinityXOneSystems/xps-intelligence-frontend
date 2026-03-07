@@ -8,9 +8,9 @@ function Input({ className, type, ...props }: ComponentProps<"input">) {
       type={type}
       data-slot="input"
       className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-all duration-200 outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "hover:border-[oklch(0.85_0.18_85)] hover:shadow-[0_0_8px_rgba(230,198,92,0.3)]",
-        "focus-visible:border-[oklch(0.85_0.18_85)] focus-visible:ring-[oklch(0.85_0.18_85)]/30 focus-visible:ring-[3px] focus-visible:shadow-[0_0_12px_rgba(230,198,92,0.4)]",
+        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-10 w-full min-w-0 rounded-xl border-2 bg-input/30 backdrop-blur-sm px-4 py-2 text-base shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-200 outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "hover:border-[oklch(0.88_0.20_90)] hover:shadow-[0_4px_16px_rgba(212,175,55,0.25),inset_0_1px_0_rgba(255,255,255,0.08)]",
+        "focus-visible:border-[oklch(0.90_0.21_88)] focus-visible:ring-[oklch(0.90_0.21_88)]/30 focus-visible:ring-[3px] focus-visible:shadow-[0_6px_20px_rgba(212,175,55,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]",
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}

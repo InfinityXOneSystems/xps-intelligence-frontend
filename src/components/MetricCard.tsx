@@ -45,28 +45,28 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4, ease: 'easeOut' }}
-      whileHover={{ scale: 1.02 }}
-      className="rounded-[18px] p-6 cursor-pointer relative overflow-hidden group transition-all duration-200"
+      whileHover={{ scale: 1.02, y: -4 }}
+      className="rounded-[18px] p-6 cursor-pointer relative overflow-hidden group transition-all duration-300"
       style={{
         background: 'var(--card)',
-        backdropFilter: 'blur(32px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+        backdropFilter: 'blur(40px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
         border: '1px solid var(--border-subtle)',
-        transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+        transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       <div 
-        className="absolute inset-0 rounded-[18px] pointer-events-none transition-all duration-200 group-hover:border-[var(--border-hover)]" 
+        className="absolute inset-0 rounded-[18px] pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300" 
         style={{ 
-          border: '1px solid transparent',
-          boxShadow: '0 0 0 rgba(212,175,55,0)',
-          transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+          border: '1px solid var(--border-hover)',
+          boxShadow: 'var(--glow-gold), 0 12px 40px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(212, 175, 55, 0.15)',
         }}
       />
       <div 
-        className="absolute inset-0 rounded-[18px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        className="absolute inset-0 rounded-[18px] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300"
         style={{
-          boxShadow: 'var(--glow-gold)',
+          background: 'linear-gradient(135deg, rgba(212,175,55,0.05) 0%, transparent 50%, rgba(192,192,192,0.03) 100%)',
         }}
       />
       
@@ -75,7 +75,9 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
           <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-[0.15em]">
             {title}
           </p>
-          <p className="text-[36px] font-bold text-foreground mt-2 leading-tight">
+          <p className="text-[36px] font-bold text-foreground mt-2 leading-tight" style={{
+            textShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+          }}>
             {formattedValue}
           </p>
           {change !== undefined && (
@@ -104,9 +106,12 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
         </div>
         {icon && (
           <motion.div
-            className="text-gold/60 group-hover:text-gold transition-colors duration-150"
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.15 }}
+            className="text-gold/60 group-hover:text-gold transition-colors duration-300"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              filter: 'drop-shadow(0 2px 8px rgba(212, 175, 55, 0.3))'
+            }}
           >
             {icon}
           </motion.div>

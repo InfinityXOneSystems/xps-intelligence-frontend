@@ -5,25 +5,25 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:border-destructive relative overflow-hidden",
   {
     variants: {
       variant: {
         default:
-          "bg-gradient-to-r from-[oklch(0.92_0.22_98)] via-[oklch(0.75_0.04_240)] to-[oklch(0.92_0.22_98)] text-black shadow-[0_0_20px_rgba(255,223,0,0.5)] hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,223,0,0.75)] hover:brightness-110",
+          "bg-gradient-to-r from-[oklch(0.94_0.22_95)] via-[oklch(0.90_0.20_88)] to-[oklch(0.94_0.22_95)] text-black shadow-[0_4px_20px_rgba(255,223,0,0.4),inset_0_1px_0_rgba(255,255,255,0.3)] hover:scale-[1.03] hover:shadow-[0_6px_30px_rgba(255,223,0,0.6),inset_0_1px_0_rgba(255,255,255,0.4)] hover:brightness-105 active:scale-[0.98] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700",
         destructive:
-          "bg-destructive text-white shadow-sm hover:bg-destructive/90 focus-visible:ring-destructive/20",
+          "bg-destructive text-white shadow-[0_2px_12px_rgba(239,68,68,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] hover:bg-destructive/90 hover:scale-[1.02] focus-visible:ring-destructive/20",
         outline:
-          "border border-border bg-background shadow-sm hover:bg-muted hover:border-border-hover",
+          "border-2 border-border bg-background/50 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:bg-muted hover:border-border-hover hover:shadow-[0_4px_16px_rgba(212,175,55,0.2)]",
         secondary:
-          "bg-secondary/20 text-secondary-foreground shadow-sm hover:bg-secondary/30 border border-border",
+          "bg-secondary/20 text-secondary-foreground shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.05)] hover:bg-secondary/30 border border-border hover:scale-[1.02]",
         ghost:
-          "hover:bg-muted hover:text-foreground",
-        link: "text-gold underline-offset-4 hover:underline",
+          "hover:bg-muted hover:text-foreground hover:scale-[1.02]",
+        link: "text-gold underline-offset-4 hover:underline hover:text-gold-muted",
         maroon:
-          "bg-gradient-to-r from-[oklch(0.45_0.15_25)] to-[oklch(0.38_0.13_20)] text-white shadow-sm hover:scale-[1.02] hover:brightness-110 border border-[rgba(139,0,35,0.4)]",
+          "bg-gradient-to-r from-[oklch(0.48_0.16_25)] via-[oklch(0.42_0.14_20)] to-[oklch(0.48_0.16_25)] text-white shadow-[0_4px_16px_rgba(139,0,35,0.4),inset_0_1px_0_rgba(255,255,255,0.15)] hover:scale-[1.03] hover:shadow-[0_6px_24px_rgba(139,0,35,0.6)] hover:brightness-110 border border-[rgba(139,0,35,0.3)] active:scale-[0.98]",
         silver:
-          "bg-gradient-to-r from-[oklch(0.78_0.02_240)] via-[oklch(0.68_0.04_250)] to-[oklch(0.58_0.03_260)] text-white shadow-[0_0_20px_rgba(192,192,192,0.4)] hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(192,192,192,0.6)] hover:brightness-110",
+          "bg-gradient-to-r from-[oklch(0.88_0_0)] via-[oklch(0.78_0_0)] to-[oklch(0.88_0_0)] text-black shadow-[0_4px_20px_rgba(192,192,192,0.4),inset_0_1px_0_rgba(255,255,255,0.4)] hover:scale-[1.03] hover:shadow-[0_6px_30px_rgba(192,192,192,0.6)] hover:brightness-105 active:scale-[0.98] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",
