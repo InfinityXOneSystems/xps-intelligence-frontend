@@ -1,22 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Eye, EyeSlash, ShieldCheck, Lightning, Database, CloudCheck, CheckCircle, Warning } from '@phosphor-icons/react'
+import { Eye, EyeSlash, CheckCircle } from '@phosphor-icons/react'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
 
 interface LoginPageProps {
   onLogin: () => void
-}
-
-interface SystemMetric {
-  label: string
-  value: string
-  status: 'optimal' | 'good' | 'warning'
-  icon: React.ReactNode
 }
 
 export function LoginPage({ onLogin }: LoginPageProps) {
@@ -25,37 +18,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [loadingProgress, setLoadingProgress] = useState(0)
-  const [systemMetrics, setSystemMetrics] = useState<SystemMetric[]>([])
-
-  useEffect(() => {
-    const metrics: SystemMetric[] = [
-      {
-        label: 'API Latency',
-        value: `${Math.floor(Math.random() * 20 + 15)}ms`,
-        status: 'optimal',
-        icon: <Lightning size={14} weight="fill" />
-      },
-      {
-        label: 'Database',
-        value: '99.9%',
-        status: 'optimal',
-        icon: <Database size={14} weight="fill" />
-      },
-      {
-        label: 'Security',
-        value: 'Active',
-        status: 'optimal',
-        icon: <ShieldCheck size={14} weight="fill" />
-      },
-      {
-        label: 'Cloud Status',
-        value: 'Online',
-        status: 'optimal',
-        icon: <CloudCheck size={14} weight="fill" />
-      }
-    ]
-    setSystemMetrics(metrics)
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -258,47 +220,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               {isLoading ? 'Signing In...' : 'Sign In'}
             </Button>
           </form>
-
-          <div className="mt-8 pt-6 border-t border-border-subtle">
-            <div className="grid grid-cols-2 gap-3">
-              {systemMetrics.map((metric, index) => (
-                <motion.div
-                  key={metric.label}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg"
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.30)',
-                    border: '1px solid rgba(212, 175, 55, 0.10)',
-                  }}
-                >
-                  <div className={getStatusColor(metric.status)}>
-                    {metric.icon}
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider truncate">
-                      {metric.label}
-                    </span>
-                    <span className={`text-xs font-semibold ${getStatusColor(metric.status)}`}>
-                      {metric.value}
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-6 text-center"
-          >
-            <p className="text-xs text-muted-foreground">
-              Protected by enterprise-grade security
-            </p>
-          </motion.div>
         </div>
       </motion.div>
 
