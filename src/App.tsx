@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Toaster } from '@/components/ui/sonner'
 import { Sidebar } from '@/components/Sidebar'
+import { TopBar } from '@/components/TopBar'
 import { AIChatPanel } from '@/components/AIChatPanel'
 import { CommandBar } from '@/components/CommandBar'
 import { DashboardPage } from '@/pages/DashboardPage'
@@ -52,13 +53,22 @@ function App() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden">
-      <div className="flex-1 flex overflow-hidden">
+    <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden relative">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(217,179,66,0.05),transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none" />
+      
+      <div className="relative flex-1 flex overflow-hidden">
         <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
         
-        <main className="flex-1 overflow-y-auto p-6">
-          {renderPage()}
-        </main>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <TopBar />
+          
+          <main className="flex-1 overflow-y-auto p-8">
+            <div className="max-w-[1800px] mx-auto">
+              {renderPage()}
+            </div>
+          </main>
+        </div>
 
         {showChat && <AIChatPanel onClose={() => setShowChat(false)} />}
       </div>

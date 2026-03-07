@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Terminal } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
@@ -12,6 +12,7 @@ export function CommandBar({ onCommand }: CommandBarProps) {
   const [command, setCommand] = useState('')
   const [history, setHistory] = useState<string[]>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
+  const [isFocused, setIsFocused] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -33,18 +34,18 @@ export function CommandBar({ onCommand }: CommandBarProps) {
     setHistory((prev) => [...prev, command])
     setHistoryIndex(-1)
 
-    if (cmd.startsWith('run scraper')) {
-      const city = cmd.replace('run scraper', '').trim()
+    if (cmd.startsWith('run scraper') || cmd.startsWith('scrape')) {
+      const city = cmd.replace(/^(run scraper|scrape)/, '').trim()
       toast.success(`Starting scraper${city ? ` for ${city}` : ''}...`)
       onCommand?.(`scraper:${city}`)
-    } else if (cmd.startsWith('show top leads')) {
+    } else if (cmd.startsWith('show top leads') || cmd.startsWith('show a+ leads')) {
       toast.success('Displaying top leads')
       onCommand?.('leads:top')
     } else if (cmd.startsWith('generate outreach')) {
       toast.success('Generating outreach email...')
       onCommand?.('email:generate')
     } else if (cmd === 'help') {
-      toast.info('Available commands: run scraper [city], show top leads, generate outreach')
+      toast.info('Available commands: scrape [city], show A+ leads, generate outreach')
     } else {
       toast.error('Unknown command. Type "help" for available commands.')
     }
@@ -77,28 +78,78 @@ export function CommandBar({ onCommand }: CommandBarProps) {
 
   return (
     <motion.div
-      initial={{ y: 20, opacity: 0 }}
+      initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="glass-card border-t border-border/50 p-4"
+      transition={{ duration: 0.5, ease: 'easeOut', delay: 0.2 }}
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
     >
-      <form onSubmit={handleSubmit} className="flex items-center gap-3">
-        <Terminal size={20} className="text-primary" />
-        <span className="text-primary font-mono">{'>'}</span>
-        <Input
-          id="command-input"
-          value={command}
-          onChange={(e) => setCommand(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type command... (Cmd/Ctrl+K to focus)"
-          className="flex-1 font-mono text-sm bg-background/50 border-border/50 focus:border-primary"
-        />
-        <span className="text-xs text-muted-foreground">
-          Press Enter
-        </span>
-      </form>
-      <p className="text-xs text-muted-foreground mt-2 ml-11">
-        Try: run scraper tampa, show top leads, generate outreach, help
-      </p>
+      <motion.form
+        onSubmit={handleSubmit}
+        className="glass-panel px-6 py-4 rounded-2xl min-w-[600px]"
+        animate={{
+          boxShadow: isFocused
+            ? '0 0 30px rgba(217, 179, 66, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5)'
+            : '0 10px 40px rgba(0, 0, 0, 0.5)'
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+              <Terminal size={16} className="text-background" weight="bold" />
+            </div>
+            <span className="text-primary font-mono text-lg glow-text-gold">{'>'}</span>
+          </div>
+          
+          <Input
+            id="command-input"
+            value={command}
+            onChange={(e) => setCommand(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder="Execute command... (⌘K to focus)"
+            className="flex-1 font-mono text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
+          />
+          
+          <AnimatePresence>
+            {command && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="flex items-center gap-2"
+              >
+                <kbd className="px-2 py-1 text-[10px] font-mono bg-white/5 border border-white/10 rounded">
+                  Enter
+                </kbd>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+        
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: isFocused ? 1 : 0, height: isFocused ? 'auto' : 0 }}
+          className="overflow-hidden"
+        >
+          <div className="mt-3 pt-3 border-t border-white/10 flex gap-2 flex-wrap">
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Quick commands:
+            </span>
+            {['scrape tampa', 'show A+ leads', 'generate outreach'].map((cmd) => (
+              <button
+                key={cmd}
+                type="button"
+                onClick={() => setCommand(cmd)}
+                className="text-[10px] px-2 py-1 rounded bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/40 transition-colors text-muted-foreground hover:text-primary"
+              >
+                {cmd}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      </motion.form>
     </motion.div>
   )
 }

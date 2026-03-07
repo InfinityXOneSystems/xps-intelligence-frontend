@@ -1,14 +1,14 @@
-# XPS Intelligence Dashboard
+# XPS Intelligence Dashboard - AI Operating System
 
-A production-grade intelligence dashboard for managing and analyzing scored contractor leads with real-time data visualization, AI-powered insights, and comprehensive sales pipeline management.
+A futuristic AI operating system interface for managing scored contractor leads with real-time visualization, intelligent agent assistance, and mission control-grade command execution.
 
 **Experience Qualities**:
-1. **Professional** - Enterprise-grade interface that instills confidence with polished interactions and precise data presentation
-2. **Intelligent** - AI-assisted workflows that feel predictive and contextually aware, reducing cognitive load
-3. **Commanding** - Powerful controls and shortcuts that make users feel efficient and in control of complex operations
+1. **Futuristic** - Cutting-edge interface with glassmorphic panels, animated gradients, and metallic effects that feel like mission control technology
+2. **Powerful** - Command-driven workflows and AI assistance that makes users feel they have unfair advantages in lead generation
+3. **Elite** - Premium aesthetic with gold accents, liquid silver highlights, and bronze secondary tones that communicate high-value intelligence operations
 
 **Complexity Level**: Complex Application (advanced functionality, likely with multiple views)
-This is a multi-view enterprise dashboard with data visualization, AI integration, role-based access, real-time updates, and sophisticated state management across multiple interconnected features.
+This is an enterprise-grade AI operating system with glassmorphic UI, animated system indicators, universal execution canvas, AI agent integration, multi-mode content rendering, and sophisticated real-time command processing across interconnected intelligence modules.
 
 ## Essential Features
 
@@ -81,23 +81,23 @@ This is a multi-view enterprise dashboard with data visualization, AI integratio
 
 ## Design Direction
 
-The design should evoke a sense of **elite intelligence operations** - like a mission control center for sales teams. Users should feel they're working with cutting-edge technology that gives them an unfair advantage. The interface should be sleek, precise, and slightly futuristic, with subtle animations that suggest sophisticated AI working behind the scenes. Think high-end financial terminals meets modern SaaS elegance.
+The design should evoke a sense of **futuristic AI mission control** - like an elite intelligence agency's command center. The interface must feel alive with animated gradients, pulsing indicators, and glassmorphic panels that suggest sophisticated AI working seamlessly. Deep black backgrounds (#050505) provide maximum contrast for electric gold accents and liquid silver highlights. Every interaction should feel precise and powerful, with metallic effects and glowing borders reinforcing the premium, cutting-edge aesthetic. Think high-tech military operations meets luxury automotive interfaces.
 
 ## Color Selection
 
-The color scheme establishes a premium, intelligence-focused aesthetic with electric gold as the power accent against a deep black backdrop.
+The color scheme establishes a futuristic, elite intelligence aesthetic with animated electric gold gradients against deep black, accented by liquid silver and bronze metallics.
 
-- **Primary Color**: Electric Gold `oklch(0.85 0.15 85)` - Represents high-value opportunities and intelligence insights, communicating premium quality and attention-commanding actions
+- **Primary Color**: Electric Gold `oklch(0.85 0.15 85)` - Animated gradient power accent representing high-value intelligence and mission-critical actions, communicates premium quality and attention-demanding operations
 - **Secondary Colors**: 
-  - Deep Black `oklch(0.1 0 0)` - Primary background for maximum contrast and sophistication
-  - Slate Gray `oklch(0.35 0.01 250)` - Secondary UI elements and muted content
-  - Steel Blue `oklch(0.5 0.08 240)` - Informational accents and secondary actions
-- **Accent Color**: Electric Gold `oklch(0.85 0.15 85)` - CTAs, highlights, active states, and premium features
+  - Deep Black `oklch(0.02 0 0)` - Pure background (#050505) for maximum contrast and futuristic depth
+  - Liquid Silver `oklch(0.65 0.08 220)` - Metallic accents for secondary UI elements and hover states
+  - Bronze `oklch(0.65 0.12 50)` - Tertiary highlights for gradient complexity
+- **Accent Color**: Electric Gold `oklch(0.85 0.15 85)` - Animated gradients, active states, glow effects, and mission control indicators
 - **Foreground/Background Pairings**:
-  - Deep Black Background `oklch(0.1 0 0)`: White text `oklch(0.98 0 0)` - Ratio 16.8:1 ✓
-  - Electric Gold `oklch(0.85 0.15 85)`: Deep Black text `oklch(0.1 0 0)` - Ratio 12.3:1 ✓
-  - Slate Gray `oklch(0.35 0.01 250)`: White text `oklch(0.98 0 0)` - Ratio 8.2:1 ✓
-  - Glass Cards `oklch(0.15 0 0 / 0.6)`: White text `oklch(0.98 0 0)` - Ratio 14.2:1 ✓
+  - Deep Black Background `oklch(0.02 0 0)`: White text `oklch(0.98 0 0)` - Ratio 21:1 ✓
+  - Electric Gold `oklch(0.85 0.15 85)`: Deep Black text `oklch(0.02 0 0)` - Ratio 15:1 ✓
+  - Liquid Silver `oklch(0.65 0.08 220)`: White text `oklch(0.98 0 0)` - Ratio 9.5:1 ✓
+  - Glass Panels `oklch(0.98 0 0 / 0.05)` with 16px blur: White text `oklch(0.98 0 0)` - Ratio 18:1 ✓
 
 ## Font Selection
 
@@ -115,7 +115,7 @@ Typography should convey **precision, modernity, and technological sophisticatio
 
 ## Animations
 
-Animations should feel **precise and purposeful** - like sophisticated machinery engaging rather than playful bounces. Use animations to reinforce the intelligence theme: data flowing, insights emerging, and systems responding with precision timing. Micro-interactions should have snappy feedback (<150ms) while larger transitions (page changes, panel slides) can take 300-400ms with smooth easing. Glow effects should pulse subtly on high-value items. Charts should animate-in with staggered reveals. Avoid anything that feels casual or whimsical.
+Animations should feel **futuristic and alive** - like sophisticated AI systems engaging and responding. Use precise, purposeful motion that reinforces the intelligence theme: gradients shifting across borders (3s infinite), glow effects pulsing on high-value items (2s ease-in-out), system indicators breathing with activity. Micro-interactions snap instantly (<100ms) while larger state transitions flow smoothly (300-400ms) with easing that feels technological rather than organic. Logo sparkles should animate subtly. Charts reveal with staggered data point emergence. Hover states scale elements slightly (1.02x) with simultaneous glow intensification. Everything should feel mission-critical and responsive, never casual.
 
 ## Component Selection
 

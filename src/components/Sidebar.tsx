@@ -7,7 +7,8 @@ import {
   PaperPlaneTilt,
   ChartLine,
   UserList,
-  GearSix
+  GearSix,
+  Sparkle
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
@@ -33,46 +34,116 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
     <motion.aside
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
       className={cn(
-        'glass-card h-full flex flex-col border-r border-border/50',
-        collapsed ? 'w-16' : 'w-64'
+        'glass-panel h-full flex flex-col relative',
+        collapsed ? 'w-20' : 'w-72'
       )}
     >
-      <div className="p-4 border-b border-border/50">
-        <h1 className="text-xl font-bold glow-text text-primary">
-          {collapsed ? 'XPS' : 'XPS Intelligence'}
-        </h1>
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
+      
+      <div className="relative p-6 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <motion.div
+              animate={{
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary via-bronze to-secondary p-[1px]"
+            >
+              <div className="w-full h-full rounded-lg bg-background flex items-center justify-center">
+                <Sparkle size={20} className="text-primary" weight="fill" />
+              </div>
+            </motion.div>
+            <motion.div
+              className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [1, 0.5, 1]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </div>
+          {!collapsed && (
+            <div>
+              <h1 className="text-xl font-bold text-primary glow-text-gold tracking-tight">
+                XPS Intelligence
+              </h1>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                AI Operating System
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
-        {menuItems.map((item) => {
+      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
+        {menuItems.map((item, index) => {
           const Icon = item.icon
           const isActive = currentPage === item.id
           
           return (
             <motion.button
               key={item.id}
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: index * 0.05 }}
               onClick={() => onNavigate(item.id)}
-              whileHover={{ x: 4 }}
+              whileHover={{ x: 6, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all',
+                'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 relative group',
                 'text-sm font-medium',
                 isActive
-                  ? 'bg-primary/10 text-primary border border-primary/30 shadow-[0_0_15px_rgba(217,179,66,0.2)]'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  ? 'gradient-gold-animated text-background shadow-[0_0_25px_rgba(217,179,66,0.4)]'
+                  : 'text-secondary hover:text-foreground hover:bg-white/5'
               )}
             >
-              <Icon size={20} weight={isActive ? 'fill' : 'regular'} />
-              {!collapsed && <span>{item.label}</span>}
+              {isActive && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-0 rounded-xl"
+                  initial={false}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                />
+              )}
+              <Icon 
+                size={20} 
+                weight={isActive ? 'fill' : 'regular'} 
+                className={cn(
+                  'relative z-10',
+                  !isActive && 'group-hover:text-primary transition-colors'
+                )} 
+              />
+              {!collapsed && (
+                <span className="relative z-10">{item.label}</span>
+              )}
+              {!isActive && (
+                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 glow-border-silver" />
+              )}
             </motion.button>
           )
         })}
       </nav>
 
-      <div className="p-4 border-t border-border/50">
-        <div className="text-xs text-muted-foreground">
-          {!collapsed && 'v1.0.0 • Lead Sniper AI'}
+      <div className="relative p-4 border-t border-white/10">
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+          <div className="w-2 h-2 bg-primary rounded-full animate-pulse-glow" />
+          {!collapsed && (
+            <div className="flex-1">
+              <div className="text-xs font-medium text-foreground">System Active</div>
+              <div className="text-[10px] text-muted-foreground">v2.0.0 • Elite Mode</div>
+            </div>
+          )}
         </div>
       </div>
     </motion.aside>
