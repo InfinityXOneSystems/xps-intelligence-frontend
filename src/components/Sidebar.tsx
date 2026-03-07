@@ -44,9 +44,9 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
     >
       <div className="relative p-6 border-b border-border-subtle">
         <div className="flex flex-col gap-4">
-          <div className="relative flex items-center justify-center w-full h-32">
-            <div className="absolute inset-0 bg-gradient-to-br from-gradient-gold-start via-gradient-silver-mid to-gradient-gold-end opacity-50 blur-2xl animate-pulse-glow" />
-            <div className="absolute inset-0 bg-gradient-to-tr from-gradient-silver-start via-gradient-gold-mid to-gradient-silver-end opacity-40 blur-xl animate-[spin_8s_linear_infinite]" />
+          <div className="relative flex items-center justify-center w-full h-40">
+            <div className="absolute inset-0 bg-gradient-to-br from-gradient-gold-start via-gradient-silver-mid to-gradient-gold-end opacity-60 blur-3xl animate-pulse-glow" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-gradient-silver-start via-gradient-gold-mid to-gradient-silver-end opacity-50 blur-2xl animate-[spin_8s_linear_infinite]" />
             <div className="absolute inset-0">
               <div className="absolute top-2 left-8 w-2 h-2 rounded-full bg-gold animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0s' }} />
               <div className="absolute top-6 right-12 w-1.5 h-1.5 rounded-full bg-silver animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0.4s' }} />
@@ -57,20 +57,15 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
               <div className="absolute top-8 right-16 w-1 h-1 rounded-full bg-gold animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '1s' }} />
               <div className="absolute bottom-8 left-16 w-1 h-1 rounded-full bg-silver animate-[sparkle_2s_ease-in-out_infinite]" style={{ animationDelay: '0.2s' }} />
             </div>
-            <div className="relative z-10 flex items-center justify-center w-full h-full p-4">
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gold/10 via-transparent to-silver/10 rounded-lg border border-gold/20 backdrop-blur-sm">
-                <div className="text-center">
-                  <div className="text-4xl font-black text-gold mb-1" style={{ textShadow: '0 0 20px rgba(212,175,55,0.6), 0 0 40px rgba(192,192,192,0.3)' }}>
-                    XPS
-                  </div>
-                  <div className="text-lg font-bold bg-gradient-to-r from-gold via-gold-muted to-silver bg-clip-text text-transparent">
-                    XPRESS
-                  </div>
-                  <div className="text-[10px] text-silver/80 italic mt-0.5">
-                    Floors For Life
-                  </div>
-                </div>
-              </div>
+            <div className="relative z-10 flex items-center justify-center w-full h-full p-3">
+              <img 
+                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDUwMCA0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPCEtLSBMZWZ0IFdpbmcgLS0+CiAgPHBhdGggZD0iTTEwMCwxMDAgTDE1MCw2MCBMMTgwLDgwIEwxOTAsNjAgTDIwMCw3MCBMMjEwLDUwIEwyMjAsNjAgTDI0MCw0MCBMMjYwLDYwIEwyODAsNDAgTDMwMCw2MCBMMzEwLDUwIEwzMjAsNzAgTDMzMCw2MCBMMzYwLDgwIEwzOTAsNjAgTDQ0MCwxMDAgTDQ0MCwzMDAgTDM5MCwzNDAgTDM2MCwzMjAgTDMzMCwzNDAgTDMyMCwzMzAgTDMxMCwzNTAgTDMwMCwzNDAgTDI4MCwzNjAgTDI2MCwzNDAgTDI0MCwzNjAgTDIyMCwzNDAgTDIxMCwzNTAgTDIwMCwzMzAgTDE5MCwzNDAgTDE4MCwzMjAgTDE1MCwzNDAgTDEwMCwzMDAiIGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iI0Q0QUYzNyIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgCiAgPCEtLSBTaGllbGQgLS0+CiAgPHBhdGggZD0iTTE3MCwxNDAgTDI1MCwxMDAgTDMzMCwxNDAgTDM0MCwyMjAgTDI3MCwyODAgTDIwMCwyMjAgWiIgZmlsbD0iI0Q0QUYzNyIgc3Ryb2tlPSIjMkEyOTI2IiBzdHJva2Utd2lkdGg9IjQiLz4KICAKICA8IS0tIFNoaWVsZCBCYW5kcyAtLT4KICA8cmVjdCB4PSIxNjAiIHk9IjE0NSIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI4IiBmaWxsPSIjMkEyOTI2IiByeD0iMiIvPgogIDxyZWN0IHg9IjE2MCIgeT0iMjY3IiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjgiIGZpbGw9IiMyQTI5MjYiIHJ4PSIyIi8+CiAgCiAgPCEtLSBYUFMgVGV4dCAtLT4KICA8dGV4dCB4PSIyNzAiIHk9IjE4MCIgZm9udC1mYW1pbHk9IidNb250c2VycmF0JywgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMDAwMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5YUFM8L3RleHQ+CiAgCiAgPCEtLSBYUFJFU1MgVGV4dCAtLT4KICA8dGV4dCB4PSIyNzAiIHk9IjI0MCIgZm9udC1mYW1pbHk9IidNb250c2VycmF0JywgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDIiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjRDRBRjM3IiBzdHJva2U9IiMyQTI5MjYiIHN0cm9rZS13aWR0aD0iMiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+WFBSRVNTPC90ZXh0PgogIAogIDwhLS0gTGVmdCBSaWJib24gLS0+CiAgPHBhdGggZD0iTTE0MCwyODUgUTE4MCwyNzUgMjIwLDI4NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRTVFNUU1IiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cGF0aCBkPSJNMTQwLDI5MCBRMTgwLDI4MCAyMjAsMjkwIiBmaWxsPSJub25lIiBzdHJva2U9IiNGNUY1RjUiIHN0cm9rZS13aWR0aD0iMiIvPgogIAogIDwhLS0gUmlnaHQgUmliYm9uIC0tPgogIDxwYXRoIGQ9Ik0zMjAsMjg1IFEzNjAsMjc1IDQwMCwyODUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0U1RTVFNSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHBhdGggZD0iTTMyMCwyOTAgUTM2MCwyODAgNDAwLDI5MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRjVGNUY1IiBzdHJva2Utd2lkdGg9IjIiLz4KICAKICA8IS0tIEZsb29ycyBGb3IgTGlmZSAtLT4KICA8dGV4dCB4PSIyNzAiIHk9IjMxNSIgZm9udC1mYW1pbHk9IidDb3VyaWVyIE5ldycsICdjdXJzaXZlJywgc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtc3R5bGU9Iml0YWxpYyIgZmlsbD0iIzMzMzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Rmxvb3JzIEZvciBMaWZlPC90ZXh0PgogIAogIDwhLS0gQm90dG9tIFdpbmcgLS0+CiAgPHBhdGggZD0iTTI3MCwzMjAgTDI1MCwzMzAgTDI0MCwzNjAgTDI2MCwzNzAgTDI3MCwzNTAgTDI4MCwzNzAgTDMwMCwzNjAgTDI5MCwzMzAgWiIgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjRDRBRjM3IiBzdHJva2Utd2lkdGg9IjEiLz4KPC9zdmc+"
+                alt="XPS XPRESS Logo"
+                className="w-full h-full object-contain"
+                style={{
+                  filter: 'drop-shadow(0 0 25px rgba(212,175,55,0.7)) drop-shadow(0 0 45px rgba(192,192,192,0.4))'
+                }}
+              />
             </div>
           </div>
           {!collapsed && (
