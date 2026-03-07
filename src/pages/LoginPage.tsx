@@ -95,7 +95,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   }
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-background relative overflow-hidden">
+    <div className="h-screen w-screen flex items-center justify-center relative overflow-hidden" style={{ background: '#000000' }}>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(212,175,55,0.12),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_70%,rgba(192,192,192,0.09),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_90%,rgba(183,112,40,0.08),transparent_45%)] pointer-events-none" />
@@ -251,7 +251,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               disabled={isLoading}
               className="w-full h-12 font-semibold rounded-xl relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(255,223,0,0.45)] disabled:opacity-70 disabled:hover:scale-100"
               style={{
-                background: 'linear-gradient(135deg, oklch(0.94 0.22 95) 0%, oklch(0.90 0.20 88) 35%, oklch(0.95 0.23 93) 100%)',
+                background: 'linear-gradient(135deg, oklch(0.92 0.22 95) 0%, oklch(0.88 0.01 0) 50%, oklch(0.92 0.22 95) 100%)',
                 color: '#1a1a1a',
               }}
             >
