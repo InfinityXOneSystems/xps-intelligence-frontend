@@ -171,26 +171,35 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
 
       <div className="p-4 border-t border-border-subtle">
         <div className="flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                handleSend()
-              }
+          <div
+            className="flex-1 rounded-xl px-4 py-3 border border-border-subtle"
+            style={{
+              background: 'linear-gradient(135deg, oklch(0.45 0.15 25) 0%, oklch(0.38 0.13 20) 50%, oklch(0.32 0.11 15) 100%)',
             }}
-            placeholder="Ask Lead Sniper..."
-            className="flex-1 bg-card border-border focus:border-gold"
-            disabled={isLoading}
-          />
-          <Button
+          >
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleSend()
+                }
+              }}
+              placeholder="Ask Lead Sniper..."
+              className="flex-1 bg-transparent border-0 text-white placeholder:text-white/70 focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
+              disabled={isLoading}
+            />
+          </div>
+          <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            size="icon"
+            className="flex items-center justify-center w-12 h-12 bg-transparent hover:opacity-80 transition-opacity disabled:opacity-30"
           >
-            <PaperPlaneTilt size={16} weight="fill" />
-          </Button>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12 L19 5 L12 19 L10 14 L5 12 Z" fill="oklch(0.42 0.14 20)" stroke="oklch(0.42 0.14 20)" strokeWidth="1.5" strokeLinejoin="round"/>
+            </svg>
+          </button>
         </div>
         <p className="text-xs text-muted-foreground mt-2">
           Powered by GPT-4

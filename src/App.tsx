@@ -10,6 +10,7 @@ import { LeadsPage } from '@/pages/LeadsPage'
 import { ScraperPage } from '@/pages/ScraperPage'
 import { CanvasPage } from '@/pages/CanvasPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
+import { SettingsPage } from '@/pages/SettingsPage'
 import { mockLeads } from '@/lib/mockData'
 import type { Lead } from '@/types/lead'
 
@@ -49,7 +50,7 @@ function App() {
       case 'team':
         return <PlaceholderPage title="Team" description="Manage team members and permissions" />
       case 'settings':
-        return <PlaceholderPage title="Settings" description="Configure your dashboard preferences" />
+        return <SettingsPage />
       default:
         return <DashboardPage leads={safeLeads} />
     }
