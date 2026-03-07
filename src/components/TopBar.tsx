@@ -37,51 +37,12 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
         WebkitBackdropFilter: 'blur(40px) saturate(200%)',
       }}
     >
-      <div className="flex items-center justify-between max-w-[1800px] mx-auto">
-        <div className="flex items-center gap-3 flex-1 justify-center">
-          {indicators.map((indicator, index) => {
-            const Icon = indicator.icon
-            const statusColor = 
-              indicator.status === 'active' ? 'text-gold' :
-              indicator.status === 'warning' ? 'text-warning' :
-              'text-muted-foreground'
-            
-            return (
-              <motion.div
-                key={indicator.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
-                className="flex items-center gap-2.5 w-[140px] h-[48px] px-3 rounded-xl border border-border-subtle hover:border-gold/50 transition-all duration-200 group"
-                style={{
-                  background: 'var(--card)',
-                  backdropFilter: 'blur(20px) saturate(150%)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(150%)',
-                }}
-              >
-                <div className="relative flex-shrink-0">
-                  <Icon size={18} className={`${statusColor} transition-transform duration-200 group-hover:scale-110`} weight="duotone" />
-                  {indicator.status === 'active' && (
-                    <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gold rounded-full shadow-[0_0_8px_rgba(212,175,55,0.7)]" />
-                  )}
-                </div>
-                <div className="flex flex-col gap-0 min-w-0 flex-1">
-                  <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide truncate">
-                    {indicator.label}
-                  </span>
-                  <span className="text-xs font-bold text-foreground truncate">
-                    {indicator.value}
-                  </span>
-                </div>
-              </motion.div>
-            )
-          })}
-        </div>
+      <div className="flex items-center justify-end max-w-[1800px] mx-auto">
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
-          className="ml-4 rounded-lg border border-border-subtle hover:border-gold/50 transition-all"
+          className="rounded-lg border border-border-subtle hover:border-gold/50 transition-all"
           style={{
             background: 'var(--card)',
             backdropFilter: 'blur(20px) saturate(150%)',
