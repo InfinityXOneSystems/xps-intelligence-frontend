@@ -20,6 +20,8 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-muted hover:text-foreground",
         link: "text-gold underline-offset-4 hover:underline",
+        maroon:
+          "bg-gradient-to-r from-[oklch(0.45_0.15_25)] to-[oklch(0.38_0.13_20)] text-white shadow-sm hover:scale-[1.02] hover:brightness-110 border border-[rgba(139,0,35,0.4)]",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",

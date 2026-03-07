@@ -17,10 +17,10 @@ interface LeadsPageProps {
 }
 
 const ratingColors: Record<LeadRating, string> = {
-  'A+': 'bg-primary/20 text-primary border-primary/30',
-  'A': 'bg-green-500/20 text-green-500 border-green-500/30',
-  'B+': 'bg-blue-500/20 text-blue-500 border-blue-500/30',
-  'B': 'bg-blue-400/20 text-blue-400 border-blue-400/30',
+  'A+': 'bg-gradient-to-br from-[oklch(0.82_0.15_70)] to-[oklch(0.75_0.14_55)] text-primary-foreground border-primary/30',
+  'A': 'bg-gradient-to-br from-[oklch(0.78_0.02_240)] to-[oklch(0.68_0.04_250)] text-white border-silver/30',
+  'B+': 'bg-gradient-to-br from-[oklch(0.72_0.14_50)] to-[oklch(0.65_0.12_40)] text-white border-bronze/30',
+  'B': 'bg-gradient-to-br from-[oklch(0.45_0.15_25)] to-[oklch(0.38_0.13_20)] text-white border-[rgba(139,0,35,0.4)]',
   'C': 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30',
   'D': 'bg-red-500/20 text-red-500 border-red-500/30'
 }

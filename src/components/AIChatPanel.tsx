@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { PaperPlaneTilt, X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 
 const CrosshairIcon = () => (
@@ -121,7 +120,7 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
         )}
       </div>
 
-      <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+      <div className="flex-1 overflow-y-auto p-4" ref={scrollRef}>
         <div className="space-y-4">
           <AnimatePresence>
             {messages.map((message) => (
@@ -137,16 +136,11 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
               >
                 <div
                   className={cn(
-                    'max-w-[85%] rounded-xl p-3 text-sm border',
+                    'max-w-[85%] text-sm',
                     message.role === 'user'
-                      ? 'text-foreground border-border'
-                      : 'text-foreground border-border'
+                      ? 'text-foreground'
+                      : 'text-foreground'
                   )}
-                  style={{
-                    background: 'var(--card)',
-                    backdropFilter: 'blur(24px) saturate(160%)',
-                    WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-                  }}
                 >
                   <p className="whitespace-pre-wrap">{message.content}</p>
                   <span className="text-xs text-muted-foreground mt-1 block">
@@ -163,14 +157,7 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
               animate={{ opacity: 1 }}
               className="flex justify-start"
             >
-              <div 
-                className="rounded-xl p-3 text-sm border border-border"
-                style={{
-                  background: 'var(--card)',
-                  backdropFilter: 'blur(24px) saturate(160%)',
-                  WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-                }}
-              >
+              <div className="text-sm">
                 <div className="flex gap-1">
                   <span className="w-2 h-2 bg-gold rounded-full animate-pulse" />
                   <span className="w-2 h-2 bg-gold rounded-full animate-pulse delay-75" />
@@ -180,7 +167,7 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
             </motion.div>
           )}
         </div>
-      </ScrollArea>
+      </div>
 
       <div className="p-4 border-t border-border-subtle">
         <div className="flex gap-2">
