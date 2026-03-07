@@ -30,7 +30,12 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="bg-surface/50 backdrop-blur-xl border-b border-border-subtle px-8 py-3"
+      className="border-b border-border-subtle px-8 py-3"
+      style={{
+        background: 'var(--card)',
+        backdropFilter: 'blur(40px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+      }}
     >
       <div className="flex items-center justify-between max-w-[1800px] mx-auto">
         <div className="flex items-center gap-3 flex-1 justify-center">
@@ -47,12 +52,17 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-card/50 backdrop-blur-sm border border-border-subtle hover:border-gold/30 hover:bg-card/70 transition-all duration-200 group"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border-subtle hover:border-gold/50 transition-all duration-200 group"
+                style={{
+                  background: 'var(--card)',
+                  backdropFilter: 'blur(20px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(150%)',
+                }}
               >
                 <div className="relative">
                   <Icon size={18} className={`${statusColor} transition-transform duration-200 group-hover:scale-110`} weight="duotone" />
                   {indicator.status === 'active' && (
-                    <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gold rounded-full shadow-[0_0_6px_rgba(212,175,55,0.6)]" />
+                    <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gold rounded-full shadow-[0_0_8px_rgba(212,175,55,0.7)]" />
                   )}
                 </div>
                 <div className="flex items-baseline gap-1.5">
@@ -71,7 +81,12 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
-          className="ml-4 rounded-lg border border-border-subtle hover:border-gold/30 hover:bg-card/70 transition-all"
+          className="ml-4 rounded-lg border border-border-subtle hover:border-gold/50 transition-all"
+          style={{
+            background: 'var(--card)',
+            backdropFilter: 'blur(20px) saturate(150%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(150%)',
+          }}
         >
           {theme === 'dark' ? (
             <Sun size={18} weight="duotone" className="text-gold" />

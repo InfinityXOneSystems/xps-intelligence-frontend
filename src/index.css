@@ -21,14 +21,14 @@
 }
 
 :root {
-  --background: #FFFFFF;
+  --background: #FAFAFA;
   --foreground: #1a1a1a;
   
-  --surface: #F8F9FA;
-  --card: rgba(255, 255, 255, 0.95);
+  --surface: rgba(248, 249, 250, 0.8);
+  --card: rgba(255, 255, 255, 0.7);
   --card-foreground: #1a1a1a;
   
-  --popover: rgba(255, 255, 255, 0.98);
+  --popover: rgba(255, 255, 255, 0.85);
   --popover-foreground: #1a1a1a;
   
   --primary: oklch(0.72 0.15 85);
@@ -42,7 +42,7 @@
   --bronze: #B77028;
   --silver: #A0A0A0;
   
-  --muted: rgba(0, 0, 0, 0.05);
+  --muted: rgba(0, 0, 0, 0.08);
   --muted-foreground: #6B7280;
   
   --accent: oklch(0.72 0.15 85);
@@ -55,10 +55,10 @@
   --warning: #D97706;
   --info: #2563EB;
   
-  --border: rgba(196, 160, 64, 0.25);
-  --border-hover: rgba(196, 160, 64, 0.5);
-  --border-subtle: rgba(0, 0, 0, 0.12);
-  --input: rgba(196, 160, 64, 0.25);
+  --border: rgba(196, 160, 64, 0.35);
+  --border-hover: rgba(196, 160, 64, 0.7);
+  --border-subtle: rgba(0, 0, 0, 0.15);
+  --input: rgba(196, 160, 64, 0.35);
   --ring: #C4A040;
   
   --radius: 1.125rem;
@@ -75,21 +75,21 @@
   --gradient-bronze-mid: oklch(0.62 0.11 45);
   --gradient-bronze-end: oklch(0.55 0.09 40);
   
-  --glow-gold: 0 0 20px rgba(196, 160, 64, 0.25);
-  --glow-gold-strong: 0 0 30px rgba(196, 160, 64, 0.4);
-  --glow-silver: 0 0 20px rgba(160, 160, 160, 0.25);
-  --glow-bronze: 0 0 20px rgba(183, 112, 40, 0.25);
+  --glow-gold: 0 0 24px rgba(196, 160, 64, 0.4);
+  --glow-gold-strong: 0 0 40px rgba(196, 160, 64, 0.6);
+  --glow-silver: 0 0 24px rgba(160, 160, 160, 0.35);
+  --glow-bronze: 0 0 24px rgba(183, 112, 40, 0.35);
 }
 
 .dark {
   --background: #000000;
   --foreground: #FFFFFF;
   
-  --surface: #050505;
-  --card: rgba(255, 255, 255, 0.03);
+  --surface: rgba(5, 5, 5, 0.6);
+  --card: rgba(255, 255, 255, 0.06);
   --card-foreground: #FFFFFF;
   
-  --popover: rgba(255, 255, 255, 0.03);
+  --popover: rgba(255, 255, 255, 0.08);
   --popover-foreground: #FFFFFF;
   
   --primary: oklch(90.5% 0.182 98.111);
@@ -103,7 +103,7 @@
   --bronze: #CD7F32;
   --silver: #C0C0C0;
   
-  --muted: rgba(255, 255, 255, 0.03);
+  --muted: rgba(255, 255, 255, 0.06);
   --muted-foreground: #6B7280;
   
   --accent: oklch(90.5% 0.182 98.111);
@@ -116,10 +116,10 @@
   --warning: #F59E0B;
   --info: #3B82F6;
   
-  --border: rgba(212, 175, 55, 0.2);
-  --border-hover: rgba(212, 175, 55, 0.5);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --input: rgba(212, 175, 55, 0.2);
+  --border: rgba(212, 175, 55, 0.35);
+  --border-hover: rgba(212, 175, 55, 0.75);
+  --border-subtle: rgba(255, 255, 255, 0.12);
+  --input: rgba(212, 175, 55, 0.35);
   --ring: #D4AF37;
   
   --gradient-gold-start: oklch(0.82 0.15 70);
@@ -134,10 +134,10 @@
   --gradient-bronze-mid: oklch(0.65 0.12 40);
   --gradient-bronze-end: oklch(0.58 0.10 35);
   
-  --glow-gold: 0 0 20px rgba(212, 175, 55, 0.3);
-  --glow-gold-strong: 0 0 30px rgba(212, 175, 55, 0.5);
-  --glow-silver: 0 0 20px rgba(192, 192, 192, 0.3);
-  --glow-bronze: 0 0 20px rgba(205, 127, 50, 0.3);
+  --glow-gold: 0 0 28px rgba(212, 175, 55, 0.45);
+  --glow-gold-strong: 0 0 45px rgba(212, 175, 55, 0.7);
+  --glow-silver: 0 0 28px rgba(192, 192, 192, 0.4);
+  --glow-bronze: 0 0 28px rgba(205, 127, 50, 0.4);
 }
 
 body {
@@ -197,13 +197,15 @@ body {
 
 .glass-panel {
   background: var(--card);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
   border: 1px solid var(--border-subtle);
 }
 
 .glass-panel-hover:hover {
   background: var(--card);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
   border-color: var(--border-hover);
   box-shadow: var(--glow-gold);
   transform: scale(1.02);
@@ -211,8 +213,8 @@ body {
 
 .glass-card {
   background: var(--card);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
   border: 1px solid var(--border-subtle);
 }
 

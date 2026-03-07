@@ -46,15 +46,29 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4, ease: 'easeOut' }}
       whileHover={{ scale: 1.02 }}
-      className="rounded-[18px] p-6 cursor-pointer relative overflow-hidden group transition-all duration-150 backdrop-blur-[24px]"
+      className="rounded-[18px] p-6 cursor-pointer relative overflow-hidden group transition-all duration-200"
       style={{
-        background: 'rgba(255, 255, 255, 0.03)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+        background: 'var(--card)',
+        backdropFilter: 'blur(32px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+        border: '1px solid var(--border-subtle)',
+        transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
-      <div className="group-hover:border-border-hover group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] absolute inset-0 rounded-[18px] pointer-events-none transition-all duration-150" 
-           style={{ border: '1px solid transparent' }} />
+      <div 
+        className="absolute inset-0 rounded-[18px] pointer-events-none transition-all duration-200 group-hover:border-[var(--border-hover)]" 
+        style={{ 
+          border: '1px solid transparent',
+          boxShadow: '0 0 0 rgba(212,175,55,0)',
+          transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      />
+      <div 
+        className="absolute inset-0 rounded-[18px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        style={{
+          boxShadow: 'var(--glow-gold)',
+        }}
+      />
       
       <div className="relative flex items-start justify-between">
         <div className="flex-1">

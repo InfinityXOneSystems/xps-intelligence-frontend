@@ -58,8 +58,9 @@ function App() {
   return (
     <ThemeProvider>
       <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden relative transition-colors duration-300">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(212,175,55,0.03),transparent_50%)] pointer-events-none dark:opacity-100 opacity-30" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(212,175,55,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(212,175,55,0.015)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(212,175,55,0.08),transparent_60%)] pointer-events-none dark:opacity-100 opacity-50" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(192,192,192,0.06),transparent_40%)] pointer-events-none dark:opacity-80 opacity-40" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(212,175,55,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(212,175,55,0.025)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none" />
         
         <div className="relative flex-1 flex overflow-hidden">
           <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />

@@ -85,7 +85,12 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
       initial={{ x: 100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: 100, opacity: 0 }}
-      className="bg-surface h-full w-80 flex flex-col border-l border-border-subtle"
+      className="h-full w-80 flex flex-col border-l border-border-subtle"
+      style={{
+        background: 'var(--card)',
+        backdropFilter: 'blur(40px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+      }}
     >
       <div className="p-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -120,11 +125,16 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
               >
                 <div
                   className={cn(
-                    'max-w-[85%] rounded-xl p-3 text-sm',
+                    'max-w-[85%] rounded-xl p-3 text-sm border',
                     message.role === 'user'
-                      ? 'bg-[#1F2937] text-foreground'
-                      : 'bg-[#111111] text-foreground border border-border'
+                      ? 'text-foreground border-border'
+                      : 'text-foreground border-border'
                   )}
+                  style={{
+                    background: 'var(--card)',
+                    backdropFilter: 'blur(24px) saturate(160%)',
+                    WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+                  }}
                 >
                   <p className="whitespace-pre-wrap">{message.content}</p>
                   <span className="text-xs text-muted-foreground mt-1 block">
@@ -141,7 +151,14 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
               animate={{ opacity: 1 }}
               className="flex justify-start"
             >
-              <div className="bg-[#111111] rounded-xl p-3 text-sm border border-border">
+              <div 
+                className="rounded-xl p-3 text-sm border border-border"
+                style={{
+                  background: 'var(--card)',
+                  backdropFilter: 'blur(24px) saturate(160%)',
+                  WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+                }}
+              >
                 <div className="flex gap-1">
                   <span className="w-2 h-2 bg-gold rounded-full animate-pulse" />
                   <span className="w-2 h-2 bg-gold rounded-full animate-pulse delay-75" />

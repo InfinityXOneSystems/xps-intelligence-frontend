@@ -70,13 +70,15 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="rounded-[18px] p-6 transition-all duration-150 backdrop-blur-[24px]"
+        className="rounded-[18px] p-6 transition-all duration-200 group"
         style={{
-          background: 'rgba(255, 255, 255, 0.03)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          background: 'var(--card)',
+          backdropFilter: 'blur(32px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          border: '1px solid var(--border-subtle)',
         }}
         whileHover={{
-          boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)',
+          boxShadow: 'var(--glow-gold)',
         }}
       >
         <h3 className="text-[22px] font-semibold mb-6 text-foreground">Opportunity Score Distribution</h3>
@@ -94,10 +96,12 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#0A0A0A',
-                border: '1px solid rgba(212, 175, 55, 0.25)',
+                backgroundColor: 'var(--card)',
+                backdropFilter: 'blur(32px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
-                color: '#FFFFFF'
+                color: 'var(--foreground)'
               }}
             />
             <Bar dataKey="count" fill="oklch(0.82 0.15 70)" radius={[8, 8, 0, 0]} />
@@ -109,13 +113,15 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3 }}
-        className="rounded-[18px] p-6 transition-all duration-150 backdrop-blur-[24px]"
+        className="rounded-[18px] p-6 transition-all duration-200 group"
         style={{
-          background: 'rgba(255, 255, 255, 0.03)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          background: 'var(--card)',
+          backdropFilter: 'blur(32px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          border: '1px solid var(--border-subtle)',
         }}
         whileHover={{
-          boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)',
+          boxShadow: 'var(--glow-gold)',
         }}
       >
         <h3 className="text-[22px] font-semibold mb-6 text-foreground">Lead Pipeline</h3>
@@ -137,10 +143,12 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: '#0A0A0A',
-                border: '1px solid rgba(212, 175, 55, 0.25)',
+                backgroundColor: 'var(--card)',
+                backdropFilter: 'blur(32px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
-                color: '#FFFFFF'
+                color: 'var(--foreground)'
               }}
             />
           </PieChart>
@@ -151,13 +159,15 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.4 }}
-        className="rounded-[18px] p-6 transition-all duration-150 lg:col-span-2 backdrop-blur-[24px]"
+        className="rounded-[18px] p-6 transition-all duration-200 lg:col-span-2 group"
         style={{
-          background: 'rgba(255, 255, 255, 0.03)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          background: 'var(--card)',
+          backdropFilter: 'blur(32px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          border: '1px solid var(--border-subtle)',
         }}
         whileHover={{
-          boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)',
+          boxShadow: 'var(--glow-gold)',
         }}
       >
         <h3 className="text-[22px] font-semibold mb-6 text-foreground">Revenue Pipeline</h3>
@@ -182,10 +192,12 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#0A0A0A',
-                border: '1px solid rgba(212, 175, 55, 0.25)',
+                backgroundColor: 'var(--card)',
+                backdropFilter: 'blur(32px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
-                color: '#FFFFFF'
+                color: 'var(--foreground)'
               }}
               formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
             />
