@@ -69,12 +69,20 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           }}
         >
           <div className="flex flex-col items-center mb-8">
-            <div className="relative mb-6" style={{ width: '108px', height: '108px' }}>
+            <div className="relative mb-6" style={{ width: '118px', height: '118px' }}>
               <div 
                 className="absolute inset-0 rounded-xl"
                 style={{
-                  background: 'radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(192,192,192,0.1) 50%, transparent 100%)',
-                  filter: 'blur(12px)',
+                  background: 'radial-gradient(circle, rgba(212,175,55,0.25) 0%, rgba(192,192,192,0.18) 40%, rgba(255,223,0,0.12) 60%, transparent 100%)',
+                  filter: 'blur(18px)',
+                }}
+              />
+              <div 
+                className="absolute inset-0 rounded-xl"
+                style={{
+                  background: 'radial-gradient(circle, rgba(255,223,0,0.15) 0%, rgba(212,175,55,0.08) 50%, transparent 70%)',
+                  filter: 'blur(24px)',
+                  animation: 'pulse-glow 3s ease-in-out infinite',
                 }}
               />
               <div className="relative z-10 flex items-center justify-center w-full h-full">
@@ -83,7 +91,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                   alt="XPS XPRESS Logo"
                   className="w-full h-full object-contain"
                   style={{
-                    filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.3)) drop-shadow(0 0 3px rgba(192,192,192,0.2))'
+                    filter: 'drop-shadow(0 0 8px rgba(212,175,55,0.4)) drop-shadow(0 0 4px rgba(192,192,192,0.25)) drop-shadow(0 0 12px rgba(255,223,0,0.2))'
                   }}
                 />
               </div>
