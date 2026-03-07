@@ -75,10 +75,15 @@
   --gradient-bronze-mid: oklch(0.62 0.11 45);
   --gradient-bronze-end: oklch(0.55 0.09 40);
   
+  --gradient-maroon-start: oklch(0.45 0.15 25);
+  --gradient-maroon-mid: oklch(0.38 0.13 20);
+  --gradient-maroon-end: oklch(0.32 0.11 15);
+  
   --glow-gold: 0 0 24px rgba(196, 160, 64, 0.4);
   --glow-gold-strong: 0 0 40px rgba(196, 160, 64, 0.6);
   --glow-silver: 0 0 24px rgba(160, 160, 160, 0.35);
   --glow-bronze: 0 0 24px rgba(183, 112, 40, 0.35);
+  --glow-maroon: 0 0 24px rgba(128, 0, 32, 0.35);
 }
 
 .dark {
@@ -134,10 +139,15 @@
   --gradient-bronze-mid: oklch(0.65 0.12 40);
   --gradient-bronze-end: oklch(0.58 0.10 35);
   
+  --gradient-maroon-start: oklch(0.48 0.16 25);
+  --gradient-maroon-mid: oklch(0.42 0.14 20);
+  --gradient-maroon-end: oklch(0.35 0.12 15);
+  
   --glow-gold: 0 0 28px rgba(212, 175, 55, 0.45);
   --glow-gold-strong: 0 0 45px rgba(212, 175, 55, 0.7);
   --glow-silver: 0 0 28px rgba(192, 192, 192, 0.4);
   --glow-bronze: 0 0 28px rgba(205, 127, 50, 0.4);
+  --glow-maroon: 0 0 28px rgba(139, 0, 35, 0.4);
 }
 
 body {
@@ -186,6 +196,9 @@ body {
   --color-gradient-bronze-start: var(--gradient-bronze-start);
   --color-gradient-bronze-mid: var(--gradient-bronze-mid);
   --color-gradient-bronze-end: var(--gradient-bronze-end);
+  --color-gradient-maroon-start: var(--gradient-maroon-start);
+  --color-gradient-maroon-mid: var(--gradient-maroon-mid);
+  --color-gradient-maroon-end: var(--gradient-maroon-end);
   
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: var(--radius);
@@ -245,6 +258,15 @@ body {
   );
 }
 
+.gradient-maroon {
+  background: linear-gradient(
+    135deg,
+    var(--gradient-maroon-start) 0%,
+    var(--gradient-maroon-mid) 50%,
+    var(--gradient-maroon-end) 100%
+  );
+}
+
 .glow-border-gold {
   border: 1px solid var(--border-hover);
   box-shadow: var(--glow-gold);
@@ -258,6 +280,11 @@ body {
 .glow-border-bronze {
   border: 1px solid var(--bronze);
   box-shadow: var(--glow-bronze);
+}
+
+.glow-border-maroon {
+  border: 1px solid oklch(0.42 0.14 20);
+  box-shadow: var(--glow-maroon);
 }
 
 .glow-text-gold {
@@ -292,6 +319,17 @@ body {
     var(--gradient-bronze-start) 0%,
     var(--gradient-bronze-mid) 50%,
     var(--gradient-bronze-end) 100%
+  );
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+.gradient-maroon-animated {
+  background: linear-gradient(
+    135deg,
+    var(--gradient-maroon-start) 0%,
+    var(--gradient-maroon-mid) 50%,
+    var(--gradient-maroon-end) 100%
   );
   background-size: 200% 200%;
   animation: gradient-shift 3s ease infinite;

@@ -59,7 +59,7 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
     'oklch(0.82 0.15 70)',
     'oklch(0.78 0.02 240)',
     'oklch(0.72 0.14 50)',
-    'oklch(0.75 0.14 55)',
+    'oklch(0.45 0.15 25)',
     'oklch(0.68 0.04 250)',
     'oklch(0.65 0.12 40)'
   ]
