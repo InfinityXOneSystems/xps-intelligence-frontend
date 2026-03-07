@@ -135,11 +135,11 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
       initial={{ x: 100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: 100, opacity: 0 }}
-      className="glass-card h-full w-80 flex flex-col border-l border-border/50"
+      className="bg-surface h-full w-80 flex flex-col border-l border-border-subtle"
     >
-      <div className="p-4 border-b border-border/50 flex items-center justify-between">
+      <div className="p-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkle size={20} className="text-primary" weight="fill" />
+          <Sparkle size={20} className="text-gold" weight="fill" />
           <h2 className="font-bold text-foreground">Lead Sniper</h2>
         </div>
         {onClose && (
@@ -170,10 +170,10 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
               >
                 <div
                   className={cn(
-                    'max-w-[85%] rounded-lg p-3 text-sm',
+                    'max-w-[85%] rounded-xl p-3 text-sm',
                     message.role === 'user'
-                      ? 'bg-primary/20 text-foreground border border-primary/30'
-                      : 'bg-muted text-foreground'
+                      ? 'bg-[#1F2937] text-foreground'
+                      : 'bg-[#111111] text-foreground border border-border'
                   )}
                 >
                   <p className="whitespace-pre-wrap">{message.content}</p>
@@ -191,11 +191,11 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
               animate={{ opacity: 1 }}
               className="flex justify-start"
             >
-              <div className="bg-muted rounded-lg p-3 text-sm">
+              <div className="bg-[#111111] rounded-xl p-3 text-sm border border-border">
                 <div className="flex gap-1">
-                  <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  <span className="w-2 h-2 bg-primary rounded-full animate-pulse delay-75" />
-                  <span className="w-2 h-2 bg-primary rounded-full animate-pulse delay-150" />
+                  <span className="w-2 h-2 bg-gold rounded-full animate-pulse" />
+                  <span className="w-2 h-2 bg-gold rounded-full animate-pulse delay-75" />
+                  <span className="w-2 h-2 bg-gold rounded-full animate-pulse delay-150" />
                 </div>
               </div>
             </motion.div>
@@ -203,7 +203,7 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
         </div>
       </ScrollArea>
 
-      <div className="p-4 border-t border-border/50">
+      <div className="p-4 border-t border-border-subtle">
         <div className="flex gap-2">
           <Input
             value={input}
@@ -215,14 +215,13 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
               }
             }}
             placeholder="Ask Lead Sniper..."
-            className="flex-1"
+            className="flex-1 bg-card border-border focus:border-gold"
             disabled={isLoading}
           />
           <Button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
             size="icon"
-            className="bg-primary hover:bg-primary/90"
           >
             <PaperPlaneTilt size={16} weight="fill" />
           </Button>

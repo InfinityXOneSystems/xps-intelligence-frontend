@@ -45,20 +45,21 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4, ease: 'easeOut' }}
-      whileHover={{ scale: 1.02, y: -4 }}
-      className="glass-panel p-6 rounded-2xl cursor-pointer relative overflow-hidden group"
+      whileHover={{ scale: 1.02 }}
+      className="bg-card border border-border rounded-[18px] p-6 cursor-pointer relative overflow-hidden group transition-all duration-150"
+      style={{
+        transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <motion.div
-        className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-primary/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-      />
+      <div className="group-hover:border-border-hover group-hover:shadow-[0_0_14px_rgba(212,175,55,0.2)] absolute inset-0 rounded-[18px] pointer-events-none" 
+           style={{ border: '1px solid transparent' }} />
       
       <div className="relative flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-[0.15em]">
             {title}
           </p>
-          <p className="text-3xl font-bold text-foreground mt-3 glow-text-gold">
+          <p className="text-[36px] font-bold text-foreground mt-2 leading-tight">
             {formattedValue}
           </p>
           {change !== undefined && (
@@ -69,14 +70,14 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
               className="flex items-center gap-1.5 mt-3"
             >
               {change >= 0 ? (
-                <TrendUp size={14} className="text-green-400" weight="bold" />
+                <TrendUp size={14} className="text-success" weight="bold" />
               ) : (
-                <TrendDown size={14} className="text-red-400" weight="bold" />
+                <TrendDown size={14} className="text-destructive" weight="bold" />
               )}
               <span
                 className={cn(
                   'text-xs font-semibold',
-                  change >= 0 ? 'text-green-400' : 'text-red-400'
+                  change >= 0 ? 'text-success' : 'text-destructive'
                 )}
               >
                 {Math.abs(change)}%
@@ -87,16 +88,14 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
         </div>
         {icon && (
           <motion.div
-            className="text-primary/60 group-hover:text-primary transition-colors duration-300"
-            whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
-            transition={{ duration: 0.5 }}
+            className="text-gold/60 group-hover:text-gold transition-colors duration-150"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.15 }}
           >
             {icon}
           </motion.div>
         )}
       </div>
-      
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </motion.div>
   )
 }

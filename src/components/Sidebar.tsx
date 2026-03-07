@@ -38,17 +38,15 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className={cn(
-        'glass-panel h-full flex flex-col relative',
+        'bg-background h-full flex flex-col relative border-r border-border-subtle',
         collapsed ? 'w-20' : 'w-72'
       )}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
-      
-      <div className="relative p-6 border-b border-white/10">
+      <div className="relative p-6 border-b border-border-subtle">
         <div className="flex items-center gap-4">
           <div className="relative flex items-center justify-center w-16 h-16">
             <div className="absolute inset-0 rounded-lg" style={{ boxShadow: 'var(--glow-gold)' }} />
-            <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 drop-shadow-[0_0_8px_rgba(217,179,66,0.6)]">
+            <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]">
               <defs>
                 <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="oklch(0.82 0.15 70)" />
@@ -89,8 +87,8 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
               <h1 className="text-xl font-bold text-white tracking-tight">
                 XPS Intelligence
               </h1>
-              <p className="text-[10px] text-white/60 uppercase tracking-wider">
-                AI Operating System
+              <p className="text-[10px] text-secondary uppercase tracking-[0.15em]">
+                Intelligence v4.2
               </p>
             </div>
           )}
@@ -109,50 +107,37 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: index * 0.05 }}
               onClick={() => onNavigate(item.id)}
-              whileHover={{ x: 6, scale: 1.02 }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={cn(
-                'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 relative group',
-                'text-sm font-medium',
+                'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-150 relative',
+                'text-sm font-semibold',
                 isActive
-                  ? 'gradient-gold-animated text-background shadow-[0_0_25px_rgba(217,179,66,0.4)]'
-                  : 'text-white hover:text-white hover:bg-white/5'
+                  ? 'bg-[rgba(212,175,55,0.12)] border border-gold text-foreground'
+                  : 'text-secondary hover:text-foreground hover:bg-muted border border-transparent'
               )}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute inset-0 rounded-xl"
-                  initial={false}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                />
-              )}
               <Icon 
                 size={20} 
-                weight={isActive ? 'fill' : 'regular'} 
-                className={cn(
-                  'relative z-10',
-                  !isActive && 'group-hover:text-primary transition-colors'
-                )} 
+                weight="regular"
+                strokeWidth={1.5}
+                className="relative z-10" 
               />
               {!collapsed && (
                 <span className="relative z-10">{item.label}</span>
-              )}
-              {!isActive && (
-                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 glow-border-silver" />
               )}
             </motion.button>
           )
         })}
       </nav>
 
-      <div className="relative p-4 border-t border-white/10">
-        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10">
-          <div className="w-2 h-2 bg-primary rounded-full animate-pulse-glow" />
+      <div className="relative p-4 border-t border-border-subtle">
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted border border-border-subtle">
+          <div className="w-2 h-2 bg-gold rounded-full animate-pulse-glow" />
           {!collapsed && (
             <div className="flex-1">
-              <div className="text-xs font-medium text-white">System Active</div>
-              <div className="text-[10px] text-white/60">v2.0.0 • Elite Mode</div>
+              <div className="text-xs font-semibold text-white">System Active</div>
+              <div className="text-[10px] text-secondary">Elite Mode</div>
             </div>
           )}
         </div>

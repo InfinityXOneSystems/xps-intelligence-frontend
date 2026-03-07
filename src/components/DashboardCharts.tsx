@@ -56,9 +56,9 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
   }, [])
 
   const COLORS = [
-    'oklch(0.78 0.15 65)',
-    'oklch(0.72 0.05 240)',
-    'oklch(0.68 0.12 45)',
+    'oklch(0.82 0.15 70)',
+    'oklch(0.78 0.02 240)',
+    'oklch(0.72 0.14 50)',
     'oklch(0.75 0.14 55)',
     'oklch(0.68 0.04 250)',
     'oklch(0.65 0.12 40)'
@@ -70,30 +70,30 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="glass-card glass-card-hover p-6 rounded-lg"
+        className="bg-card border border-border rounded-[18px] p-6 hover:border-border-hover hover:shadow-[0_0_14px_rgba(212,175,55,0.2)] transition-all duration-150"
       >
-        <h3 className="text-lg font-semibold mb-4">Opportunity Score Distribution</h3>
+        <h3 className="text-[22px] font-semibold mb-6 text-foreground">Opportunity Score Distribution</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={scoreDistribution}>
-            <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.25 0.01 250)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
             <XAxis
               dataKey="name"
-              stroke="oklch(0.6 0.01 250)"
-              style={{ fontSize: '12px', fontFamily: 'Inter' }}
+              stroke="#9CA3AF"
+              style={{ fontSize: '12px', fontFamily: 'Montserrat, Inter, sans-serif' }}
             />
             <YAxis
-              stroke="oklch(0.6 0.01 250)"
-              style={{ fontSize: '12px', fontFamily: 'Inter' }}
+              stroke="#9CA3AF"
+              style={{ fontSize: '12px', fontFamily: 'Montserrat, Inter, sans-serif' }}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'oklch(0.12 0 0)',
-                border: '1px solid oklch(0.25 0.01 250)',
-                borderRadius: '0.5rem',
-                color: 'oklch(0.98 0 0)'
+                backgroundColor: '#0A0A0A',
+                border: '1px solid rgba(212, 175, 55, 0.25)',
+                borderRadius: '12px',
+                color: '#FFFFFF'
               }}
             />
-            <Bar dataKey="count" fill="oklch(0.78 0.15 65)" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="count" fill="oklch(0.82 0.15 70)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </motion.div>
@@ -102,9 +102,9 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3 }}
-        className="glass-card glass-card-hover p-6 rounded-lg"
+        className="bg-card border border-border rounded-[18px] p-6 hover:border-border-hover hover:shadow-[0_0_14px_rgba(212,175,55,0.2)] transition-all duration-150"
       >
-        <h3 className="text-lg font-semibold mb-4">Lead Pipeline</h3>
+        <h3 className="text-[22px] font-semibold mb-6 text-foreground">Lead Pipeline</h3>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
@@ -114,7 +114,7 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
               labelLine={false}
               label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
               outerRadius={100}
-              fill="oklch(0.85 0.15 85)"
+              fill="#D4AF37"
               dataKey="value"
             >
               {pipelineData.map((entry, index) => (
@@ -123,10 +123,10 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: 'oklch(0.12 0 0)',
-                border: '1px solid oklch(0.25 0.01 250)',
-                borderRadius: '0.5rem',
-                color: 'oklch(0.98 0 0)'
+                backgroundColor: '#0A0A0A',
+                border: '1px solid rgba(212, 175, 55, 0.25)',
+                borderRadius: '12px',
+                color: '#FFFFFF'
               }}
             />
           </PieChart>
@@ -137,41 +137,41 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.4 }}
-        className="glass-card glass-card-hover p-6 rounded-lg lg:col-span-2"
+        className="bg-card border border-border rounded-[18px] p-6 hover:border-border-hover hover:shadow-[0_0_14px_rgba(212,175,55,0.2)] transition-all duration-150 lg:col-span-2"
       >
-        <h3 className="text-lg font-semibold mb-4">Revenue Pipeline</h3>
+        <h3 className="text-[22px] font-semibold mb-6 text-foreground">Revenue Pipeline</h3>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={revenueData}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="oklch(0.78 0.15 65)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="oklch(0.78 0.15 65)" stopOpacity={0} />
+                <stop offset="5%" stopColor="oklch(0.82 0.15 70)" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="oklch(0.82 0.15 70)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.25 0.01 250)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
             <XAxis
               dataKey="month"
-              stroke="oklch(0.6 0.01 250)"
-              style={{ fontSize: '12px', fontFamily: 'Inter' }}
+              stroke="#9CA3AF"
+              style={{ fontSize: '12px', fontFamily: 'Montserrat, Inter, sans-serif' }}
             />
             <YAxis
-              stroke="oklch(0.6 0.01 250)"
-              style={{ fontSize: '12px', fontFamily: 'Inter' }}
+              stroke="#9CA3AF"
+              style={{ fontSize: '12px', fontFamily: 'Montserrat, Inter, sans-serif' }}
               tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'oklch(0.12 0 0)',
-                border: '1px solid oklch(0.25 0.01 250)',
-                borderRadius: '0.5rem',
-                color: 'oklch(0.98 0 0)'
+                backgroundColor: '#0A0A0A',
+                border: '1px solid rgba(212, 175, 55, 0.25)',
+                borderRadius: '12px',
+                color: '#FFFFFF'
               }}
               formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
             />
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="oklch(0.78 0.15 65)"
+              stroke="oklch(0.82 0.15 70)"
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorRevenue)"

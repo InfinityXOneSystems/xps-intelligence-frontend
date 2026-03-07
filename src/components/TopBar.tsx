@@ -26,15 +26,15 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="glass-panel border-b border-white/10 px-6 py-4"
+      className="bg-surface border-b border-border-subtle px-6 py-4"
     >
       <div className="flex items-center justify-between gap-6">
         <div className="flex items-center gap-6 flex-1">
           {indicators.map((indicator, index) => {
             const Icon = indicator.icon
             const statusColor = 
-              indicator.status === 'active' ? 'text-primary' :
-              indicator.status === 'warning' ? 'text-yellow-500' :
+              indicator.status === 'active' ? 'text-gold' :
+              indicator.status === 'warning' ? 'text-warning' :
               'text-muted-foreground'
             
             return (
@@ -43,13 +43,13 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-center gap-2.5 px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:border-primary/40 transition-all group"
+                className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-card border border-border hover:border-border-hover transition-all duration-150"
               >
                 <div className="relative">
-                  <Icon size={16} className={statusColor} weight="fill" />
+                  <Icon size={16} className={statusColor} weight="regular" strokeWidth={1.5} />
                   {indicator.status === 'active' && (
                     <motion.div
-                      className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary rounded-full"
+                      className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gold rounded-full"
                       animate={{
                         scale: [1, 1.3, 1],
                         opacity: [1, 0.6, 1]
@@ -63,10 +63,10 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
                   )}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider leading-none">
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] leading-none font-semibold">
                     {indicator.label}
                   </span>
-                  <span className="text-xs font-medium text-foreground mt-0.5">
+                  <span className="text-xs font-semibold text-foreground mt-0.5">
                     {indicator.value}
                   </span>
                 </div>
@@ -77,12 +77,12 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
         
         <div className="flex items-center gap-3">
           <motion.div
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/40"
+            className="px-4 py-2 rounded-xl border border-gold/40 bg-[rgba(212,175,55,0.08)]"
             animate={{
               boxShadow: [
-                '0 0 20px rgba(217, 179, 66, 0.2)',
-                '0 0 30px rgba(217, 179, 66, 0.4)',
-                '0 0 20px rgba(217, 179, 66, 0.2)',
+                '0 0 14px rgba(212, 175, 55, 0.2)',
+                '0 0 20px rgba(212, 175, 55, 0.3)',
+                '0 0 14px rgba(212, 175, 55, 0.2)',
               ]
             }}
             transition={{
@@ -92,8 +92,8 @@ export function TopBar({ indicators = defaultIndicators }: TopBarProps) {
             }}
           >
             <div className="flex items-center gap-2">
-              <Lightning size={16} className="text-primary" weight="fill" />
-              <span className="text-xs font-medium text-foreground">
+              <Lightning size={16} className="text-gold" weight="fill" />
+              <span className="text-xs font-semibold text-foreground">
                 Mission Control Active
               </span>
             </div>
