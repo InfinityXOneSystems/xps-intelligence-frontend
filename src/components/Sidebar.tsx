@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { 
+  House,
   ChartBar, 
   Users, 
   Robot, 
@@ -21,6 +22,7 @@ interface SidebarProps {
 }
 
 const menuItems = [
+  { id: 'dashboard', label: 'Home', icon: House },
   { id: 'dashboard', label: 'Dashboard', icon: ChartBar },
   { id: 'leads', label: 'Leads', icon: Users },
   { id: 'scraper', label: 'Scraper Control', icon: Robot },
