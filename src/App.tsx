@@ -77,9 +77,11 @@ function App() {
   return (
     <ThemeProvider>
       <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden relative transition-colors duration-300">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(212,175,55,0.08),transparent_60%)] pointer-events-none dark:opacity-100 opacity-50" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(192,192,192,0.06),transparent_40%)] pointer-events-none dark:opacity-80 opacity-40" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(212,175,55,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(212,175,55,0.025)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(212,175,55,0.10),transparent_50%)] pointer-events-none dark:opacity-100 opacity-60" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_80%,rgba(192,192,192,0.08),transparent_50%)] pointer-events-none dark:opacity-90 opacity-50" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_90%_40%,rgba(183,112,40,0.07),transparent_45%)] pointer-events-none dark:opacity-80 opacity-45" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_15%_70%,rgba(139,0,35,0.06),transparent_40%)] pointer-events-none dark:opacity-70 opacity-40" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,175,55,0.04)_0%,transparent_25%,rgba(192,192,192,0.03)_50%,transparent_75%,rgba(183,112,40,0.02)_100%)] pointer-events-none" />
         
         <div className="relative flex-1 flex overflow-hidden">
           {!isMobile && <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />}
