@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-gradient-to-r from-[oklch(0.88_0.20_95)] via-[oklch(0.85_0.19_88)] to-[oklch(0.82_0.18_80)] text-black shadow-[0_0_20px_rgba(255,223,0,0.45)] hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,223,0,0.65)] hover:brightness-110",
+          "bg-gradient-to-r from-[oklch(0.92_0.22_98)] via-[oklch(0.75_0.04_240)] to-[oklch(0.92_0.22_98)] text-black shadow-[0_0_20px_rgba(255,223,0,0.5)] hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,223,0,0.75)] hover:brightness-110",
         destructive:
           "bg-destructive text-white shadow-sm hover:bg-destructive/90 focus-visible:ring-destructive/20",
         outline:
