@@ -31,14 +31,17 @@ function App() {
   const LEADS_REQUIRED_PAGES = new Set(['home', 'dashboard', 'leads', 'prospects', 'leaderboard'])
 
   const renderPage = () => {
-    if (LEADS_REQUIRED_PAGES.has(currentPage)) {
-      if (isLoading) {
-        return (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading leads...</p>
-            </div>
+    // Settings page is always accessible regardless of API state
+    if (currentPage === 'settings') {
+      return <SettingsPage onNavigate={setCurrentPage} />
+    }
+
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading leads...</p>
           </div>
         )
       }
@@ -82,12 +85,6 @@ function App() {
         return <LeaderboardPage onNavigate={setCurrentPage} />
       case 'roadmap':
         return <RoadmapPage onNavigate={setCurrentPage} />
-      case 'settings':
-        return <SettingsPage onNavigate={setCurrentPage} />
-      case 'agent':
-        return <AgentPage onNavigate={setCurrentPage} />
-      case 'logs':
-        return <SystemLogsPage onNavigate={setCurrentPage} />
       default:
         return <HomePage onNavigate={setCurrentPage} />
     }
