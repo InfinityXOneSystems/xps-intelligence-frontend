@@ -9,7 +9,7 @@ export interface ScraperCanvasData {
 
 export interface DataCanvasData {
   type: 'table' | 'chart' | 'map'
-  content: any
+  content: unknown
 }
 
 export interface DocumentCanvasData {
@@ -37,6 +37,6 @@ export interface MediaCanvasData {
 
 export interface CanvasState {
   mode: CanvasMode
-  data: any
+  data: ScraperCanvasData | DataCanvasData | DocumentCanvasData | DevCanvasData | MediaCanvasData | null
   isFullscreen: boolean
 }

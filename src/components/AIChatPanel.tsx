@@ -276,7 +276,7 @@ Provide a helpful response. If the task requires a tool, call it. Keep the expla
       const response = await window.spark.llm(promptText, 'gpt-4o-mini')
 
       // Match tool call syntax: [TOOL_CALL: tool_name | param1=value1 | param2=value2]
-      const TOOL_CALL_PATTERN = /\[TOOL_CALL:\s*([^\|\]]+)(?:\s*\|([^\]]*))?\]/g
+      const TOOL_CALL_PATTERN = /\[TOOL_CALL:\s*([^|\]]+)(?:\s*\|([^\]]*))?\]/g
       let match
       let cleanResponse = response
       const toolResults: string[] = []

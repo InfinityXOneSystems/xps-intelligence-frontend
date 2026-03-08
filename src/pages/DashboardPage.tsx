@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Users, TrendUp, ChartLine, CurrencyDollar, Phone, Envelope, ChatCircleText, ArrowUp, CaretUp, CaretDown } from '@phosphor-icons/react'
-import { LineChart, Line, ResponsiveContainer, AreaChart, Area } from 'recharts'
+import { Users, TrendUp, ChartLine, CurrencyDollar, Phone, Envelope, ChatCircleText, CaretUp } from '@phosphor-icons/react'
+import { ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { toast } from 'sonner'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { BackButton } from '@/components/BackButton'
@@ -57,7 +57,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     toast.success('SMS draft opened')
   }
 
-  const handleReorderMetrics = (metricId: string, direction: 'up' | 'down') => {
+  const _handleReorderMetrics = (metricId: string, direction: 'up' | 'down') => {
     const currentIndex = metricOrder.indexOf(metricId)
     if (direction === 'up' && currentIndex > 0) {
       const newOrder = [...metricOrder]
@@ -163,8 +163,8 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {metricOrder.map((metricId, index) => {
           const config = metricConfig[metricId]
-          const isFirst = index === 0
-          const isLast = index === metricOrder.length - 1
+          const _isFirst = index === 0
+          const _isLast = index === metricOrder.length - 1
           
           return (
             <motion.div

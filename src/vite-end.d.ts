@@ -13,7 +13,7 @@ interface UserInfo {
 declare global {
   interface Window {
     spark: {
-      llmPrompt: (strings: readonly string[] | TemplateStringsArray, ...values: any[]) => string
+      llmPrompt: (strings: readonly string[] | TemplateStringsArray, ...values: unknown[]) => string
       llm: (prompt: string, modelName?: string, jsonMode?: boolean) => Promise<string>
       user: () => Promise<UserInfo>
       kv: {

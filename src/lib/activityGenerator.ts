@@ -12,32 +12,32 @@ export function generateMockActivities(leads: Lead[]): Activity[] {
   }> = [
     {
       type: 'lead_added',
-      titleFn: (lead) => `New lead discovered`,
+      titleFn: (_lead) => `New lead discovered`,
       descFn: (lead) => `${lead.company} from ${lead.city} added to pipeline`
     },
     {
       type: 'score_updated',
-      titleFn: (lead) => `Score updated`,
+      titleFn: (_lead) => `Score updated`,
       descFn: (lead) => `${lead.company} opportunity score: ${lead.opportunityScore}`
     },
     {
       type: 'lead_assigned',
-      titleFn: (lead) => `Lead assigned`,
+      titleFn: (_lead) => `Lead assigned`,
       descFn: (lead) => `${lead.company} assigned to ${lead.assignedRep}`
     },
     {
       type: 'email_sent',
-      titleFn: (lead) => `Email sent`,
+      titleFn: (_lead) => `Email sent`,
       descFn: (lead) => `Outreach email sent to ${lead.company}`
     },
     {
       type: 'call_made',
-      titleFn: (lead) => `Call logged`,
+      titleFn: (_lead) => `Call logged`,
       descFn: (lead) => `Call made to ${lead.company}`
     },
     {
       type: 'status_changed',
-      titleFn: (lead) => `Status updated`,
+      titleFn: (_lead) => `Status updated`,
       descFn: (lead) => `${lead.company} marked as ${lead.status}`
     }
   ]
