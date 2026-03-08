@@ -21,15 +21,18 @@ interface SidebarProps {
   collapsed?: boolean
 }
 
-const menuItems = [
+const primaryMenuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'dashboard', label: 'Dashboard', icon: ChartBar },
   { id: 'leads', label: 'Leads', icon: Users },
-  { id: 'scraper', label: 'Scraper Control', icon: Robot },
-  { id: 'canvas', label: 'Execution Canvas', icon: Square },
-  { id: 'pipeline', label: 'Sales Pipeline', icon: FunnelSimple },
-  { id: 'outreach', label: 'Outreach', icon: PaperPlaneTilt },
+  { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'analytics', label: 'Analytics', icon: ChartLine },
+  { id: 'outreach', label: 'Outreach', icon: PaperPlaneTilt },
+]
+
+const utilityMenuItems = [
+  { id: 'scraper', label: 'Scraper', icon: Robot },
+  { id: 'canvas', label: 'Canvas', icon: Square },
   { id: 'team', label: 'Team', icon: UserList },
   { id: 'settings', label: 'Settings', icon: GearSix }
 ]
@@ -81,40 +84,85 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
         </div>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
-        {menuItems.map((item, index) => {
-          const Icon = item.icon
-          const isActive = currentPage === item.id
-          
-          return (
-            <motion.button
-              key={`${item.id}-${item.label}`}
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: index * 0.05 }}
-              onClick={() => onNavigate(item.id)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={cn(
-                'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-150 relative',
-                'text-sm font-semibold',
-                isActive
-                  ? 'bg-[rgba(212,175,55,0.12)] border border-gold text-foreground'
-                  : 'text-secondary hover:text-foreground hover:bg-muted border border-transparent'
-              )}
-            >
-              <Icon 
-                size={20} 
-                weight="regular"
-                strokeWidth={1.5}
-                className="relative z-10" 
-              />
-              {!collapsed && (
-                <span className="relative z-10">{item.label}</span>
-              )}
-            </motion.button>
-          )
-        })}
+      <nav className="flex-1 p-6 space-y-8 overflow-y-auto">
+        <div className="space-y-2">
+          {primaryMenuItems.map((item, index) => {
+            const Icon = item.icon
+            const isActive = currentPage === item.id
+            
+            return (
+              <motion.button
+                key={`${item.id}-${item.label}`}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: index * 0.05 }}
+                onClick={() => onNavigate(item.id)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={cn(
+                  'w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-150 relative',
+                  'text-sm font-semibold',
+                  isActive
+                    ? 'bg-[rgba(212,175,55,0.12)] border border-gold text-foreground'
+                    : 'text-secondary hover:text-foreground hover:bg-muted border border-transparent'
+                )}
+              >
+                <Icon 
+                  size={22} 
+                  weight="regular"
+                  strokeWidth={1.5}
+                  className="relative z-10" 
+                />
+                {!collapsed && (
+                  <span className="relative z-10">{item.label}</span>
+                )}
+              </motion.button>
+            )
+          })}
+        </div>
+
+        <div className="border-t border-border-subtle pt-6">
+          {!collapsed && (
+            <div className="px-2 mb-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Tools
+            </div>
+          )}
+          <div className="space-y-2">
+            {utilityMenuItems.map((item, index) => {
+              const Icon = item.icon
+              const isActive = currentPage === item.id
+              
+              return (
+                <motion.button
+                  key={`${item.id}-${item.label}`}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: (primaryMenuItems.length + index) * 0.05 }}
+                  onClick={() => onNavigate(item.id)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={cn(
+                    'w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-150 relative',
+                    'text-sm font-semibold',
+                    isActive
+                      ? 'bg-[rgba(212,175,55,0.12)] border border-gold text-foreground'
+                      : 'text-secondary hover:text-foreground hover:bg-muted border border-transparent'
+                  )}
+                >
+                  <Icon 
+                    size={22} 
+                    weight="regular"
+                    strokeWidth={1.5}
+                    className="relative z-10" 
+                  />
+                  {!collapsed && (
+                    <span className="relative z-10">{item.label}</span>
+                  )}
+                </motion.button>
+              )
+            })}
+          </div>
+        </div>
       </nav>
     </motion.aside>
   )

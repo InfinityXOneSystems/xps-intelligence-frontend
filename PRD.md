@@ -191,14 +191,14 @@ Animations should feel **futuristic and alive** - like sophisticated AI systems 
   - Search: MagnifyingGlass (filters)
   
 - **Spacing**:
-  - Page padding: p-6 (24px)
-  - Card padding: p-6 (24px)
-  - Section gaps: gap-6 (24px)
-  - Component gaps: gap-4 (16px)
-  - Button padding: px-6 py-2.5 (24px/10px)
-  - Input padding: px-4 py-2 (16px/8px)
-  - Table cell padding: px-4 py-3 (16px/12px)
-  - Sidebar padding: p-4 (16px)
+  - Page padding: p-10 md:p-16 (generous breathing room)
+  - Card padding: p-8 md:p-10 (spacious internal spacing)
+  - Section gaps: gap-10 md:gap-16 (significant separation between sections)
+  - Component gaps: gap-6 md:gap-8 (clear visual grouping)
+  - Button padding: px-8 py-4 (comfortable touch targets)
+  - Input padding: px-5 py-3.5 (relaxed input fields)
+  - Table cell padding: px-6 py-5 (breathing room for data)
+  - Sidebar padding: p-6 (comfortable navigation)
   
 - **Mobile**:
   - Sidebar collapses to bottom navigation bar on mobile (<768px)
@@ -208,4 +208,20 @@ Animations should feel **futuristic and alive** - like sophisticated AI systems 
   - Command bar becomes full-screen modal on mobile
   - Metric cards stack vertically in single column
   - All touch targets minimum 44x44px
-  - Reduced padding/gaps (p-4 instead of p-6)
+  - Reduced padding/gaps (p-6 instead of p-10)
+
+## Layout Philosophy (Inspired by ZoomInfo, Apollo.io, LinkedIn Sales Navigator)
+
+**Psychological Principles Applied:**
+1. **Progressive Disclosure**: Show only what's immediately actionable, hide complexity until needed
+2. **Visual Hierarchy**: Clear importance ranking through size, color, and spacing
+3. **Breathing Room**: Generous whitespace (2-4x current) reduces cognitive load
+4. **Focused Attention**: Single primary action per screen section
+5. **Contextual Navigation**: Each page is self-contained with clear entry/exit points
+
+**Layout Structure:**
+- **Home**: Minimalist dashboard with 4 key metrics and quick actions (inspired by Notion, Linear)
+- **Dashboard**: Mobile-optimized priority view - only show what needs action NOW
+- **Leads**: Spacious table with generous padding, clear visual hierarchy
+- **Canvas**: Moved to bottom of navigation - utility tool, not core workflow
+- **All Pages**: Back button for clear navigation, generous spacing between all elements

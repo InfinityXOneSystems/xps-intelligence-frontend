@@ -68,27 +68,27 @@ Keep it under 150 words, friendly but professional. Include a compelling subject
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <BackButton onBack={() => onNavigate('home')} />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Leads</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-4xl font-bold">Leads</h1>
+          <p className="text-muted-foreground mt-2 text-base">
             Manage and track your contractor leads
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div className="relative">
             <MagnifyingGlass
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10"
+              size={20}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground z-10"
             />
             <div className="relative">
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search leads..."
-                className="pl-10 w-64 border-2 border-transparent"
+                className="pl-12 w-80 border-2 border-transparent text-base py-6"
                 style={{
                   background: 'rgba(0, 0, 0, 0.70)',
                   backdropFilter: 'blur(16px)',

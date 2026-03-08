@@ -58,11 +58,11 @@ export function CanvasPage({ onNavigate }: { onNavigate: (page: string) => void 
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col space-y-10">
       <BackButton onBack={() => onNavigate('home')} />
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Execution Canvas</h1>
-        <p className="text-muted-foreground mt-1">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold">Execution Canvas</h1>
+        <p className="text-muted-foreground mt-2 text-base">
           Universal content rendering system with multiple modes
         </p>
       </div>

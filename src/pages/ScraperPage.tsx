@@ -50,11 +50,11 @@ export function ScraperPage({ onNavigate }: { onNavigate: (page: string) => void
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <BackButton onBack={() => onNavigate('home')} />
       <div>
-        <h1 className="text-3xl font-bold">Scraper Control</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-4xl font-bold">Scraper Control</h1>
+        <p className="text-muted-foreground mt-2 text-base">
           Configure and run lead generation scraper
         </p>
       </div>
