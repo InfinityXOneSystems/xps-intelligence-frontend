@@ -225,3 +225,37 @@ Animations should feel **futuristic and alive** - like sophisticated AI systems 
 - **Leads**: Spacious table with generous padding, clear visual hierarchy
 - **Canvas**: Moved to bottom of navigation - utility tool, not core workflow
 - **All Pages**: Back button for clear navigation, generous spacing between all elements
+
+## Backend Integration Architecture
+
+**Current State:**
+- Frontend-only application using Spark's `useKV` hook for browser-based persistence
+- Mock data structure in place for development
+- All data operations handled client-side
+
+**Backend Integration Options:**
+1. **REST API Integration** - Standard HTTP API with React Query for caching and state management
+2. **WebSocket Support** - Real-time updates for scraper progress and new lead notifications
+3. **Hybrid Approach** - REST for CRUD operations, WebSocket for live updates
+
+**API Layer Structure:**
+- `src/lib/api.ts` - Base API client with authentication and error handling
+- `src/lib/leadsApi.ts` - Lead-specific endpoints (CRUD, metrics, assignment)
+- `src/lib/websocket.ts` - WebSocket client for real-time features
+- `src/hooks/useLeadsApi.ts` - React Query hooks wrapping API calls
+
+**Required Backend Endpoints:**
+- Lead Management: GET/POST/PUT/DELETE `/api/leads`, GET `/api/leads/metrics`
+- Scraper Control: POST `/api/scraper/run`, GET `/api/scraper/status/:id`, GET `/api/scraper/logs`
+- Real-time Events: `lead:created`, `lead:updated`, `scraper:progress`, `scraper:completed`
+
+**Migration Path:**
+- Application works standalone with `useKV` (no backend required)
+- Can progressively adopt backend by replacing `useKV` calls with API hooks
+- Environment variables control API endpoints (development/production)
+- React Query provides caching, optimistic updates, and background sync
+
+**Documentation:**
+- `BACKEND_INTEGRATION_GUIDE.md` - Comprehensive integration patterns and examples
+- `QUICK_START_BACKEND.md` - Quick reference for common backend connection scenarios
+- `.env.example` - Template for API configuration
