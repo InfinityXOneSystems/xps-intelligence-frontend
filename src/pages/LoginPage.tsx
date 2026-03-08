@@ -48,7 +48,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     <div className="h-screen w-screen flex items-center justify-center relative overflow-hidden bg-background">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(212,175,55,0.12),transparent_50%)] pointer-events-none dark:opacity-100 opacity-40" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_70%,rgba(192,192,192,0.09),transparent_50%)] pointer-events-none dark:opacity-100 opacity-40" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_90%,rgba(183,112,40,0.08),transparent_45%)] pointer-events-none dark:opacity-100 opacity-40" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_10%_80%,rgba(139,0,35,0.06),transparent_40%)] pointer-events-none dark:opacity-100 opacity-40" />
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,175,55,0.03)_0%,transparent_30%,rgba(192,192,192,0.02)_60%,transparent_100%)] pointer-events-none dark:opacity-100 opacity-40" />
       

@@ -48,11 +48,11 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
       whileHover={{ scale: 1.02, y: -4 }}
       className="rounded-[18px] p-6 cursor-pointer relative overflow-hidden group transition-all duration-300"
       style={{
-        background: 'rgba(0, 0, 0, 0.6)',
-        backdropFilter: 'blur(40px) saturate(200%)',
-        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+        background: 'rgba(0, 0, 0, 0.70)',
+        backdropFilter: 'blur(60px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(60px) saturate(180%)',
         border: '2px solid var(--border-subtle)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
         transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
