@@ -16,6 +16,7 @@ export type TaskType =
   | 'predict'
   | 'simulate'
 
+// The twelve first-class agents defined in AGENTS.md
 export type AgentRole =
   | 'PlannerAgent'
   | 'ResearchAgent'
@@ -33,21 +34,6 @@ export type AgentRole =
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed'
 
 export type PlanStatus = 'pending' | 'running' | 'completed' | 'failed' | 'partial'
-
-// The twelve first-class agents defined in AGENTS.md
-export type AgentRole =
-  | 'PlannerAgent'
-  | 'ResearchAgent'
-  | 'BuilderAgent'
-  | 'ScraperAgent'
-  | 'MediaAgent'
-  | 'ValidatorAgent'
-  | 'DevOpsAgent'
-  | 'MonitoringAgent'
-  | 'KnowledgeAgent'
-  | 'BusinessAgent'
-  | 'PredictionAgent'
-  | 'SimulationAgent'
 
 export interface AgentDefinition {
   role: AgentRole
@@ -141,6 +127,14 @@ export const TASK_AGENT_MAP: Record<TaskType, AgentRole> = {
   search: 'ResearchAgent',
   report: 'PlannerAgent',
   github_action: 'DevOpsAgent',
+  plan: 'PlannerAgent',
+  research: 'ResearchAgent',
+  validate: 'ValidatorAgent',
+  monitor: 'MonitoringAgent',
+  media: 'MediaAgent',
+  knowledge: 'KnowledgeAgent',
+  predict: 'PredictionAgent',
+  simulate: 'SimulationAgent',
 }
 
 export interface ToolCall {
@@ -161,6 +155,7 @@ export interface AgentTask {
   description: string
   status: TaskStatus
   agent?: AgentRole
+  assignedAgent?: AgentRole
   startedAt?: string
   completedAt?: string
   result?: string
@@ -200,4 +195,10 @@ export interface MemoryEntry {
 export interface AgentMemoryStore {
   entries: MemoryEntry[]
   lastUpdated: string
+}
+
+export interface OrchestratorConfig {
+  concurrencyLimit: number
+  maxRetries: number
+  retryDelayMs: number
 }
