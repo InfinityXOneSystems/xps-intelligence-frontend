@@ -10,7 +10,9 @@ import {
   UserList,
   GearSix,
   Square,
-  X
+  X,
+  Brain,
+  Scroll
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
@@ -26,12 +28,14 @@ const menuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'dashboard', label: 'Dashboard', icon: ChartBar },
   { id: 'leads', label: 'Leads', icon: Users },
+  { id: 'agent', label: 'Agent Control', icon: Brain },
   { id: 'scraper', label: 'Scraper Control', icon: Robot },
   { id: 'canvas', label: 'Execution Canvas', icon: Square },
   { id: 'pipeline', label: 'Sales Pipeline', icon: FunnelSimple },
   { id: 'outreach', label: 'Outreach', icon: PaperPlaneTilt },
   { id: 'analytics', label: 'Analytics', icon: ChartLine },
   { id: 'team', label: 'Team', icon: UserList },
+  { id: 'logs', label: 'System Logs', icon: Scroll },
   { id: 'settings', label: 'Settings', icon: GearSix }
 ]
 

@@ -16,6 +16,8 @@ import { SettingsPage } from '@/pages/SettingsPage'
 import { ProspectsPage } from '@/pages/ProspectsPage'
 import { LeaderboardPage } from '@/pages/LeaderboardPage'
 import { RoadmapPage } from '@/pages/RoadmapPage'
+import { AgentPage } from '@/pages/AgentPage'
+import { SystemLogsPage } from '@/pages/SystemLogsPage'
 import { useLeads } from '@/hooks/useLeadsApi'
 
 function App() {
@@ -26,40 +28,39 @@ function App() {
   
   const { data: _leads = [], isLoading, error } = useLeads()
 
+  const LEADS_REQUIRED_PAGES = new Set(['home', 'dashboard', 'leads', 'prospects', 'leaderboard'])
+
   const renderPage = () => {
-    // Settings page is always accessible regardless of API state
-    if (currentPage === 'settings') {
-      return <SettingsPage onNavigate={setCurrentPage} />
-    }
-
-    if (isLoading) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading leads...</p>
+    if (LEADS_REQUIRED_PAGES.has(currentPage)) {
+      if (isLoading) {
+        return (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading leads...</p>
+            </div>
           </div>
-        </div>
-      )
-    }
+        )
+      }
 
-    if (error) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center max-w-md">
-            <p className="text-destructive mb-4">Failed to connect to API</p>
-            <p className="text-sm text-muted-foreground mb-4">
-              Make sure your backend server is running at {import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}
-            </p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-            >
-              Retry
-            </button>
+      if (error) {
+        return (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center max-w-md">
+              <p className="text-destructive mb-4">Failed to connect to API</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Make sure your backend server is running at {import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}
+              </p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+              >
+                Retry
+              </button>
+            </div>
           </div>
-        </div>
-      )
+        )
+      }
     }
     
     switch (currentPage) {
@@ -81,6 +82,12 @@ function App() {
         return <LeaderboardPage onNavigate={setCurrentPage} />
       case 'roadmap':
         return <RoadmapPage onNavigate={setCurrentPage} />
+      case 'settings':
+        return <SettingsPage onNavigate={setCurrentPage} />
+      case 'agent':
+        return <AgentPage onNavigate={setCurrentPage} />
+      case 'logs':
+        return <SystemLogsPage onNavigate={setCurrentPage} />
       default:
         return <HomePage onNavigate={setCurrentPage} />
     }
