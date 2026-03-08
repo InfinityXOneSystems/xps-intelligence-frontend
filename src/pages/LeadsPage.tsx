@@ -9,11 +9,13 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import type { Lead, LeadRating } from '@/types/lead'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { BackButton } from '@/components/BackButton'
 
 interface LeadsPageProps {
   leads: Lead[]
   onUpdateLead?: (lead: Lead) => void
   onDeleteLead?: (id: string) => void
+  onNavigate: (page: string) => void
 }
 
 const ratingColors: Record<LeadRating, string> = {
@@ -25,7 +27,7 @@ const ratingColors: Record<LeadRating, string> = {
   'D': 'bg-red-500/20 text-red-500 border-red-500/30'
 }
 
-export function LeadsPage({ leads, onUpdateLead, onDeleteLead }: LeadsPageProps) {
+export function LeadsPage({ leads, onUpdateLead, onDeleteLead, onNavigate }: LeadsPageProps) {
   const [search, setSearch] = useState('')
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
 
@@ -67,6 +69,7 @@ Keep it under 150 words, friendly but professional. Include a compelling subject
 
   return (
     <div className="space-y-6">
+      <BackButton onBack={() => onNavigate('home')} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Leads</h1>

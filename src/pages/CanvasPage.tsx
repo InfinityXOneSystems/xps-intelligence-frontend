@@ -7,8 +7,9 @@ import { DocumentCanvasContent } from '@/components/canvas/DocumentCanvasContent
 import { DevCanvasContent } from '@/components/canvas/DevCanvasContent'
 import { MediaCanvasContent } from '@/components/canvas/MediaCanvasContent'
 import type { CanvasState, CanvasMode } from '@/types/canvas'
+import { BackButton } from '@/components/BackButton'
 
-export function CanvasPage() {
+export function CanvasPage({ onNavigate }: { onNavigate: (page: string) => void }) {
   const [canvasState, setCanvasState] = useState<CanvasState>({
     mode: 'scraper',
     data: {
@@ -58,6 +59,7 @@ export function CanvasPage() {
 
   return (
     <div className="h-full flex flex-col">
+      <BackButton onBack={() => onNavigate('home')} />
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Execution Canvas</h1>
         <p className="text-muted-foreground mt-1">

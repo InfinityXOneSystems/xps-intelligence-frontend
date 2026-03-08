@@ -7,8 +7,9 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
+import { BackButton } from '@/components/BackButton'
 
-export function ScraperPage() {
+export function ScraperPage({ onNavigate }: { onNavigate: (page: string) => void }) {
   const [isRunning, setIsRunning] = useState(false)
   const [config, setConfig] = useState({
     city: '',
@@ -50,6 +51,7 @@ export function ScraperPage() {
 
   return (
     <div className="space-y-6">
+      <BackButton onBack={() => onNavigate('home')} />
       <div>
         <h1 className="text-3xl font-bold">Scraper Control</h1>
         <p className="text-muted-foreground mt-1">

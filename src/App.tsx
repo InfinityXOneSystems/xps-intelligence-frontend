@@ -47,23 +47,23 @@ function App() {
       case 'home':
         return <HomePage leads={safeLeads} onNavigate={setCurrentPage} />
       case 'dashboard':
-        return <DashboardPage leads={safeLeads} />
+        return <DashboardPage leads={safeLeads} onNavigate={setCurrentPage} />
       case 'leads':
-        return <LeadsPage leads={safeLeads} onUpdateLead={handleUpdateLead} onDeleteLead={handleDeleteLead} />
+        return <LeadsPage leads={safeLeads} onUpdateLead={handleUpdateLead} onDeleteLead={handleDeleteLead} onNavigate={setCurrentPage} />
       case 'scraper':
-        return <ScraperPage />
+        return <ScraperPage onNavigate={setCurrentPage} />
       case 'canvas':
-        return <CanvasPage />
+        return <CanvasPage onNavigate={setCurrentPage} />
       case 'pipeline':
-        return <PlaceholderPage title="Sales Pipeline" description="Track deals through your sales funnel" />
+        return <PlaceholderPage title="Sales Pipeline" description="Track deals through your sales funnel" onNavigate={setCurrentPage} />
       case 'outreach':
-        return <PlaceholderPage title="Outreach" description="Manage email campaigns and outreach efforts" />
+        return <PlaceholderPage title="Outreach" description="Manage email campaigns and outreach efforts" onNavigate={setCurrentPage} />
       case 'analytics':
-        return <PlaceholderPage title="Analytics" description="Deep dive into your lead generation metrics" />
+        return <PlaceholderPage title="Analytics" description="Deep dive into your lead generation metrics" onNavigate={setCurrentPage} />
       case 'team':
-        return <PlaceholderPage title="Team" description="Manage team members and permissions" />
+        return <PlaceholderPage title="Team" description="Manage team members and permissions" onNavigate={setCurrentPage} />
       case 'settings':
-        return <SettingsPage />
+        return <SettingsPage onNavigate={setCurrentPage} />
       default:
         return <HomePage leads={safeLeads} onNavigate={setCurrentPage} />
     }

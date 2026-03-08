@@ -1,6 +1,9 @@
-export function PlaceholderPage({ title, description }: { title: string; description: string }) {
+import { BackButton } from '@/components/BackButton'
+
+export function PlaceholderPage({ title, description, onNavigate }: { title: string; description: string; onNavigate: (page: string) => void }) {
   return (
     <div className="space-y-6">
+      <BackButton onBack={() => onNavigate('home')} />
       <div>
         <h1 className="text-3xl font-bold">{title}</h1>
         <p className="text-muted-foreground mt-1">{description}</p>

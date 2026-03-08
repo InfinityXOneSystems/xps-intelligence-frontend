@@ -5,12 +5,14 @@ import { LineChart, Line, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import type { Lead } from '@/types/lead'
 import { toast } from 'sonner'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { BackButton } from '@/components/BackButton'
 
 interface DashboardPageProps {
   leads: Lead[]
+  onNavigate: (page: string) => void
 }
 
-export function DashboardPage({ leads }: DashboardPageProps) {
+export function DashboardPage({ leads, onNavigate }: DashboardPageProps) {
   const isMobile = useIsMobile()
   const [metricOrder, setMetricOrder] = useState(['unansweredLeads', 'aPlusOpportunities', 'responseRate', 'revenuePipeline'])
 
@@ -111,6 +113,7 @@ export function DashboardPage({ leads }: DashboardPageProps) {
 
   return (
     <div className="space-y-4 pb-6">
+      <BackButton onBack={() => onNavigate('home')} />
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}

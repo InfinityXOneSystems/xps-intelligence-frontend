@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
+import { BackButton } from '@/components/BackButton'
 
-export function SettingsPage() {
+export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => void }) {
   return (
     <div className="space-y-8">
+      <BackButton onBack={() => onNavigate('home')} />
       <div>
         <h1 className="text-3xl font-bold text-white">Settings</h1>
         <p className="text-white/70 mt-1">Configure your dashboard preferences and system settings</p>
