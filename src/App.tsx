@@ -27,6 +27,11 @@ function App() {
   const { data: leads = [], isLoading, error } = useLeads()
 
   const renderPage = () => {
+    // Settings page is always accessible regardless of API state
+    if (currentPage === 'settings') {
+      return <SettingsPage onNavigate={setCurrentPage} />
+    }
+
     if (isLoading) {
       return (
         <div className="flex items-center justify-center h-full">
@@ -76,8 +81,6 @@ function App() {
         return <LeaderboardPage onNavigate={setCurrentPage} />
       case 'roadmap':
         return <RoadmapPage onNavigate={setCurrentPage} />
-      case 'settings':
-        return <SettingsPage onNavigate={setCurrentPage} />
       default:
         return <HomePage onNavigate={setCurrentPage} />
     }
