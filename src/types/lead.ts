@@ -1,5 +1,6 @@
-export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'closed' | 'lost'
+export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'signed' | 'lost'
 export type LeadRating = 'A+' | 'A' | 'B+' | 'B' | 'C' | 'D'
+export type LeadPriority = 'green' | 'yellow' | 'red'
 
 export interface Lead {
   id: string
@@ -12,10 +13,15 @@ export interface Lead {
   rating: LeadRating
   opportunityScore: number
   assignedRep?: string
+  assignedInitials?: string
   status: LeadStatus
+  priority?: LeadPriority
+  isNew?: boolean
   notes?: string
   createdAt: string
   updatedAt?: string
+  lastTouchedAt?: string
+  lastTouchedBy?: string
   category?: string
   address?: string
   revenue?: number

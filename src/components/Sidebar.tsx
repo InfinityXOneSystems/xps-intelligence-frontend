@@ -1,15 +1,13 @@
 import { motion } from 'framer-motion'
 import { 
   House,
-  ChartBar, 
   Users, 
-  Robot, 
+  Trophy,
+  MagnifyingGlass,
   FunnelSimple, 
-  PaperPlaneTilt,
-  ChartLine,
-  UserList,
+  MapTrifold,
+  Robot, 
   GearSix,
-  Sparkle,
   Square
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
@@ -23,17 +21,16 @@ interface SidebarProps {
 
 const primaryMenuItems = [
   { id: 'home', label: 'Home', icon: House },
-  { id: 'dashboard', label: 'Dashboard', icon: ChartBar },
   { id: 'leads', label: 'Leads', icon: Users },
+  { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
-  { id: 'analytics', label: 'Analytics', icon: ChartLine },
-  { id: 'outreach', label: 'Outreach', icon: PaperPlaneTilt },
+  { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
+  { id: 'roadmap', label: 'Roadmap', icon: MapTrifold },
 ]
 
 const utilityMenuItems = [
   { id: 'scraper', label: 'Scraper', icon: Robot },
   { id: 'canvas', label: 'Canvas', icon: Square },
-  { id: 'team', label: 'Team', icon: UserList },
   { id: 'settings', label: 'Settings', icon: GearSix }
 ]
 
@@ -54,7 +51,7 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
             <div 
               className="absolute inset-0 rounded-xl"
               style={{
-                background: 'radial-gradient(circle, rgba(212,175,55,0.08) 0%, rgba(192,192,192,0.05) 50%, transparent 100%)',
+                background: 'radial-gradient(circle, rgba(34,197,94,0.08) 0%, rgba(234,179,8,0.05) 50%, transparent 100%)',
                 filter: 'blur(10px)',
               }}
             />
@@ -64,7 +61,7 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
                 alt="XPS XPRESS Logo"
                 className="w-full h-full object-contain"
                 style={{
-                  filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.3)) drop-shadow(0 0 3px rgba(192,192,192,0.2))'
+                  filter: 'drop-shadow(0 0 6px rgba(34,197,94,0.3)) drop-shadow(0 0 3px rgba(234,179,8,0.2))'
                 }}
               />
             </div>
@@ -103,8 +100,8 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
                   'w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-150 relative',
                   'text-sm font-semibold',
                   isActive
-                    ? 'bg-[rgba(212,175,55,0.12)] border border-gold text-foreground'
-                    : 'text-secondary hover:text-foreground hover:bg-muted border border-transparent'
+                    ? 'bg-[rgba(34,197,94,0.12)] border border-success text-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent'
                 )}
               >
                 <Icon 
@@ -145,8 +142,8 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
                     'w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-150 relative',
                     'text-sm font-semibold',
                     isActive
-                      ? 'bg-[rgba(212,175,55,0.12)] border border-gold text-foreground'
-                      : 'text-secondary hover:text-foreground hover:bg-muted border border-transparent'
+                      ? 'bg-[rgba(34,197,94,0.12)] border border-success text-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent'
                   )}
                 >
                   <Icon 

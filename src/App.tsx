@@ -7,7 +7,6 @@ import { Sidebar } from '@/components/Sidebar'
 import { TopBar } from '@/components/TopBar'
 import { MobileMenu } from '@/components/MobileMenu'
 import { AIChatPanel } from '@/components/AIChatPanel'
-import { LoginPage } from '@/pages/LoginPage'
 import { HomePage } from '@/pages/HomePage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { LeadsPage } from '@/pages/LeadsPage'
@@ -15,11 +14,13 @@ import { ScraperPage } from '@/pages/ScraperPage'
 import { CanvasPage } from '@/pages/CanvasPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { ProspectsPage } from '@/pages/ProspectsPage'
+import { LeaderboardPage } from '@/pages/LeaderboardPage'
+import { RoadmapPage } from '@/pages/RoadmapPage'
 import { mockLeads } from '@/lib/mockData'
 import type { Lead } from '@/types/lead'
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useKV<boolean>('is-logged-in', false)
   const [currentPage, setCurrentPage] = useState('home')
   const [showChat, setShowChat] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -36,10 +37,6 @@ function App() {
     setLeads((currentLeads) => (currentLeads || []).filter((lead) => lead.id !== id))
   }
 
-  const handleLogin = () => {
-    setIsLoggedIn(() => true)
-  }
-
   const renderPage = () => {
     const safeLeads = leads || []
     
@@ -50,18 +47,18 @@ function App() {
         return <DashboardPage leads={safeLeads} onNavigate={setCurrentPage} />
       case 'leads':
         return <LeadsPage leads={safeLeads} onUpdateLead={handleUpdateLead} onDeleteLead={handleDeleteLead} onNavigate={setCurrentPage} />
+      case 'prospects':
+        return <ProspectsPage onNavigate={setCurrentPage} />
       case 'scraper':
         return <ScraperPage onNavigate={setCurrentPage} />
       case 'canvas':
         return <CanvasPage onNavigate={setCurrentPage} />
       case 'pipeline':
         return <PlaceholderPage title="Sales Pipeline" description="Track deals through your sales funnel" onNavigate={setCurrentPage} />
-      case 'outreach':
-        return <PlaceholderPage title="Outreach" description="Manage email campaigns and outreach efforts" onNavigate={setCurrentPage} />
-      case 'analytics':
-        return <PlaceholderPage title="Analytics" description="Deep dive into your lead generation metrics" onNavigate={setCurrentPage} />
-      case 'team':
-        return <PlaceholderPage title="Team" description="Manage team members and permissions" onNavigate={setCurrentPage} />
+      case 'leaderboard':
+        return <LeaderboardPage leads={safeLeads} onNavigate={setCurrentPage} />
+      case 'roadmap':
+        return <RoadmapPage onNavigate={setCurrentPage} />
       case 'settings':
         return <SettingsPage onNavigate={setCurrentPage} />
       default:
@@ -69,21 +66,13 @@ function App() {
     }
   }
 
-  if (!isLoggedIn) {
-    return (
-      <ThemeProvider>
-        <LoginPage onLogin={handleLogin} />
-      </ThemeProvider>
-    )
-  }
-
   return (
     <ThemeProvider>
       <div className="h-screen w-screen flex flex-col overflow-hidden relative bg-background text-foreground transition-colors duration-300">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(212,175,55,0.06),transparent_50%)] pointer-events-none dark:opacity-100 opacity-30" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_80%,rgba(192,192,192,0.04),transparent_50%)] pointer-events-none dark:opacity-100 opacity-30" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_15%_70%,rgba(139,0,35,0.03),transparent_40%)] pointer-events-none dark:opacity-100 opacity-30" />
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,175,55,0.02)_0%,transparent_25%,rgba(192,192,192,0.015)_50%,transparent_75%,rgba(139,0,35,0.01)_100%)] pointer-events-none dark:opacity-100 opacity-30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(34,197,94,0.08),transparent_50%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_80%,rgba(234,179,8,0.06),transparent_50%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(239,68,68,0.04),transparent_60%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(34,197,94,0.02)_0%,transparent_25%,rgba(234,179,8,0.015)_50%,transparent_75%,rgba(239,68,68,0.01)_100%)] pointer-events-none" />
         
         <div className="relative flex-1 flex overflow-hidden">
           {!isMobile && <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />}
