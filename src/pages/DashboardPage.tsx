@@ -1,25 +1,28 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Users, TrendUp, ChartLine, CurrencyDollar, Phone, Envelope, ChatCircleText } from '@phosphor-icons/react'
-import { LineChart, Line, ResponsiveContainer } from 'recharts'
+import { Users, TrendUp, ChartLine, CurrencyDollar, Phone, Envelope, ChatCircleText, ArrowUp, CaretUp, CaretDown } from '@phosphor-icons/react'
+import { LineChart, Line, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import type { Lead } from '@/types/lead'
 import { toast } from 'sonner'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 interface DashboardPageProps {
   leads: Lead[]
 }
 
 export function DashboardPage({ leads }: DashboardPageProps) {
-  const [draggedMetric, setDraggedMetric] = useState<string | null>(null)
-  const [metricOrder, setMetricOrder] = useState(['totalLeads', 'aPlusOpportunities', 'responseRate', 'revenuePipeline'])
+  const isMobile = useIsMobile()
+  const [metricOrder, setMetricOrder] = useState(['unansweredLeads', 'aPlusOpportunities', 'responseRate', 'revenuePipeline'])
 
   const metrics = useMemo(() => {
     const aPlusLeads = leads.filter((l) => l.rating === 'A+').length
+    const unanswered = leads.filter((l) => l.status === 'new').length
     const responseRate = 23.5
     const revenuePipeline = leads.reduce((sum, lead) => sum + (lead.revenue || 0), 0)
 
     return {
       totalLeads: leads.length,
+      unansweredLeads: unanswered,
       aPlusOpportunities: aPlusLeads,
       responseRate,
       revenuePipeline
@@ -27,8 +30,8 @@ export function DashboardPage({ leads }: DashboardPageProps) {
   }, [leads])
 
   const trendData = useMemo(() => {
-    return Array.from({ length: 7 }, (_, i) => ({
-      value: Math.floor(40 + (i * 8) + Math.random() * 10)
+    return Array.from({ length: 12 }, (_, i) => ({
+      value: Math.floor(35 + (i * 6.5) + Math.random() * 8)
     }))
   }, [])
 
@@ -51,26 +54,17 @@ export function DashboardPage({ leads }: DashboardPageProps) {
     toast.success('SMS draft opened')
   }
 
-  const handleDragStart = (metricId: string) => {
-    setDraggedMetric(metricId)
-  }
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-  }
-
-  const handleDrop = (targetMetricId: string) => {
-    if (!draggedMetric || draggedMetric === targetMetricId) return
-    
-    const newOrder = [...metricOrder]
-    const draggedIndex = newOrder.indexOf(draggedMetric)
-    const targetIndex = newOrder.indexOf(targetMetricId)
-    
-    newOrder.splice(draggedIndex, 1)
-    newOrder.splice(targetIndex, 0, draggedMetric)
-    
-    setMetricOrder(newOrder)
-    setDraggedMetric(null)
+  const handleReorderMetrics = (metricId: string, direction: 'up' | 'down') => {
+    const currentIndex = metricOrder.indexOf(metricId)
+    if (direction === 'up' && currentIndex > 0) {
+      const newOrder = [...metricOrder]
+      ;[newOrder[currentIndex - 1], newOrder[currentIndex]] = [newOrder[currentIndex], newOrder[currentIndex - 1]]
+      setMetricOrder(newOrder)
+    } else if (direction === 'down' && currentIndex < metricOrder.length - 1) {
+      const newOrder = [...metricOrder]
+      ;[newOrder[currentIndex], newOrder[currentIndex + 1]] = [newOrder[currentIndex + 1], newOrder[currentIndex]]
+      setMetricOrder(newOrder)
+    }
   }
 
   const metricConfig: Record<string, {
@@ -79,60 +73,101 @@ export function DashboardPage({ leads }: DashboardPageProps) {
     icon: React.ReactNode
     gradient: string
     change: string
+    positive: boolean
   }> = {
-    totalLeads: {
-      title: 'Total Leads',
-      value: metrics.totalLeads,
-      icon: <Users size={24} weight="duotone" className="text-white" />,
-      gradient: 'linear-gradient(135deg, var(--gradient-gold-start), var(--gradient-gold-end))',
-      change: '+12%'
+    unansweredLeads: {
+      title: 'Unanswered Leads',
+      value: metrics.unansweredLeads,
+      icon: <Users size={18} weight="duotone" className="text-white" />,
+      gradient: 'linear-gradient(135deg, var(--gradient-maroon-start), var(--gradient-maroon-end))',
+      change: '+12%',
+      positive: false
     },
     aPlusOpportunities: {
       title: 'A+ Opportunities',
       value: metrics.aPlusOpportunities,
-      icon: <TrendUp size={24} weight="duotone" className="text-foreground" />,
-      gradient: 'linear-gradient(135deg, var(--gradient-silver-start), var(--gradient-silver-end))',
-      change: '+8%'
+      icon: <TrendUp size={18} weight="duotone" className="text-foreground" />,
+      gradient: 'linear-gradient(135deg, var(--gradient-gold-start), var(--gradient-gold-end))',
+      change: '+8%',
+      positive: true
     },
     responseRate: {
       title: 'Response Rate',
       value: `${metrics.responseRate}%`,
-      icon: <ChartLine size={24} weight="duotone" className="text-white" />,
-      gradient: 'linear-gradient(135deg, var(--gradient-bronze-start), var(--gradient-bronze-end))',
-      change: '+5%'
+      icon: <ChartLine size={18} weight="duotone" className="text-white" />,
+      gradient: 'linear-gradient(135deg, var(--gradient-silver-start), var(--gradient-silver-end))',
+      change: '+5%',
+      positive: true
     },
     revenuePipeline: {
       title: 'Revenue Pipeline',
       value: `$${(metrics.revenuePipeline / 1000).toFixed(0)}K`,
-      icon: <CurrencyDollar size={24} weight="duotone" className="text-white" />,
-      gradient: 'linear-gradient(135deg, var(--gradient-maroon-start), var(--gradient-maroon-end))',
-      change: '+18%'
+      icon: <CurrencyDollar size={18} weight="duotone" className="text-white" />,
+      gradient: 'linear-gradient(135deg, var(--gradient-bronze-start), var(--gradient-bronze-end))',
+      change: '+18%',
+      positive: true
     }
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Intelligence overview and key metrics
-        </p>
-      </div>
+    <div className="space-y-4 pb-6">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="rounded-2xl p-4 overflow-hidden relative"
+        style={{
+          background: 'var(--card)',
+          backdropFilter: 'blur(32px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          border: '1px solid var(--border-subtle)',
+        }}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Lead Growth</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">Last 30 days</p>
+          </div>
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg" style={{ background: 'rgba(16, 185, 129, 0.15)' }}>
+            <CaretUp size={14} weight="bold" className="text-success" />
+            <span className="text-sm font-bold text-success">24%</span>
+          </div>
+        </div>
+        <div className="h-20 -mx-2">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={trendData}>
+              <defs>
+                <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--gradient-gold-start)" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="var(--gradient-gold-start)" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <Area 
+                type="monotone" 
+                dataKey="value" 
+                stroke="var(--gradient-gold-start)"
+                strokeWidth={2}
+                fill="url(#areaGradient)"
+                dot={false}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         {metricOrder.map((metricId, index) => {
           const config = metricConfig[metricId]
+          const isFirst = index === 0
+          const isLast = index === metricOrder.length - 1
+          
           return (
             <motion.div
               key={metricId}
-              draggable
-              onDragStart={() => handleDragStart(metricId)}
-              onDragOver={handleDragOver}
-              onDrop={() => handleDrop(metricId)}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-              className="rounded-[18px] p-4 transition-all duration-200 cursor-move hover:scale-105"
+              transition={{ delay: index * 0.08 }}
+              className="rounded-xl p-3 relative group"
               style={{
                 background: 'var(--card)',
                 backdropFilter: 'blur(32px) saturate(180%)',
@@ -140,28 +175,39 @@ export function DashboardPage({ leads }: DashboardPageProps) {
                 border: '1px solid var(--border-subtle)',
               }}
             >
-              <div className="flex items-start justify-between mb-3">
-                <div className="p-2.5 rounded-xl" style={{ background: config.gradient }}>
+              {isMobile && (
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-1">
+                  {!isFirst && (
+                    <button
+                      onClick={() => handleReorderMetrics(metricId, 'up')}
+                      className="p-1 rounded bg-muted/30 hover:bg-muted/50"
+                    >
+                      <CaretUp size={12} weight="bold" className="text-white" />
+                    </button>
+                  )}
+                  {!isLast && (
+                    <button
+                      onClick={() => handleReorderMetrics(metricId, 'down')}
+                      className="p-1 rounded bg-muted/30 hover:bg-muted/50"
+                    >
+                      <CaretDown size={12} weight="bold" className="text-white" />
+                    </button>
+                  )}
+                </div>
+              )}
+              
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-2 rounded-lg" style={{ background: config.gradient }}>
                   {config.icon}
                 </div>
-                <span className="text-xs text-success font-semibold">{config.change}</span>
+                <span className={`text-xs font-bold ${config.positive ? 'text-success' : 'text-warning'}`}>
+                  {config.change}
+                </span>
               </div>
-              <div className="text-2xl font-bold text-white mb-1">{config.value}</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
+              
+              <div className="text-xl font-bold text-white mb-1">{config.value}</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                 {config.title}
-              </div>
-              <div className="h-8">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trendData}>
-                    <Line 
-                      type="monotone" 
-                      dataKey="value" 
-                      stroke="#FFFFFF" 
-                      strokeWidth={1.5}
-                      dot={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
               </div>
             </motion.div>
           )
@@ -171,8 +217,8 @@ export function DashboardPage({ leads }: DashboardPageProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="rounded-[18px] p-6 transition-all duration-200"
+        transition={{ delay: 0.4 }}
+        className="rounded-2xl p-4"
         style={{
           background: 'var(--card)',
           backdropFilter: 'blur(32px) saturate(180%)',
@@ -180,87 +226,91 @@ export function DashboardPage({ leads }: DashboardPageProps) {
           border: '1px solid var(--border-subtle)',
         }}
       >
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-[22px] font-semibold text-white">Unanswered Leads</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              {unansweredLeads.length} leads awaiting response
+            <h3 className="text-base font-bold text-white">Priority Leads</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {unansweredLeads.length} awaiting response
             </p>
           </div>
         </div>
         
         <div className="space-y-3">
           {unansweredLeads.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No unanswered leads at the moment
+            <div className="text-center py-8 text-muted-foreground text-sm">
+              No unanswered leads
             </div>
           ) : (
-            unansweredLeads.map((lead, index) => (
+            unansweredLeads.slice(0, isMobile ? 5 : 10).map((lead, index) => (
               <motion.div
                 key={lead.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 + (index * 0.05) }}
-                className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl transition-all duration-200 hover:bg-muted/20 gap-4"
+                transition={{ delay: 0.5 + (index * 0.04) }}
+                className="rounded-xl p-3 transition-all duration-200"
                 style={{
                   border: '1px solid var(--border-subtle)',
+                  background: 'rgba(0, 0, 0, 0.2)'
                 }}
               >
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2 flex-wrap">
-                    <h4 className="font-semibold text-white">{lead.company}</h4>
-                    <span
-                      className="px-2 py-1 text-xs font-semibold rounded-md"
-                      style={{
-                        background: lead.rating === 'A+' 
-                          ? 'linear-gradient(135deg, var(--gradient-gold-start), var(--gradient-gold-end))'
-                          : lead.rating === 'A'
-                          ? 'linear-gradient(135deg, var(--gradient-silver-start), var(--gradient-silver-end))'
-                          : 'linear-gradient(135deg, var(--gradient-bronze-start), var(--gradient-bronze-end))',
-                        color: '#FFFFFF'
-                      }}
-                    >
-                      {lead.rating}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      Score: {lead.opportunityScore}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4 text-sm text-white flex-wrap">
-                    <span className="flex items-center gap-1.5">
-                      <Phone size={14} weight="duotone" />
-                      {lead.phone}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Envelope size={14} weight="duotone" />
-                      {lead.email}
-                    </span>
-                    <span className="text-muted-foreground">{lead.city}</span>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <h4 className="font-semibold text-white text-sm">{lead.company}</h4>
+                      <span
+                        className="px-1.5 py-0.5 text-[10px] font-bold rounded"
+                        style={{
+                          background: lead.rating === 'A+' 
+                            ? 'linear-gradient(135deg, var(--gradient-gold-start), var(--gradient-gold-end))'
+                            : lead.rating === 'A'
+                            ? 'linear-gradient(135deg, var(--gradient-silver-start), var(--gradient-silver-end))'
+                            : 'linear-gradient(135deg, var(--gradient-bronze-start), var(--gradient-bronze-end))',
+                          color: '#FFFFFF'
+                        }}
+                      >
+                        {lead.rating}
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      <a 
+                        href={`tel:${lead.phone}`}
+                        className="flex items-center gap-1.5 text-xs text-white hover:text-gold transition-colors"
+                      >
+                        <Phone size={12} weight="duotone" />
+                        {lead.phone}
+                      </a>
+                      <a
+                        href={`mailto:${lead.email}`}
+                        className="flex items-center gap-1.5 text-xs text-white hover:text-gold transition-colors"
+                      >
+                        <Envelope size={12} weight="duotone" />
+                        {lead.email}
+                      </a>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                
+                <div className="flex items-center gap-2 mt-3">
                   <button
                     onClick={() => handleShareEmail(lead)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 text-white text-sm font-medium"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-200 active:scale-95 text-white text-xs font-semibold"
                     style={{ 
                       border: '1px solid var(--border-subtle)',
                       background: 'linear-gradient(135deg, var(--gradient-gold-start), var(--gradient-gold-end))'
                     }}
-                    title="Share via Email"
                   >
-                    <Envelope size={18} weight="duotone" />
+                    <Envelope size={14} weight="duotone" />
                     Email
                   </button>
                   <button
                     onClick={() => handleShareSMS(lead)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 text-white text-sm font-medium"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-200 active:scale-95 text-white text-xs font-semibold"
                     style={{ 
                       border: '1px solid var(--border-subtle)',
                       background: 'linear-gradient(135deg, var(--gradient-maroon-start), var(--gradient-maroon-end))'
                     }}
-                    title="Share via SMS"
                   >
-                    <ChatCircleText size={18} weight="duotone" />
+                    <ChatCircleText size={14} weight="duotone" />
                     SMS
                   </button>
                 </div>
