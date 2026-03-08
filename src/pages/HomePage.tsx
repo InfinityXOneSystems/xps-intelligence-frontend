@@ -17,7 +17,7 @@ interface HomePageProps {
 }
 
 export function HomePage({ leads, onNavigate }: HomePageProps) {
-  const recentLeads = leads.slice(0, 10)
+  const allLeads = leads
   const newLeads = leads.filter(l => l.isNew || l.status === 'new')
   const greenLeads = leads.filter(l => l.priority === 'green' || l.status === 'signed')
   const yellowLeads = leads.filter(l => l.priority === 'yellow' || l.status === 'contacted')
@@ -118,18 +118,18 @@ export function HomePage({ leads, onNavigate }: HomePageProps) {
 
       <div>
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold">Recent Leads</h2>
+          <h2 className="text-3xl font-bold">All Leads</h2>
           <Button
             onClick={() => onNavigate('leads')}
             variant="outline"
             size="lg"
             className="border-success text-success hover:bg-success hover:text-white"
           >
-            View All Leads
+            Manage Leads
           </Button>
         </div>
 
-        {recentLeads.length === 0 ? (
+        {allLeads.length === 0 ? (
           <Card className="glass-card p-16 text-center">
             <p className="text-muted-foreground text-lg mb-6">No leads yet. Start by searching for prospects.</p>
             <Button
@@ -141,7 +141,7 @@ export function HomePage({ leads, onNavigate }: HomePageProps) {
           </Card>
         ) : (
           <div className="space-y-4">
-            {recentLeads.map((lead, index) => (
+            {allLeads.map((lead, index) => (
               <motion.div
                 key={lead.id}
                 initial={{ opacity: 0, x: -20 }}
