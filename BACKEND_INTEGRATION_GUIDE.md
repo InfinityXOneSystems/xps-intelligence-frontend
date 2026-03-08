@@ -1,147 +1,147 @@
 # Backend Integration Guide for XPS Intelligence Dashboard
 
-## Current Architecture
+This is a **frontend-on
 
-This is a **frontend-only Spark application** that currently uses:
-- **Mock data** (`mockLeads` array) for lead information
-- **`useKV` hook** from `@github/spark/hooks` for client-side persistence (localStorage-like)
-- **No external API calls** - all data lives in the browser
 
-## How to Connect to a Backend API
 
-### Option 1: REST API Integration (Recommended for most cases)
 
-#### Step 1: Create an API Service Layer
 
-Create `/workspaces/spark-template/src/lib/api.ts`:
 
-```typescript
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://your-api.com/api'
+const API_BASE_URL = import.meta.e
 
-interface ApiError {
-  message: string
   status: number
-}
 
-class ApiClient {
   private baseUrl: string
 
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+    options: 
     const url = `${this.baseUrl}${endpoint}`
-    
-    const config: RequestInit = {
-      ...options,
+
       headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+        ...option
     }
+ 
 
-    try {
-      const response = await fetch(url, config)
-      
-      if (!response.ok) {
-        const error: ApiError = {
-          message: `API Error: ${response.statusText}`,
-          status: response.status,
-        }
-        throw error
-      }
+        const err
+          status: respons
 
-      return await response.json()
+
     } catch (error) {
-      console.error('API request failed:', error)
-      throw error
-    }
-  }
+   
 
-  async get<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'GET' })
+  async get<T>(endpoint: st
   }
-
-  async post<T>(endpoint: string, data: unknown): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'POST',
-      body: JSON.stringify(data),
+  async post<T>(endpoint: str
+      method: 'PO
     })
+
+    return this.request<T>(endpoi
+      body: JSON.
+  }
+  async delete<T>(endpoint: string): Promis
   }
 
-  async put<T>(endpoint: string, data: unknown): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'DELETE' })
-  }
-}
-
-export const api = new ApiClient(API_BASE_URL)
 ```
 
-#### Step 2: Create Lead-Specific API Functions
-
-Create `/workspaces/spark-template/src/lib/leadsApi.ts`:
-
+Create `/
 ```typescript
-import { api } from './api'
-import type { Lead, DashboardMetrics } from '@/types/lead'
-
+import
 export const leadsApi = {
-  async getAll(): Promise<Lead[]> {
-    return api.get<Lead[]>('/leads')
-  },
+    return api.get<Lead[]>('/lead
 
-  async getById(id: string): Promise<Lead> {
-    return api.get<Lead>(`/leads/${id}`)
-  },
+    return api.get<Lead>(`/leads/$
 
-  async create(lead: Omit<Lead, 'id' | 'createdAt'>): Promise<Lead> {
-    return api.post<Lead>('/leads', lead)
-  },
+    return api.post
 
-  async update(id: string, lead: Partial<Lead>): Promise<Lead> {
-    return api.put<Lead>(`/leads/${id}`, lead)
-  },
 
-  async delete(id: string): Promise<void> {
-    return api.delete<void>(`/leads/${id}`)
-  },
 
-  async getMetrics(): Promise<DashboardMetrics> {
-    return api.get<DashboardMetrics>('/leads/metrics')
-  },
+    return api.delete
 
-  async assignRep(leadId: string, repId: string): Promise<Lead> {
-    return api.post<Lead>(`/leads/${leadId}/assign`, { repId })
-  },
-}
-```
+    return api.ge
 
-#### Step 3: Update App.tsx to Use API Instead of useKV
+   
 
-Modify `/workspaces/spark-template/src/App.tsx`:
 
-```typescript
-import { useState, useEffect } from 'react'
-import { leadsApi } from '@/lib/leadsApi'
+
+
+
 import { toast } from 'sonner'
-// ... other imports
 
-function App() {
-  const [currentPage, setCurrentPage] = useState('home')
-  const [showChat, setShowChat] = useState(true)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  
+  const [currentPage,
+  const [mobileMenuOpen, setMobil
+  // R
+  c
+
+  useEffect(() => {
+  }, [])
+  const fetchLeads =
+      setLoading(true)
+      
+   
+
+    }
+
+   
+ 
+
+    } catch (error) {
+   
+
+  const handleDeleteLead = async (id: string) =
+
+      toast.success('Lead deleted successfully')
+
+    }
+
+}
+
+
+
+VITE_API_URL=http://localhost:3000/a
+
+
+VITE_API_URL=https://your-production-api.com
+
+
+
+
+
+
+
+import { toast } from 'sonner'
+
+  re
+
+  })
+
+  re
+
+  })
+
+  co
+
+      leadsApi.update(id, data),
+      queryClient.invalidateQueries({ queryKey: ['leads'] })
+    
+ 
+  }
+
+  const queryClient = useQueryClient()
+
+    onSuccess: () => {
+
+    onError: 
+    },
+}
+export function useCreateLead(
+
+
+      queryClien
+    },
+      toast.error('Failed to create lead')
+  })
+``
   // Replace useKV with regular useState
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
@@ -286,6 +286,366 @@ export function useCreateLead() {
 }
 ```
 
+#### Step 2: Setup QueryClient in App
+
+Modify `/workspaces/spark-template/src/App.tsx`:
+
+```typescript
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useLeads } from '@/hooks/useLeads'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+})
+
+function AppContent() {
+  const { data: leads = [], isLoading } = useLeads()
+  const { mutate: updateLead } = useUpdateLead()
+  const { mutate: deleteLead } = useDeleteLead()
+
+  // Use leads data directly
+  // handleUpdateLead and handleDeleteLead now just call the mutations
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
+    </QueryClientProvider>
+  )
+}
+```
+
+---
+
+### Option 3: WebSocket for Real-Time Updates
+
+For real-time scraper updates and lead notifications:
+
+Create `/workspaces/spark-template/src/lib/websocket.ts`:
+
+```typescript
+type MessageHandler = (data: any) => void
+
+class WebSocketClient {
+  private ws: WebSocket | null = null
+  private handlers: Map<string, MessageHandler[]> = new Map()
+  private reconnectTimeout: number = 3000
+  private url: string
+
+  constructor(url: string) {
+    this.url = url
+  }
+
+  connect() {
+    this.ws = new WebSocket(this.url)
+
+    this.ws.onopen = () => {
+      console.log('WebSocket connected')
+    }
+
+    this.ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data)
+        const { type, data } = message
+
+        const handlers = this.handlers.get(type) || []
+        handlers.forEach((handler) => handler(data))
+      } catch (error) {
+        console.error('WebSocket message error:', error)
+      }
+    }
+
+    this.ws.onclose = () => {
+      console.log('WebSocket disconnected, reconnecting...')
+      setTimeout(() => this.connect(), this.reconnectTimeout)
+    }
+
+    this.ws.onerror = (error) => {
+      console.error('WebSocket error:', error)
+    }
+  }
+
+  on(type: string, handler: MessageHandler) {
+    if (!this.handlers.has(type)) {
+      this.handlers.set(type, [])
+    }
+    this.handlers.get(type)!.push(handler)
+  }
+
+  off(type: string, handler: MessageHandler) {
+    const handlers = this.handlers.get(type) || []
+    const index = handlers.indexOf(handler)
+    if (index > -1) {
+      handlers.splice(index, 1)
+    }
+  }
+
+  send(type: string, data: any) {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({ type, data }))
+    }
+  }
+
+  disconnect() {
+    this.ws?.close()
+  }
+}
+
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:3000'
+export const wsClient = new WebSocketClient(WS_URL)
+```
+
+Use in components:
+
+```typescript
+useEffect(() => {
+  wsClient.connect()
+
+  const handleNewLead = (lead: Lead) => {
+    setLeads((prev) => [...prev, lead])
+    toast.success('New lead scraped!')
+  }
+
+  wsClient.on('lead:created', handleNewLead)
+
+  return () => {
+    wsClient.off('lead:created', handleNewLead)
+  }
+}, [])
+```
+
+---
+
+## Authentication Setup
+
+If your backend requires authentication:
+
+#### Step 1: Add Auth to API Client
+
+```typescript
+// In api.ts
+class ApiClient {
+  private token: string | null = null
+
+  setToken(token: string) {
+    this.token = token
+    localStorage.setItem('auth_token', token)
+  }
+
+  getToken(): string | null {
+    if (!this.token) {
+      this.token = localStorage.getItem('auth_token')
+    }
+    return this.token
+  }
+
+  clearToken() {
+    this.token = null
+    localStorage.removeItem('auth_token')
+  }
+
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const token = this.getToken()
+    
+    const config: RequestInit = {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...options.headers,
+      },
+    }
+
+    // ... rest of request logic
+  }
+}
+```
+
+#### Step 2: Create Auth Hooks
+
+```typescript
+// src/hooks/useAuth.ts
+import { useQuery } from '@tanstack/react-query'
+import { api } from '@/lib/api'
+
+export function useAuth() {
+  return useQuery({
+    queryKey: ['auth', 'user'],
+    queryFn: async () => {
+      // Use Spark's built-in user API
+      const user = await spark.user()
+      return user
+    },
+  })
+}
+```
+
+---
+
+## Backend API Requirements
+
+Your backend should provide these endpoints:
+
+### Lead Endpoints
+- `GET /api/leads` - Get all leads
+- `GET /api/leads/:id` - Get single lead
+- `POST /api/leads` - Create lead
+- `PUT /api/leads/:id` - Update lead
+- `DELETE /api/leads/:id` - Delete lead
+- `GET /api/leads/metrics` - Get dashboard metrics
+- `POST /api/leads/:id/assign` - Assign lead to rep
+
+### Scraper Endpoints
+- `POST /api/scraper/run` - Trigger scraper
+- `GET /api/scraper/status` - Get scraper status
+- `GET /api/scraper/logs` - Get scraper logs
+
+### WebSocket Events (Optional)
+- `lead:created` - New lead scraped
+- `lead:updated` - Lead updated
+- `scraper:progress` - Scraper progress update
+- `scraper:completed` - Scraper finished
+
+---
+
+## Example Backend Response Formats
+
+### GET /api/leads
+```json
+[
+  {
+    "id": "lead_123",
+    "company": "Acme Construction",
+    "city": "San Francisco",
+    "state": "CA",
+    "phone": "(555) 123-4567",
+    "email": "contact@acme.com",
+    "website": "https://acme.com",
+    "rating": "A+",
+    "opportunityScore": 95,
+    "status": "new",
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+]
+```
+
+### POST /api/leads/:id/assign
+```json
+{
+  "repId": "user_456"
+}
+```
+
+Response:
+```json
+{
+  "id": "lead_123",
+  "assignedRep": "John Doe",
+  "assignedInitials": "JD",
+  "updatedAt": "2024-01-15T11:00:00Z"
+}
+```
+
+---
+
+## Migration Checklist
+
+- [ ] Create API service layer (`api.ts`, `leadsApi.ts`)
+- [ ] Set up environment variables (`.env`, `.env.production`)
+- [ ] Replace `useKV` with API calls in `App.tsx`
+- [ ] Add error handling and loading states
+- [ ] (Optional) Set up React Query for better caching
+- [ ] (Optional) Add WebSocket for real-time updates
+- [ ] (Optional) Implement authentication
+- [ ] Test with your backend API
+- [ ] Update scraper functionality to call backend
+- [ ] Add proper error boundaries for API failures
+
+---
+
+## Testing Without a Backend
+
+To test the integration layer without a backend, use Mock Service Worker (MSW):
+
+```bash
+npm install msw --save-dev
+```
+
+Create `/workspaces/spark-template/src/mocks/handlers.ts`:
+
+```typescript
+import { http, HttpResponse } from 'msw'
+import { mockLeads } from '@/lib/mockData'
+
+export const handlers = [
+  http.get('/api/leads', () => {
+    return HttpResponse.json(mockLeads)
+  }),
+
+  http.post('/api/leads', async ({ request }) => {
+    const newLead = await request.json()
+    return HttpResponse.json({ id: 'new_lead_123', ...newLead })
+  }),
+
+  http.put('/api/leads/:id', async ({ request, params }) => {
+    const updates = await request.json()
+    return HttpResponse.json({ id: params.id, ...updates })
+  }),
+
+  http.delete('/api/leads/:id', () => {
+    return new HttpResponse(null, { status: 204 })
+  }),
+]
+```
+
+---
+
+## Performance Considerations
+
+1. **Caching**: Use React Query's cache to avoid unnecessary API calls
+2. **Pagination**: Implement pagination for large lead lists
+3. **Debouncing**: Debounce search/filter inputs to reduce API calls
+4. **Optimistic Updates**: Update UI immediately, rollback on error
+5. **Background Sync**: Use service worker to sync when connection returns
+
+---
+
+## Current State vs. Future State
+
+### Current (Frontend-Only)
+```
+┌─────────────────┐
+│  React Frontend │ ──useKV──> Browser Storage
+└─────────────────┘
+```
+
+### Future (With Backend)
+```
+┌─────────────────┐        ┌──────────────┐        ┌──────────────┐
+│  React Frontend │ ──API─> │ Backend API  │ ──DB─> │   Database   │
+└─────────────────┘        └──────────────┘        └──────────────┘
+        │                          │
+        └────────WebSocket─────────┘
+```
+
+---
+
+## Questions?
+
+This guide covers the main approaches for connecting your frontend to a backend. Choose:
+- **Option 1** for simplicity
+- **Option 2** for production apps with complex data needs
+- **Option 3** when you need real-time features
+
+The current app is fully functional as a frontend-only application using Spark's `useKV` for persistence, but can be easily migrated to any backend by following these patterns.
 #### Step 2: Setup QueryClient in App
 
 Modify `/workspaces/spark-template/src/App.tsx`:
