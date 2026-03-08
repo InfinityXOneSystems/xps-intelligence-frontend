@@ -17,7 +17,9 @@ import { LeaderboardPage } from '@/pages/LeaderboardPage'
 import { RoadmapPage } from '@/pages/RoadmapPage'
 import { AgentPage } from '@/pages/AgentPage'
 import { SystemLogsPage } from '@/pages/SystemLogsPage'
-import { PipelinePage } from '@/pages/PipelinePage'
+import { TaskQueuePage } from '@/pages/TaskQueuePage'
+import { CodeEditorPage } from '@/pages/CodeEditorPage'
+import { SandboxPage } from '@/pages/SandboxPage'
 import { useLeads } from '@/hooks/useLeadsApi'
 
 function App() {
@@ -88,6 +90,12 @@ function App() {
         return <AgentPage onNavigate={setCurrentPage} />
       case 'logs':
         return <SystemLogsPage onNavigate={setCurrentPage} />
+      case 'tasks':
+        return <TaskQueuePage onNavigate={setCurrentPage} />
+      case 'editor':
+        return <CodeEditorPage onNavigate={setCurrentPage} />
+      case 'sandbox':
+        return <SandboxPage onNavigate={setCurrentPage} />
       default:
         return <HomePage onNavigate={setCurrentPage} />
     }

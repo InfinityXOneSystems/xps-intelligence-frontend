@@ -32,7 +32,7 @@ const CrosshairIcon = () => (
   </svg>
 )
 
-const AGENT_COMMANDS = [
+const _AGENT_COMMANDS = [
   'scrape epoxy companies Orlando',
   'generate outreach email',
   'build analytics dashboard',
@@ -40,7 +40,7 @@ const AGENT_COMMANDS = [
   'analyze leads',
 ]
 
-const isAgentCommand = (text: string): boolean => {
+const _isAgentCommand = (text: string): boolean => {
   const lower = text.toLowerCase()
   return (
     lower.startsWith('scrape ') ||

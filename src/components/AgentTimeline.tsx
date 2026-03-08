@@ -12,6 +12,14 @@ import {
   MagnifyingGlass,
   FileText,
   GithubLogo,
+  Brain,
+  Binoculars,
+  CheckSquare,
+  Pulse,
+  Image,
+  BookOpen,
+  ChartLine,
+  PlayCircle,
 } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -31,6 +39,14 @@ const TASK_ICONS: Record<TaskType, React.ElementType> = {
   search: MagnifyingGlass,
   report: FileText,
   github_action: GithubLogo,
+  plan: Brain,
+  research: Binoculars,
+  validate: CheckSquare,
+  monitor: Pulse,
+  media: Image,
+  knowledge: BookOpen,
+  predict: ChartLine,
+  simulate: PlayCircle,
 }
 
 const TASK_COLORS: Record<TaskType, string> = {
@@ -42,6 +58,14 @@ const TASK_COLORS: Record<TaskType, string> = {
   search: 'text-orange-400',
   report: 'text-slate-400',
   github_action: 'text-pink-400',
+  plan: 'text-violet-400',
+  research: 'text-sky-400',
+  validate: 'text-yellow-400',
+  monitor: 'text-red-400',
+  media: 'text-rose-400',
+  knowledge: 'text-indigo-400',
+  predict: 'text-emerald-400',
+  simulate: 'text-teal-400',
 }
 
 const TASK_BADGE_VARIANTS: Record<TaskType, string> = {
@@ -53,6 +77,14 @@ const TASK_BADGE_VARIANTS: Record<TaskType, string> = {
   search: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
   report: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
   github_action: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
+  plan: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
+  research: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
+  validate: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+  monitor: 'bg-red-500/10 text-red-400 border-red-500/20',
+  media: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+  knowledge: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+  predict: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  simulate: 'bg-teal-500/10 text-teal-400 border-teal-500/20',
 }
 
 function StatusIcon({ status }: { status: TaskStatus }) {
