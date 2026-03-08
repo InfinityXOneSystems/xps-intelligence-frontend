@@ -1,5 +1,6 @@
 import { llmRouter } from './llm'
 import type { AgentPlan, AgentTask, TaskType, ToolCall } from './agentTypes'
+import { TASK_AGENT_MAP } from './agentTypes'
 
 function uuid(): string {
   return crypto.randomUUID()
@@ -79,12 +80,13 @@ function buildTasksFromLLMResponse(raw: string): AgentTask[] {
         type: item.type,
         description: item.description,
         status: 'pending' as const,
+        assignedAgent: TASK_AGENT_MAP[item.type],
       }))
   } catch {
     return [
-      { id: uuid(), type: 'search', description: 'Search for relevant data', status: 'pending' as const },
-      { id: uuid(), type: 'analyze_leads', description: 'Process and analyze results', status: 'pending' as const },
-      { id: uuid(), type: 'report', description: 'Summarize findings', status: 'pending' as const },
+      { id: uuid(), type: 'search', description: 'Search for relevant data', status: 'pending' as const, assignedAgent: TASK_AGENT_MAP['search'] },
+      { id: uuid(), type: 'analyze_leads', description: 'Process and analyze results', status: 'pending' as const, assignedAgent: TASK_AGENT_MAP['analyze_leads'] },
+      { id: uuid(), type: 'report', description: 'Summarize findings', status: 'pending' as const, assignedAgent: TASK_AGENT_MAP['report'] },
     ]
   }
 }

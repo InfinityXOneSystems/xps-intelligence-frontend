@@ -11,13 +11,13 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { LeadsPage } from '@/pages/LeadsPage'
 import { ScraperPage } from '@/pages/ScraperPage'
 import { CanvasPage } from '@/pages/CanvasPage'
-import { PlaceholderPage } from '@/pages/PlaceholderPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { ProspectsPage } from '@/pages/ProspectsPage'
 import { LeaderboardPage } from '@/pages/LeaderboardPage'
 import { RoadmapPage } from '@/pages/RoadmapPage'
 import { AgentPage } from '@/pages/AgentPage'
 import { SystemLogsPage } from '@/pages/SystemLogsPage'
+import { PipelinePage } from '@/pages/PipelinePage'
 import { useLeads } from '@/hooks/useLeadsApi'
 
 function App() {
@@ -77,7 +77,7 @@ function App() {
       case 'canvas':
         return <CanvasPage onNavigate={setCurrentPage} />
       case 'pipeline':
-        return <PlaceholderPage title="Sales Pipeline" description="Track deals through your sales funnel" onNavigate={setCurrentPage} />
+        return <PipelinePage onNavigate={setCurrentPage} />
       case 'leaderboard':
         return <LeaderboardPage onNavigate={setCurrentPage} />
       case 'roadmap':
