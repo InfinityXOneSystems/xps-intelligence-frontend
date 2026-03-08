@@ -172,7 +172,7 @@ class AgentPlanner {
 
   async createPlan(userCommand: string): Promise<AgentPlan> {
     const prompt = buildPlanningPrompt(userCommand)
-    const raw = await llmRouter.complete(prompt)
+    const raw = await llmRouter.complete(prompt, {}, userCommand)
     const tasks = buildTasksFromLLMResponse(raw)
 
     const plan: AgentPlan = {

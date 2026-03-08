@@ -154,8 +154,8 @@ async function completeWithHuggingFace(prompt: string, config: LLMConfig): Promi
   return data?.generated_text ?? ''
 }
 
-function fallbackResponse(prompt: string): string {
-  const lower = prompt.toLowerCase()
+function fallbackResponse(userCommand: string): string {
+  const lower = userCommand.toLowerCase()
   if (lower.includes('scrape') || lower.includes('crawl')) {
     return JSON.stringify([
       { type: 'scrape', description: 'Search target websites for business data' },
@@ -209,7 +209,7 @@ export const llmRouter = {
 
   getLastProvider,
 
-  async complete(prompt: string, config: LLMConfig = {}): Promise<string> {
+  async complete(prompt: string, config: LLMConfig = {}, userCommand?: string): Promise<string> {
     const merged = { ...activeConfig, ...config }
     const providers: LLMProvider[] = ['groq', 'gemini', 'huggingface']
     const primary = pickProvider(merged)
@@ -243,6 +243,6 @@ export const llmRouter = {
     }
 
     // All providers unavailable or no keys configured — use rule-based fallback
-    return fallbackResponse(prompt)
+    return fallbackResponse(userCommand ?? prompt)
   },
 }
