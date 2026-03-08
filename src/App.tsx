@@ -20,6 +20,7 @@ import { SystemLogsPage } from '@/pages/SystemLogsPage'
 import { TaskQueuePage } from '@/pages/TaskQueuePage'
 import { CodeEditorPage } from '@/pages/CodeEditorPage'
 import { SandboxPage } from '@/pages/SandboxPage'
+import { PipelinePage } from '@/pages/PipelinePage'
 import { useLeads } from '@/hooks/useLeadsApi'
 
 function App() {
