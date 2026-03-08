@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { PaperPlaneTilt, X } from '@phosphor-icons/react'
+import { PaperPlaneTilt, X, Lightning } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { llmRouter } from '@/lib/llm'
+import { agentPlanner } from '@/lib/agentPlanner'
 
 const CrosshairIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -17,11 +20,33 @@ const CrosshairIcon = () => (
   </svg>
 )
 
+const AGENT_COMMANDS = [
+  'scrape epoxy companies Orlando',
+  'generate outreach email',
+  'build analytics dashboard',
+  'deploy backend',
+  'analyze leads',
+]
+
+const isAgentCommand = (text: string): boolean => {
+  const lower = text.toLowerCase()
+  return (
+    lower.startsWith('scrape ') ||
+    lower.startsWith('deploy ') ||
+    lower.startsWith('build ') ||
+    lower.includes('generate') ||
+    lower.includes('analyze leads') ||
+    lower.includes('run scraper') ||
+    lower.includes('github action')
+  )
+}
+
 interface Message {
   id: string
   role: 'user' | 'assistant'
   content: string
   timestamp: Date
+  isAgentResponse?: boolean
 }
 
 interface AIChatPanelProps {
@@ -33,7 +58,7 @@ export function AIChatPanel({ onClose }: AIChatPanelProps) {
     {
       id: '1',
       role: 'assistant',
-      content: 'Hello! I\'m Lead Sniper, your AI sales assistant. I can help you find leads, generate outreach emails, answer contractor sales questions, and execute any command you need. Try asking me something!',
+      content: 'Hello! I\'m Lead Sniper, your autonomous AI platform assistant. I can answer questions OR run agent commands.\n\nTry:\n• "scrape epoxy companies Orlando"\n• "generate outreach email"\n• "build analytics dashboard"\n• "deploy backend"',
       timestamp: new Date()
     }
   ])
@@ -58,27 +83,41 @@ export function AIChatPanel({ onClose }: AIChatPanelProps) {
     }
 
     setMessages((prev) => [...prev, userMessage])
+    const currentInput = input
     setInput('')
     setIsLoading(true)
 
     try {
-      const promptText = `You are Lead Sniper, an AI assistant for contractor sales and lead generation. 
+      let responseContent: string
+      let isAgentResponse = false
+
+      if (isAgentCommand(currentInput)) {
+        isAgentResponse = true
+        const plan = await agentPlanner.createPlan(currentInput)
+        responseContent = `🤖 Agent plan created: **${plan.tasks.length} tasks** dispatched.\n\n`
+        responseContent += plan.tasks.map((t, i) => `${i + 1}. [${t.type}] ${t.description}`).join('\n')
+        responseContent += '\n\n➡️ Go to **Agent** page to monitor execution in real-time.'
+
+        agentPlanner.executePlan(plan, () => {})
+      } else {
+        const promptText = `You are Lead Sniper, an AI assistant for contractor sales and lead generation. 
       
-User query: ${input}
+User query: ${currentInput}
 
 Provide a helpful, concise response. If they ask to find leads, suggest searching the leads database. If they ask to generate an email, provide a professional contractor outreach email template. Keep responses under 3 paragraphs.`
-      
-      const response = await window.spark.llm(promptText, 'gpt-4o-mini')
+        responseContent = await llmRouter.complete(promptText)
+      }
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: response,
-        timestamp: new Date()
+        content: responseContent,
+        timestamp: new Date(),
+        isAgentResponse,
       }
 
       setMessages((prev) => [...prev, assistantMessage])
-    } catch (error) {
+    } catch {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -107,6 +146,7 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
         <div className="flex items-center gap-2">
           <CrosshairIcon />
           <h2 className="font-bold text-foreground">Lead Sniper</h2>
+          <Badge variant="outline" className="text-xs">AI Agent</Badge>
         </div>
         {onClose && (
           <Button
@@ -137,12 +177,16 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
                 <div
                   className={cn(
                     'max-w-[85%] text-sm',
-                    message.role === 'user'
-                      ? 'text-foreground'
-                      : 'text-foreground'
+                    message.isAgentResponse && 'border border-primary/30 rounded-lg p-3 bg-primary/5'
                   )}
                 >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  {message.isAgentResponse && (
+                    <div className="flex items-center gap-1 mb-1 text-primary text-xs font-semibold">
+                      <Lightning size={12} weight="fill" />
+                      Agent Plan
+                    </div>
+                  )}
+                  <p className="whitespace-pre-wrap text-foreground">{message.content}</p>
                   <span className="text-xs text-muted-foreground mt-1 block">
                     {message.timestamp.toLocaleTimeString()}
                   </span>
@@ -169,6 +213,20 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
         </div>
       </div>
 
+      <div className="px-3 py-2 border-t border-border-subtle/50">
+        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+          {AGENT_COMMANDS.map((cmd) => (
+            <button
+              key={cmd}
+              onClick={() => setInput(cmd)}
+              className="whitespace-nowrap text-xs px-2 py-1 rounded-full border border-border-subtle text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors flex-shrink-0"
+            >
+              {cmd}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="p-4 border-t border-border-subtle">
         <div className="flex gap-2 items-center">
           <div className="relative flex-1">
@@ -181,7 +239,7 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
                   handleSend()
                 }
               }}
-              placeholder="Ask Lead Sniper..."
+              placeholder="Ask or run a command..."
               className="w-full text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-offset-0 px-4 py-3 rounded-xl border-2 border-transparent"
               style={{
                 background: 'rgba(0, 0, 0, 0.70)',
@@ -214,7 +272,7 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
           </button>
         </div>
         <p className="text-xs text-muted-foreground mt-2">
-          Powered by GPT-4
+          Agent-powered · Groq / Gemini / HuggingFace
         </p>
       </div>
     </motion.div>
