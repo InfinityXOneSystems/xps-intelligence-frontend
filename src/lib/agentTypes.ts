@@ -7,6 +7,28 @@ export type TaskType =
   | 'search'
   | 'report'
   | 'github_action'
+  | 'plan'
+  | 'research'
+  | 'validate'
+  | 'monitor'
+  | 'media'
+  | 'knowledge'
+  | 'predict'
+  | 'simulate'
+
+export type AgentRole =
+  | 'PlannerAgent'
+  | 'ResearchAgent'
+  | 'BuilderAgent'
+  | 'ScraperAgent'
+  | 'MediaAgent'
+  | 'ValidatorAgent'
+  | 'DevOpsAgent'
+  | 'MonitoringAgent'
+  | 'KnowledgeAgent'
+  | 'BusinessAgent'
+  | 'PredictionAgent'
+  | 'SimulationAgent'
 
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed'
 
@@ -29,6 +51,7 @@ export interface AgentTask {
   type: TaskType
   description: string
   status: TaskStatus
+  agent?: AgentRole
   startedAt?: string
   completedAt?: string
   result?: string
@@ -51,4 +74,20 @@ export interface AgentEvent {
   toolCallId?: string
   timestamp: string
   payload?: unknown
+}
+
+/** Memory persistence interfaces */
+export interface MemoryEntry {
+  id: string
+  type: 'task' | 'knowledge' | 'vector'
+  key: string
+  value: string
+  tags: string[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AgentMemoryStore {
+  entries: MemoryEntry[]
+  lastUpdated: string
 }
