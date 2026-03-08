@@ -137,6 +137,13 @@ export const TASK_AGENT_MAP: Record<TaskType, AgentRole> = {
   simulate: 'SimulationAgent',
 }
 
+/** Orchestrator configuration */
+export interface OrchestratorConfig {
+  concurrencyLimit: number
+  maxRetries: number
+  retryDelayMs: number
+}
+
 export interface ToolCall {
   id: string
   toolId: string
@@ -154,7 +161,9 @@ export interface AgentTask {
   type: TaskType
   description: string
   status: TaskStatus
+  /** Agent role as set by the task author or UI */
   agent?: AgentRole
+  /** Agent role assigned by the orchestrator during execution */
   assignedAgent?: AgentRole
   startedAt?: string
   completedAt?: string
