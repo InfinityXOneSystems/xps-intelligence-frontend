@@ -205,3 +205,9 @@ export interface AgentMemoryStore {
   entries: MemoryEntry[]
   lastUpdated: string
 }
+
+export interface OrchestratorConfig {
+  concurrencyLimit: number
+  maxRetries: number
+  retryDelayMs: number
+}
