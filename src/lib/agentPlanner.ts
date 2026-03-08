@@ -1,5 +1,7 @@
 import { llmRouter } from './llm'
-import type { AgentPlan, AgentTask, TaskType, ToolCall } from './agentTypes'
+import type { AgentPlan, AgentTask, AgentRole, TaskType, ToolCall, MemoryEntry, AgentMemoryStore } from './agentTypes'
+
+const MEMORY_STORAGE_KEY = 'xps_agent_memory'
 
 function uuid(): string {
   return crypto.randomUUID()
@@ -13,6 +15,26 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+/** Map task types to the best agent role for that work */
+const TASK_AGENT_MAP: Record<TaskType, AgentRole> = {
+  plan: 'PlannerAgent',
+  research: 'ResearchAgent',
+  scrape: 'ScraperAgent',
+  search: 'ResearchAgent',
+  build_ui: 'BuilderAgent',
+  deploy: 'DevOpsAgent',
+  github_action: 'DevOpsAgent',
+  generate_email: 'BusinessAgent',
+  analyze_leads: 'BusinessAgent',
+  report: 'KnowledgeAgent',
+  validate: 'ValidatorAgent',
+  monitor: 'MonitoringAgent',
+  media: 'MediaAgent',
+  knowledge: 'KnowledgeAgent',
+  predict: 'PredictionAgent',
+  simulate: 'SimulationAgent',
+}
+
 const TASK_TOOL_MAP: Record<TaskType, string[]> = {
   scrape: ['playwright_browser', 'http_crawler', 'scraper'],
   generate_email: ['email_generator'],
@@ -22,6 +44,14 @@ const TASK_TOOL_MAP: Record<TaskType, string[]> = {
   search: ['http_crawler', 'playwright_browser'],
   report: ['database', 'filesystem'],
   github_action: ['github_api'],
+  plan: ['planner_llm'],
+  research: ['http_crawler', 'knowledge_base'],
+  validate: ['test_runner', 'linter'],
+  monitor: ['metrics_collector', 'alerting'],
+  media: ['image_gen', 'video_gen'],
+  knowledge: ['vector_store', 'knowledge_base'],
+  predict: ['ml_inference', 'analytics'],
+  simulate: ['sandbox_runtime', 'code_exec'],
 }
 
 const TASK_LOG_TEMPLATES: Record<TaskType, string[][]> = {
@@ -50,6 +80,30 @@ const TASK_LOG_TEMPLATES: Record<TaskType, string[][]> = {
   github_action: [
     ['Authenticating with GitHub API...', 'Triggering workflow dispatch...', 'Monitoring run status...', 'Workflow completed successfully'],
   ],
+  plan: [
+    ['Decomposing goal into subtasks...', 'Routing tasks to agents...', 'Setting task priorities...', 'Plan ready for execution'],
+  ],
+  research: [
+    ['Querying knowledge base...', 'Crawling relevant sources...', 'Synthesizing findings...', 'Research complete'],
+  ],
+  validate: [
+    ['Running lint checks...', 'Executing test suite...', 'Performing type validation...', 'Running security scan...', 'Validation passed ✓'],
+  ],
+  monitor: [
+    ['Collecting system metrics...', 'Checking health endpoints...', 'Analyzing error rates...', 'Monitoring report ready'],
+  ],
+  media: [
+    ['Loading media pipeline...', 'Applying generation parameters...', 'Rendering output...', 'Media asset ready'],
+  ],
+  knowledge: [
+    ['Indexing documents...', 'Embedding vectors...', 'Updating knowledge graph...', 'Knowledge base updated'],
+  ],
+  predict: [
+    ['Loading prediction model...', 'Feeding input features...', 'Running inference...', 'Prediction confidence: 87%'],
+  ],
+  simulate: [
+    ['Spinning up sandbox container...', 'Loading execution environment...', 'Running simulation...', 'Collecting results...', 'Simulation complete'],
+  ],
 }
 
 const TASK_DURATIONS: Record<TaskType, [number, number]> = {
@@ -61,6 +115,14 @@ const TASK_DURATIONS: Record<TaskType, [number, number]> = {
   search: [1500, 3000],
   report: [1000, 2000],
   github_action: [2500, 5000],
+  plan: [800, 1500],
+  research: [2000, 4000],
+  validate: [2000, 4500],
+  monitor: [1000, 2500],
+  media: [3000, 6000],
+  knowledge: [1500, 3000],
+  predict: [1000, 2500],
+  simulate: [3000, 7000],
 }
 
 interface LLMTaskItem {
@@ -79,25 +141,26 @@ function buildTasksFromLLMResponse(raw: string): AgentTask[] {
         type: item.type,
         description: item.description,
         status: 'pending' as const,
+        agent: TASK_AGENT_MAP[item.type] ?? 'PlannerAgent',
       }))
   } catch {
     return [
-      { id: uuid(), type: 'search', description: 'Search for relevant data', status: 'pending' as const },
-      { id: uuid(), type: 'analyze_leads', description: 'Process and analyze results', status: 'pending' as const },
-      { id: uuid(), type: 'report', description: 'Summarize findings', status: 'pending' as const },
+      { id: uuid(), type: 'search', description: 'Search for relevant data', status: 'pending' as const, agent: 'ResearchAgent' as AgentRole },
+      { id: uuid(), type: 'analyze_leads', description: 'Process and analyze results', status: 'pending' as const, agent: 'BusinessAgent' as AgentRole },
+      { id: uuid(), type: 'report', description: 'Summarize findings', status: 'pending' as const, agent: 'KnowledgeAgent' as AgentRole },
     ]
   }
 }
 
 function buildPlanningPrompt(userCommand: string): string {
-  return `You are an AI agent planner for XPS Intelligence, a B2B lead generation platform.
+  return `You are an AI agent planner for XPS Intelligence, a B2B lead generation and autonomous AI platform.
 
 User command: "${userCommand}"
 
 Break this command into 2-4 sequential tasks. Respond with a JSON array only, no explanation.
 Each task: {"type": "<task_type>", "description": "<short description>"}
 
-Valid task types: scrape, generate_email, analyze_leads, deploy, build_ui, search, report, github_action
+Valid task types: scrape, generate_email, analyze_leads, deploy, build_ui, search, report, github_action, plan, research, validate, monitor, media, knowledge, predict, simulate
 
 Example response:
 [
@@ -169,6 +232,49 @@ async function executeTask(
 
 class AgentPlanner {
   private history: AgentPlan[] = []
+  private memoryStore: AgentMemoryStore = { entries: [], lastUpdated: now() }
+
+  constructor() {
+    this.loadMemory()
+  }
+
+  private loadMemory(): void {
+    try {
+      const raw = localStorage.getItem(MEMORY_STORAGE_KEY)
+      if (raw) {
+        this.memoryStore = JSON.parse(raw) as AgentMemoryStore
+      }
+    } catch {
+      this.memoryStore = { entries: [], lastUpdated: now() }
+    }
+  }
+
+  private saveMemory(): void {
+    try {
+      this.memoryStore.lastUpdated = now()
+      localStorage.setItem(MEMORY_STORAGE_KEY, JSON.stringify(this.memoryStore))
+    } catch {
+      // ignore storage errors
+    }
+  }
+
+  rememberTask(planId: string, command: string, result: string): void {
+    const entry: MemoryEntry = {
+      id: uuid(),
+      type: 'task',
+      key: planId,
+      value: JSON.stringify({ command, result }),
+      tags: ['task', 'history'],
+      createdAt: now(),
+      updatedAt: now(),
+    }
+    this.memoryStore.entries = [entry, ...this.memoryStore.entries].slice(0, 200)
+    this.saveMemory()
+  }
+
+  getMemory(): MemoryEntry[] {
+    return [...this.memoryStore.entries]
+  }
 
   async createPlan(userCommand: string): Promise<AgentPlan> {
     const prompt = buildPlanningPrompt(userCommand)
@@ -220,6 +326,7 @@ class AgentPlanner {
     onUpdate(final)
 
     this.history = [final, ...this.history].slice(0, 20)
+    this.rememberTask(final.id, final.userCommand, final.status)
     return final
   }
 
