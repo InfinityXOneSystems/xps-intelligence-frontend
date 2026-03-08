@@ -22,7 +22,7 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { id: 'dashboard', label: 'Home', icon: House },
+  { id: 'home', label: 'Home', icon: House },
   { id: 'dashboard', label: 'Dashboard', icon: ChartBar },
   { id: 'leads', label: 'Leads', icon: Users },
   { id: 'scraper', label: 'Scraper Control', icon: Robot },
@@ -88,7 +88,7 @@ export function Sidebar({ currentPage, onNavigate, collapsed = false }: SidebarP
           
           return (
             <motion.button
-              key={item.id}
+              key={`${item.id}-${item.label}`}
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: index * 0.05 }}

@@ -8,6 +8,7 @@ import { TopBar } from '@/components/TopBar'
 import { MobileMenu } from '@/components/MobileMenu'
 import { AIChatPanel } from '@/components/AIChatPanel'
 import { LoginPage } from '@/pages/LoginPage'
+import { HomePage } from '@/pages/HomePage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { LeadsPage } from '@/pages/LeadsPage'
 import { ScraperPage } from '@/pages/ScraperPage'
@@ -19,7 +20,7 @@ import type { Lead } from '@/types/lead'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useKV<boolean>('is-logged-in', false)
-  const [currentPage, setCurrentPage] = useState('dashboard')
+  const [currentPage, setCurrentPage] = useState('home')
   const [showChat, setShowChat] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [leads, setLeads] = useKV<Lead[]>('leads-data', mockLeads)
@@ -43,6 +44,8 @@ function App() {
     const safeLeads = leads || []
     
     switch (currentPage) {
+      case 'home':
+        return <HomePage leads={safeLeads} onNavigate={setCurrentPage} />
       case 'dashboard':
         return <DashboardPage leads={safeLeads} />
       case 'leads':
@@ -62,7 +65,7 @@ function App() {
       case 'settings':
         return <SettingsPage />
       default:
-        return <DashboardPage leads={safeLeads} />
+        return <HomePage leads={safeLeads} onNavigate={setCurrentPage} />
     }
   }
 
