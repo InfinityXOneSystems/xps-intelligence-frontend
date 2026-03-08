@@ -1,3 +1,4 @@
+import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowsOut, ArrowsIn, Code, Database, FileText, Play, Image as ImageIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
@@ -5,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { CanvasState, CanvasMode } from '@/types/canvas'
 
-const modeIcons: Record<CanvasMode, any> = {
+const modeIcons: Record<CanvasMode, React.ElementType> = {
   scraper: Play,
   data: Database,
   document: FileText,

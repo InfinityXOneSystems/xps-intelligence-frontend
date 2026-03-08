@@ -3,7 +3,6 @@ import { BackButton } from '@/components/BackButton'
 import { Trophy, Medal, Crown } from '@phosphor-icons/react'
 import { Card } from '@/components/ui/card'
 import { useLeads } from '@/hooks/useLeadsApi'
-import type { Lead } from '@/types/lead'
 
 interface LeaderboardPageProps {
   onNavigate: (page: string) => void
@@ -19,7 +18,6 @@ interface RepStats {
 
 export function LeaderboardPage({ onNavigate }: LeaderboardPageProps) {
   const { data: leads = [] } = useLeads()
-  const repStats: RepStats[] = []
 
   const statsByRep = leads.reduce((acc, lead) => {
     const rep = lead.assignedInitials || lead.assignedRep || 'Unassigned'

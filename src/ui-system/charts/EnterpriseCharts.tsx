@@ -295,7 +295,7 @@ export const PipelineFlow: React.FC<PipelineFlowProps> = ({ stages }) => {
     <div className="p-6 rounded-xl bg-card backdrop-blur-xl border border-border-subtle">
       <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4">Pipeline Flow</h3>
       <div className="space-y-4">
-        {stages.map((stage, index) => {
+        {stages.map((stage, _index) => {
           const percentage = (stage.count / maxCount) * 100
           const color = stage.color || CHART_COLORS.gold
 

@@ -1,4 +1,4 @@
-type MessageHandler = (data: any) => void
+type MessageHandler = (data: unknown) => void
 
 class WebSocketClient {
   private ws: WebSocket | null = null
@@ -76,7 +76,7 @@ class WebSocketClient {
     }
   }
 
-  send(type: string, data: any) {
+  send(type: string, data: unknown) {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({ type, data }))
     } else {

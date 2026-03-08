@@ -24,7 +24,7 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isMobile = useIsMobile()
   
-  const { data: leads = [], isLoading, error } = useLeads()
+  const { data: _leads = [], isLoading, error } = useLeads()
 
   const renderPage = () => {
     // Settings page is always accessible regardless of API state

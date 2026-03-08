@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Globe, Pulse, Monitor } from '@phosphor-icons/react'
+import { Globe, Pulse } from '@phosphor-icons/react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'

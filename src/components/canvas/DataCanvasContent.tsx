@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Table, ChartBar, MapPin } from '@phosphor-icons/react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
 import type { DataCanvasData } from '@/types/canvas'
 
@@ -25,7 +24,7 @@ const samplePieData = [
 
 const COLORS = ['oklch(0.85 0.15 85)', 'oklch(0.65 0.08 220)', 'oklch(0.65 0.12 50)', 'oklch(0.55 0.01 250)']
 
-export function DataCanvasContent({ data }: DataCanvasContentProps) {
+export function DataCanvasContent({ data: _data }: DataCanvasContentProps) {
   const [vizType, setVizType] = useState<'bar' | 'line' | 'pie'>('bar')
 
   return (

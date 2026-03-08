@@ -95,7 +95,7 @@ export function NotificationPanel({
       <ScrollArea className="h-[450px]">
         <div className="space-y-2 pr-4">
           <AnimatePresence>
-            {visibleNotifications.map((notification, index) => {
+            {visibleNotifications.map((notification, _index) => {
               const config = typeConfig[notification.type]
               const Icon = config.icon
               

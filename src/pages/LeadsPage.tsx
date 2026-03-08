@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { PencilSimple, Trash, UserPlus, Envelope, Phone, MagnifyingGlass } from '@phosphor-icons/react'
+import { Trash, Envelope, Phone, MagnifyingGlass } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -61,7 +61,7 @@ Keep it under 150 words, friendly but professional. Include a compelling subject
       const email = await window.spark.llm(promptText, 'gpt-4o-mini')
       toast.success('Email generated! Check AI chat panel.')
       console.log(email)
-    } catch (error) {
+    } catch {
       toast.error('Failed to generate email')
     }
   }

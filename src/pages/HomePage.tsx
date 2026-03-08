@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Phone, Envelope, Star, Clock, TrendUp } from '@phosphor-icons/react'
+import { Phone, Envelope, Star, Clock } from '@phosphor-icons/react'
 import { useLeads } from '@/hooks/useLeadsApi'
 
 interface HomePageProps {

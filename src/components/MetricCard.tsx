@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { TrendUp, TrendDown } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'

@@ -6,7 +6,7 @@ import { DataCanvasContent } from '@/components/canvas/DataCanvasContent'
 import { DocumentCanvasContent } from '@/components/canvas/DocumentCanvasContent'
 import { DevCanvasContent } from '@/components/canvas/DevCanvasContent'
 import { MediaCanvasContent } from '@/components/canvas/MediaCanvasContent'
-import type { CanvasState, CanvasMode } from '@/types/canvas'
+import type { CanvasState, CanvasMode, ScraperCanvasData, DataCanvasData, DocumentCanvasData, DevCanvasData, MediaCanvasData } from '@/types/canvas'
 import { BackButton } from '@/components/BackButton'
 
 export function CanvasPage({ onNavigate }: { onNavigate: (page: string) => void }) {
@@ -43,15 +43,15 @@ export function CanvasPage({ onNavigate }: { onNavigate: (page: string) => void 
   const renderCanvasContent = () => {
     switch (canvasState.mode) {
       case 'scraper':
-        return <ScraperCanvasContent data={canvasState.data as any} />
+        return <ScraperCanvasContent data={canvasState.data as ScraperCanvasData} />
       case 'data':
-        return <DataCanvasContent data={canvasState.data as any} />
+        return <DataCanvasContent data={canvasState.data as DataCanvasData} />
       case 'document':
-        return <DocumentCanvasContent data={canvasState.data as any} />
+        return <DocumentCanvasContent data={canvasState.data as DocumentCanvasData} />
       case 'dev':
-        return <DevCanvasContent data={canvasState.data as any} />
+        return <DevCanvasContent data={canvasState.data as DevCanvasData} />
       case 'media':
-        return <MediaCanvasContent data={canvasState.data as any} />
+        return <MediaCanvasContent data={canvasState.data as MediaCanvasData} />
       default:
         return null
     }
@@ -85,7 +85,7 @@ export function CanvasPage({ onNavigate }: { onNavigate: (page: string) => void 
   )
 }
 
-function getDefaultDataForMode(mode: CanvasMode) {
+function getDefaultDataForMode(mode: CanvasMode): ScraperCanvasData | DataCanvasData | DocumentCanvasData | DevCanvasData | MediaCanvasData | null {
   switch (mode) {
     case 'scraper':
       return {
