@@ -101,16 +101,35 @@ export function CommandBar({ onCommand }: CommandBarProps) {
             <span className="text-primary font-mono text-lg glow-text-gold">{'>'}</span>
           </div>
           
-          <Input
-            id="command-input"
-            value={command}
-            onChange={(e) => setCommand(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            placeholder="Type command... (⌘K to focus)"
-            className="flex-1 font-mono text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
-          />
+          <div className="relative flex-1">
+            <Input
+              id="command-input"
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              placeholder="Type command... (⌘K to focus)"
+              className="w-full font-mono text-sm border-2 border-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
+              style={{
+                background: 'rgba(0, 0, 0, 0.70)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+              }}
+            />
+            <div 
+              className="absolute inset-0 rounded-xl pointer-events-none"
+              style={{
+                padding: '2px',
+                background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
+                WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                WebkitMaskComposite: 'xor',
+                maskComposite: 'exclude',
+                backgroundSize: '200% 200%',
+                animation: 'gradient-shift 3s linear infinite',
+              }}
+            />
+          </div>
           
           <AnimatePresence>
             {command && (

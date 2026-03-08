@@ -74,35 +74,92 @@ export function ScraperPage({ onNavigate }: { onNavigate: (page: string) => void
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  value={config.city}
-                  onChange={(e) => setConfig({ ...config, city: e.target.value })}
-                  placeholder="Tampa"
-                  className="mt-1.5"
-                />
+                <div className="relative mt-1.5">
+                  <Input
+                    id="city"
+                    value={config.city}
+                    onChange={(e) => setConfig({ ...config, city: e.target.value })}
+                    placeholder="Tampa"
+                    className="border-2 border-transparent"
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.70)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                    }}
+                  />
+                  <div 
+                    className="absolute inset-0 rounded-xl pointer-events-none"
+                    style={{
+                      padding: '2px',
+                      background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
+                      WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                      WebkitMaskComposite: 'xor',
+                      maskComposite: 'exclude',
+                      backgroundSize: '200% 200%',
+                      animation: 'gradient-shift 3s linear infinite',
+                    }}
+                  />
+                </div>
               </div>
 
               <div>
                 <Label htmlFor="category">Category</Label>
-                <Input
-                  id="category"
-                  value={config.category}
-                  onChange={(e) => setConfig({ ...config, category: e.target.value })}
-                  placeholder="epoxy contractors"
-                  className="mt-1.5"
-                />
+                <div className="relative mt-1.5">
+                  <Input
+                    id="category"
+                    value={config.category}
+                    onChange={(e) => setConfig({ ...config, category: e.target.value })}
+                    placeholder="epoxy contractors"
+                    className="border-2 border-transparent"
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.70)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                    }}
+                  />
+                  <div 
+                    className="absolute inset-0 rounded-xl pointer-events-none"
+                    style={{
+                      padding: '2px',
+                      background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
+                      WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                      WebkitMaskComposite: 'xor',
+                      maskComposite: 'exclude',
+                      backgroundSize: '200% 200%',
+                      animation: 'gradient-shift 3s linear infinite',
+                    }}
+                  />
+                </div>
               </div>
 
               <div>
                 <Label htmlFor="maxResults">Max Results</Label>
-                <Input
-                  id="maxResults"
-                  type="number"
-                  value={config.maxResults}
-                  onChange={(e) => setConfig({ ...config, maxResults: parseInt(e.target.value) || 50 })}
-                  className="mt-1.5"
-                />
+                <div className="relative mt-1.5">
+                  <Input
+                    id="maxResults"
+                    type="number"
+                    value={config.maxResults}
+                    onChange={(e) => setConfig({ ...config, maxResults: parseInt(e.target.value) || 50 })}
+                    className="border-2 border-transparent"
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.70)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                    }}
+                  />
+                  <div 
+                    className="absolute inset-0 rounded-xl pointer-events-none"
+                    style={{
+                      padding: '2px',
+                      background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
+                      WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                      WebkitMaskComposite: 'xor',
+                      maskComposite: 'exclude',
+                      backgroundSize: '200% 200%',
+                      animation: 'gradient-shift 3s linear infinite',
+                    }}
+                  />
+                </div>
               </div>
 
               <div className="space-y-3">

@@ -81,14 +81,33 @@ Keep it under 150 words, friendly but professional. Include a compelling subject
           <div className="relative">
             <MagnifyingGlass
               size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10"
             />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search leads..."
-              className="pl-10 w-64"
-            />
+            <div className="relative">
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search leads..."
+                className="pl-10 w-64 border-2 border-transparent"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.70)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                }}
+              />
+              <div 
+                className="absolute inset-0 rounded-xl pointer-events-none"
+                style={{
+                  padding: '2px',
+                  background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
+                  WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                  WebkitMaskComposite: 'xor',
+                  maskComposite: 'exclude',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradient-shift 3s linear infinite',
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

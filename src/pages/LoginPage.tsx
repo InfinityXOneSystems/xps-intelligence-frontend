@@ -115,22 +115,35 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               <Label htmlFor="email" className="text-foreground font-medium text-center block">
                 Email
               </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-                style={{
-                  background: 'var(--input)',
-                  backdropFilter: 'blur(16px)',
-                  WebkitBackdropFilter: 'blur(16px)',
-                  borderColor: 'var(--border)',
-                }}
-                className="h-12 text-foreground text-center placeholder:text-muted-foreground border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.70)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                  }}
+                  className="h-12 text-foreground text-center placeholder:text-muted-foreground border-2 border-transparent transition-all duration-200 disabled:opacity-50"
+                  required
+                />
+                <div 
+                  className="absolute inset-0 rounded-xl pointer-events-none"
+                  style={{
+                    padding: '2px',
+                    background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
+                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                    WebkitMaskComposite: 'xor',
+                    maskComposite: 'exclude',
+                    backgroundSize: '200% 200%',
+                    animation: 'gradient-shift 3s linear infinite',
+                  }}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -138,34 +151,47 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 Password
               </Label>
               <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
-                  style={{
-                    background: 'var(--input)',
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)',
-                    borderColor: 'var(--border)',
-                  }}
-                  className="h-12 text-foreground text-center placeholder:text-muted-foreground pr-12 border-2 transition-all duration-200 hover:border-[oklch(0.88_0.20_95)] hover:shadow-[0_0_20px_rgba(255,223,0,0.25)] focus-visible:border-[oklch(0.90_0.21_93)] focus-visible:shadow-[0_0_28px_rgba(255,223,0,0.35)] disabled:opacity-50"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLoading}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gold transition-colors disabled:opacity-50"
-                >
-                  {showPassword ? (
-                    <EyeSlash size={20} weight="regular" />
-                  ) : (
-                    <Eye size={20} weight="regular" />
-                  )}
-                </button>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.70)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                    }}
+                    className="h-12 text-foreground text-center placeholder:text-muted-foreground pr-12 border-2 border-transparent transition-all duration-200 disabled:opacity-50"
+                    required
+                  />
+                  <div 
+                    className="absolute inset-0 rounded-xl pointer-events-none"
+                    style={{
+                      padding: '2px',
+                      background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
+                      WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                      WebkitMaskComposite: 'xor',
+                      maskComposite: 'exclude',
+                      backgroundSize: '200% 200%',
+                      animation: 'gradient-shift 3s linear infinite',
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gold transition-colors disabled:opacity-50 z-10"
+                  >
+                    {showPassword ? (
+                      <EyeSlash size={20} weight="regular" />
+                    ) : (
+                      <Eye size={20} weight="regular" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
