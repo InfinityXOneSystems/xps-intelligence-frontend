@@ -8,6 +8,11 @@ import { BackButton } from '@/components/BackButton'
 import { useLeads } from '@/hooks/useLeadsApi'
 import type { Lead } from '@/types/lead'
 
+// Pre-compute static trend data at module load (simulated sparkline data)
+const STATIC_TREND_DATA = Array.from({ length: 12 }, (_, i) => ({
+  value: Math.floor(35 + (i * 6.5) + Math.random() * 8)
+}))
+
 interface DashboardPageProps {
   onNavigate: (page: string) => void
 }
@@ -32,11 +37,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     }
   }, [leads])
 
-  const trendData = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => ({
-      value: Math.floor(35 + (i * 6.5) + Math.random() * 8)
-    }))
-  }, [])
+  const trendData = STATIC_TREND_DATA
 
   const unansweredLeads = useMemo(() => {
     return [...leads]
@@ -47,7 +48,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   const handleShareEmail = (lead: Lead) => {
     const subject = encodeURIComponent(`Re: ${lead.company}`)
     const body = encodeURIComponent(`Hi ${lead.company},\n\nI wanted to reach out regarding...`)
-    window.location.href = `mailto:info@infinityxonesystems@gmail.com?subject=${subject}&body=${body}`
+    window.open(`mailto:info@infinityxonesystems@gmail.com?subject=${subject}&body=${body}`, '_self')
     toast.success('Email draft opened')
   }
 

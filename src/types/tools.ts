@@ -123,6 +123,19 @@ export interface AgentSettings {
     crmExportEnabled: boolean
   }
   integrations: {
+    // Named API keys for supported providers
+    groqApiKey: string
+    openaiApiKey: string
+    anthropicApiKey: string
+    geminiApiKey: string
+    awsAccessKeyId: string
+    awsSecretAccessKey: string
+    awsRegion: string
+    gcpProjectId: string
+    gcpApiKey: string
+    cloudflareAccountId: string
+    cloudflareApiToken: string
+    // Generic additional keys
     apiKeys: Record<string, string>
     oauthConnectors: string[]
     tokenVaultEnabled: boolean

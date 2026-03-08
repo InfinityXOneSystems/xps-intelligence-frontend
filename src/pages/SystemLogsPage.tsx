@@ -170,6 +170,7 @@ export function SystemLogsPage({ onNavigate }: SystemLogsPageProps) {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refreshLogs()
     const interval = setInterval(refreshLogs, 1500)
     return () => clearInterval(interval)

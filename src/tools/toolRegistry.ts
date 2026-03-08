@@ -409,6 +409,17 @@ export const DEFAULT_SETTINGS: AgentSettings = {
     crmExportEnabled: true,
   },
   integrations: {
+    groqApiKey: '',
+    openaiApiKey: '',
+    anthropicApiKey: '',
+    geminiApiKey: '',
+    awsAccessKeyId: '',
+    awsSecretAccessKey: '',
+    awsRegion: 'us-east-1',
+    gcpProjectId: '',
+    gcpApiKey: '',
+    cloudflareAccountId: '',
+    cloudflareApiToken: '',
     apiKeys: {},
     oauthConnectors: [],
     tokenVaultEnabled: false,
@@ -419,7 +430,15 @@ export function loadSettings(): AgentSettings {
   try {
     const stored = localStorage.getItem(SETTINGS_KEY)
     if (stored) {
-      return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) }
+      const parsed = JSON.parse(stored) as Partial<AgentSettings>
+      return {
+        ...DEFAULT_SETTINGS,
+        ...parsed,
+        integrations: {
+          ...DEFAULT_SETTINGS.integrations,
+          ...(parsed.integrations ?? {}),
+        },
+      }
     }
   } catch {
     // ignore parse errors
