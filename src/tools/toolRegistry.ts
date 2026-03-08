@@ -430,14 +430,17 @@ export function loadSettings(): AgentSettings {
   try {
     const stored = localStorage.getItem(SETTINGS_KEY)
     if (stored) {
-      const parsed = JSON.parse(stored) as Partial<AgentSettings>
-      return {
-        ...DEFAULT_SETTINGS,
-        ...parsed,
-        integrations: {
-          ...DEFAULT_SETTINGS.integrations,
-          ...(parsed.integrations ?? {}),
-        },
+      const parsed = JSON.parse(stored)
+      if (parsed && typeof parsed === 'object') {
+        const typed = parsed as Partial<AgentSettings>
+        return {
+          ...DEFAULT_SETTINGS,
+          ...typed,
+          integrations: {
+            ...DEFAULT_SETTINGS.integrations,
+            ...(typed.integrations ?? {}),
+          },
+        }
       }
     }
   } catch {

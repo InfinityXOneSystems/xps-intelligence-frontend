@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import {
   Brain,
@@ -647,6 +647,20 @@ function ApiKeyRow({
   onChange: (v: string) => void
 }) {
   const [visible, setVisible] = useState(false)
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const toggle = () => {
+    setVisible((prev) => {
+      const next = !prev
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+      if (next) {
+        // Auto-hide key after 30 seconds for security
+        hideTimerRef.current = setTimeout(() => setVisible(false), 30_000)
+      }
+      return next
+    })
+  }
+
   return (
     <div className="flex items-center justify-between py-3 border-b border-white/8 last:border-0">
       <div className="flex-1 mr-4">
@@ -662,9 +676,9 @@ function ApiKeyRow({
           placeholder={placeholder ?? 'sk-…'}
         />
         <button
-          onClick={() => setVisible((v) => !v)}
+          onClick={toggle}
           className="text-white/30 hover:text-white/70 transition-colors text-xs px-1"
-          title={visible ? 'Hide' : 'Show'}
+          title={visible ? 'Hide (auto-hides in 30s)' : 'Show'}
         >
           {visible ? '🙈' : '👁'}
         </button>
