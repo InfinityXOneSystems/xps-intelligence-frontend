@@ -2,17 +2,18 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Users, TrendUp, ChartLine, CurrencyDollar, Phone, Envelope, ChatCircleText, ArrowUp, CaretUp, CaretDown } from '@phosphor-icons/react'
 import { LineChart, Line, ResponsiveContainer, AreaChart, Area } from 'recharts'
-import type { Lead } from '@/types/lead'
 import { toast } from 'sonner'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { BackButton } from '@/components/BackButton'
+import { useLeads } from '@/hooks/useLeadsApi'
+import type { Lead } from '@/types/lead'
 
 interface DashboardPageProps {
-  leads: Lead[]
   onNavigate: (page: string) => void
 }
 
-export function DashboardPage({ leads, onNavigate }: DashboardPageProps) {
+export function DashboardPage({ onNavigate }: DashboardPageProps) {
+  const { data: leads = [] } = useLeads()
   const isMobile = useIsMobile()
   const [metricOrder, setMetricOrder] = useState(['unansweredLeads', 'aPlusOpportunities', 'responseRate', 'revenuePipeline'])
 

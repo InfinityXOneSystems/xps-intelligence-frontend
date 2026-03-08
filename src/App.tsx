@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useKV } from '@github/spark/hooks'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/hooks/use-theme'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -17,36 +16,54 @@ import { SettingsPage } from '@/pages/SettingsPage'
 import { ProspectsPage } from '@/pages/ProspectsPage'
 import { LeaderboardPage } from '@/pages/LeaderboardPage'
 import { RoadmapPage } from '@/pages/RoadmapPage'
-import { mockLeads } from '@/lib/mockData'
-import type { Lead } from '@/types/lead'
+import { useLeads } from '@/hooks/useLeadsApi'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
   const [showChat, setShowChat] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [leads, setLeads] = useKV<Lead[]>('leads-data', mockLeads)
   const isMobile = useIsMobile()
-
-  const handleUpdateLead = (updatedLead: Lead) => {
-    setLeads((currentLeads) => 
-      (currentLeads || []).map((lead) => (lead.id === updatedLead.id ? updatedLead : lead))
-    )
-  }
-
-  const handleDeleteLead = (id: string) => {
-    setLeads((currentLeads) => (currentLeads || []).filter((lead) => lead.id !== id))
-  }
+  
+  const { data: leads = [], isLoading, error } = useLeads()
 
   const renderPage = () => {
-    const safeLeads = leads || []
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading leads...</p>
+          </div>
+        </div>
+      )
+    }
+
+    if (error) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center max-w-md">
+            <p className="text-destructive mb-4">Failed to connect to API</p>
+            <p className="text-sm text-muted-foreground mb-4">
+              Make sure your backend server is running at {import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}
+            </p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )
+    }
     
     switch (currentPage) {
       case 'home':
-        return <HomePage leads={safeLeads} onNavigate={setCurrentPage} />
+        return <HomePage onNavigate={setCurrentPage} />
       case 'dashboard':
-        return <DashboardPage leads={safeLeads} onNavigate={setCurrentPage} />
+        return <DashboardPage onNavigate={setCurrentPage} />
       case 'leads':
-        return <LeadsPage leads={safeLeads} onUpdateLead={handleUpdateLead} onDeleteLead={handleDeleteLead} onNavigate={setCurrentPage} />
+        return <LeadsPage onNavigate={setCurrentPage} />
       case 'prospects':
         return <ProspectsPage onNavigate={setCurrentPage} />
       case 'scraper':
@@ -56,13 +73,13 @@ function App() {
       case 'pipeline':
         return <PlaceholderPage title="Sales Pipeline" description="Track deals through your sales funnel" onNavigate={setCurrentPage} />
       case 'leaderboard':
-        return <LeaderboardPage leads={safeLeads} onNavigate={setCurrentPage} />
+        return <LeaderboardPage onNavigate={setCurrentPage} />
       case 'roadmap':
         return <RoadmapPage onNavigate={setCurrentPage} />
       case 'settings':
         return <SettingsPage onNavigate={setCurrentPage} />
       default:
-        return <HomePage leads={safeLeads} onNavigate={setCurrentPage} />
+        return <HomePage onNavigate={setCurrentPage} />
     }
   }
 

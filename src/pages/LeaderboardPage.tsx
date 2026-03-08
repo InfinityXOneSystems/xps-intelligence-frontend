@@ -2,11 +2,10 @@ import { motion } from 'framer-motion'
 import { BackButton } from '@/components/BackButton'
 import { Trophy, Medal, Crown } from '@phosphor-icons/react'
 import { Card } from '@/components/ui/card'
-import { useKV } from '@github/spark/hooks'
+import { useLeads } from '@/hooks/useLeadsApi'
 import type { Lead } from '@/types/lead'
 
 interface LeaderboardPageProps {
-  leads: Lead[]
   onNavigate: (page: string) => void
 }
 
@@ -18,7 +17,8 @@ interface RepStats {
   totalRevenue: number
 }
 
-export function LeaderboardPage({ leads, onNavigate }: LeaderboardPageProps) {
+export function LeaderboardPage({ onNavigate }: LeaderboardPageProps) {
+  const { data: leads = [] } = useLeads()
   const repStats: RepStats[] = []
 
   const statsByRep = leads.reduce((acc, lead) => {

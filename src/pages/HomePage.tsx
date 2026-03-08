@@ -2,14 +2,15 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Phone, Envelope, Star, Clock, TrendUp } from '@phosphor-icons/react'
-import type { Lead } from '@/types/lead'
+import { useLeads } from '@/hooks/useLeadsApi'
 
 interface HomePageProps {
-  leads: Lead[]
   onNavigate: (page: string) => void
 }
 
-export function HomePage({ leads, onNavigate }: HomePageProps) {
+export function HomePage({ onNavigate }: HomePageProps) {
+  const { data: leads = [] } = useLeads()
+  
   const greenLeads = leads.filter(lead => lead.priority === 'green')
   const yellowLeads = leads.filter(lead => lead.priority === 'yellow')
   const redLeads = leads.filter(lead => lead.priority === 'red')

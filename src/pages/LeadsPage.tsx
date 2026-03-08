@@ -10,11 +10,9 @@ import type { Lead, LeadRating } from '@/types/lead'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { BackButton } from '@/components/BackButton'
+import { useLeads, useDeleteLead } from '@/hooks/useLeadsApi'
 
 interface LeadsPageProps {
-  leads: Lead[]
-  onUpdateLead?: (lead: Lead) => void
-  onDeleteLead?: (id: string) => void
   onNavigate: (page: string) => void
 }
 
@@ -27,7 +25,9 @@ const ratingColors: Record<LeadRating, string> = {
   'D': 'bg-red-500/20 text-red-500 border-red-500/30'
 }
 
-export function LeadsPage({ leads, onUpdateLead, onDeleteLead, onNavigate }: LeadsPageProps) {
+export function LeadsPage({ onNavigate }: LeadsPageProps) {
+  const { data: leads = [] } = useLeads()
+  const deleteLead = useDeleteLead()
   const [search, setSearch] = useState('')
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
 
@@ -44,8 +44,7 @@ export function LeadsPage({ leads, onUpdateLead, onDeleteLead, onNavigate }: Lea
   }, [leads, search])
 
   const handleDelete = (id: string) => {
-    onDeleteLead?.(id)
-    toast.success('Lead deleted successfully')
+    deleteLead.mutate(id)
   }
 
   const handleGenerateEmail = async (lead: Lead) => {
