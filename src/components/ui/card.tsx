@@ -7,13 +7,34 @@ function Card({ className, ...props }: ComponentProps<"div">) {
     <div
       data-slot="card"
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-[18px] border-2 border-border-subtle py-6 backdrop-blur-[40px] saturate-[200%]",
+        "bg-card text-card-foreground flex flex-col gap-6 rounded-[18px] border-2 border-border-subtle py-6 backdrop-blur-[40px] saturate-[200%] relative group",
         "shadow-[0_8px_32px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.05)]",
-        "transition-all duration-300 hover:border-border-hover hover:shadow-[0_12px_40px_rgba(0,0,0,0.18),0_0_30px_rgba(212,175,55,0.15),inset_0_1px_0_rgba(212,175,55,0.1)]",
+        "transition-all duration-300",
         className
       )}
       {...props}
-    />
+    >
+      <div 
+        className="absolute inset-[-2px] rounded-[18px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-[1]" 
+        style={{ 
+          background: 'linear-gradient(90deg, var(--gold-1), var(--gold-2), var(--gold-3), var(--gold-1))',
+          backgroundSize: '300% 100%',
+          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+          padding: '2px',
+          animation: 'gold-gradient-shift 3s ease-in-out infinite',
+        }}
+      />
+      <div 
+        className="absolute inset-0 rounded-[18px] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-500 z-0"
+        style={{
+          boxShadow: '0 0 30px rgba(212, 175, 55, 0.3), 0 0 60px rgba(212, 175, 55, 0.15)',
+          animation: 'gold-glow-pulse 2s ease-in-out infinite',
+        }}
+      />
+      {props.children}
+    </div>
   )
 }
 

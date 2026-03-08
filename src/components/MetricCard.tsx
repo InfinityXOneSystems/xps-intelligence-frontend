@@ -57,21 +57,22 @@ export function MetricCard({ title, value, change, icon, delay = 0 }: MetricCard
       }}
     >
       <div 
-        className="absolute inset-[-2px] rounded-[18px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
+        className="absolute inset-[-2px] rounded-[18px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" 
         style={{ 
-          background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
-          backgroundSize: '200% 200%',
+          background: 'linear-gradient(90deg, var(--gold-1), var(--gold-2), var(--gold-3), var(--gold-1))',
+          backgroundSize: '300% 100%',
           WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
           WebkitMaskComposite: 'xor',
           maskComposite: 'exclude',
           padding: '2px',
-          animation: 'gradient-shift 3s linear infinite',
+          animation: 'gold-gradient-shift 3s ease-in-out infinite',
         }}
       />
       <div 
-        className="absolute inset-0 rounded-[18px] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300"
+        className="absolute inset-0 rounded-[18px] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-500"
         style={{
-          background: 'linear-gradient(135deg, rgba(212,175,55,0.05) 0%, transparent 50%, rgba(192,192,192,0.03) 100%)',
+          boxShadow: '0 0 30px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.2)',
+          animation: 'gold-glow-pulse 2s ease-in-out infinite',
         }}
       />
       

@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-white shadow-[0_2px_12px_rgba(239,68,68,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] hover:bg-destructive/90 hover:scale-[1.02] focus-visible:ring-destructive/20",
         outline:
-          "border-2 border-border bg-background/50 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:bg-muted hover:border-border-hover hover:shadow-[0_4px_16px_rgba(212,175,55,0.2)]",
+          "border-2 border-border bg-background/50 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:bg-muted hover:shadow-[0_4px_16px_rgba(212,175,55,0.2)] group/btn relative after:absolute after:inset-[-2px] after:rounded-xl after:opacity-0 after:transition-opacity after:duration-500 hover:after:opacity-100 after:pointer-events-none after:bg-[linear-gradient(90deg,var(--gold-1),var(--gold-2),var(--gold-3),var(--gold-1))] after:bg-[length:300%_100%] after:[animation:gold-gradient-shift_3s_ease-in-out_infinite] after:[mask:linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)] after:[mask-composite:exclude] after:p-[2px] after:-z-10",
         secondary:
           "bg-secondary/20 text-secondary-foreground shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.05)] hover:bg-secondary/30 border border-border hover:scale-[1.02]",
         ghost:

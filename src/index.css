@@ -56,6 +56,10 @@
   --input: oklch(0.80 0.05 75);
   --ring: oklch(0.58 0.15 65);
   
+  --gold-1: oklch(0.905 0.182 98.111);
+  --gold-2: oklch(0.850 0.165 85.000);
+  --gold-3: oklch(0.920 0.190 105.000);
+  
   --radius: 1rem;
   
   --glow-green: 0 0 40px rgba(34, 197, 94, 0.25), 0 0 15px rgba(34, 197, 94, 0.15);
@@ -196,6 +200,9 @@ body {
   --color-border-subtle: var(--border-subtle);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-gold-1: var(--gold-1);
+  --color-gold-2: var(--gold-2);
+  --color-gold-3: var(--gold-3);
   
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: var(--radius);
@@ -256,4 +263,40 @@ body {
 .priority-red {
   border-left: 4px solid oklch(0.65 0.24 25);
   box-shadow: var(--glow-red);
+}
+
+@keyframes gold-gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes gold-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), 0 0 40px rgba(212, 175, 55, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.6), 0 0 60px rgba(212, 175, 55, 0.3);
+  }
+}
+
+.gold-border-animated {
+  position: relative;
+  border: 2px solid transparent;
+  background: linear-gradient(var(--background), var(--background)) padding-box,
+              linear-gradient(90deg, var(--gold-1), var(--gold-2), var(--gold-3), var(--gold-1)) border-box;
+  background-size: 300% 100%;
+  animation: gold-gradient-shift 3s ease-in-out infinite;
+}
+
+.gold-border-animated-glow {
+  position: relative;
+  border: 2px solid transparent;
+  background: linear-gradient(var(--background), var(--background)) padding-box,
+              linear-gradient(90deg, var(--gold-1), var(--gold-2), var(--gold-3), var(--gold-1)) border-box;
+  background-size: 300% 100%;
+  animation: gold-gradient-shift 3s ease-in-out infinite, gold-glow-pulse 2s ease-in-out infinite;
 }
