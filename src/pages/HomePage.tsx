@@ -1,6 +1,9 @@
+import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Badge } from '@/components/ui/badge'
 import { 
   Users, 
   Robot, 
@@ -12,9 +15,16 @@ import {
   ArrowRight,
   TrendUp,
   Phone,
-  EnvelopeSimple
+  EnvelopeSimple,
+  Bell,
+  Lightning
 } from '@phosphor-icons/react'
+import { ActivityFeed } from '@/components/ActivityFeed'
+import { NotificationPanel } from '@/components/NotificationPanel'
+import { generateMockActivities, generateMockNotifications } from '@/lib/activityGenerator'
+import { useKV } from '@github/spark/hooks'
 import type { Lead } from '@/types/lead'
+import type { Activity, Notification } from '@/types/activity'
 
 interface HomePageProps {
   leads: Lead[]
@@ -22,6 +32,10 @@ interface HomePageProps {
 }
 
 export function HomePage({ leads, onNavigate }: HomePageProps) {
+  const [activities, setActivities] = useKV<Activity[]>('home-activities', [])
+  const [notifications, setNotifications] = useKV<Notification[]>('home-notifications', [])
+  const [activeTab, setActiveTab] = useState<'activity' | 'notifications'>('activity')
+  
   const aLeads = leads.filter(lead => lead.rating === 'A+' || lead.rating === 'A')
   const unansweredLeads = leads.slice(0, 5)
   
@@ -45,6 +59,64 @@ export function HomePage({ leads, onNavigate }: HomePageProps) {
     { label: 'Team', icon: UserList, page: 'team', desc: 'Team Management' },
     { label: 'Pipeline', icon: FunnelSimple, page: 'pipeline', desc: 'Sales Funnel' },
   ]
+  
+  const unreadCount = useMemo(() => 
+    (notifications || []).filter(n => !n.read).length,
+    [notifications]
+  )
+  
+  useEffect(() => {
+    if (leads.length > 0 && (!activities || activities.length === 0)) {
+      setActivities(() => generateMockActivities(leads))
+    }
+  }, [leads, activities, setActivities])
+  
+  useEffect(() => {
+    if (!notifications || notifications.length === 0) {
+      setNotifications(() => generateMockNotifications())
+    }
+  }, [notifications, setNotifications])
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Math.random() > 0.7) {
+        const newActivity: Activity = {
+          id: `activity-realtime-${Date.now()}`,
+          type: 'lead_added',
+          title: 'New lead discovered',
+          description: 'Fresh opportunity added to pipeline',
+          timestamp: Date.now()
+        }
+        setActivities((current) => [newActivity, ...(current || [])].slice(0, 50))
+      }
+    }, 30000)
+    
+    return () => clearInterval(interval)
+  }, [setActivities])
+  
+  const handleActivityClick = (activity: Activity) => {
+    if (activity.leadId) {
+      onNavigate('leads')
+    }
+  }
+  
+  const handleNotificationRead = (id: string) => {
+    setNotifications((current) => 
+      (current || []).map(n => n.id === id ? { ...n, read: true } : n)
+    )
+  }
+  
+  const handleNotificationClick = (notification: Notification) => {
+    if (notification.actionUrl) {
+      onNavigate(notification.actionUrl)
+    }
+  }
+  
+  const handleClearAllNotifications = () => {
+    setNotifications((current) => 
+      (current || []).map(n => ({ ...n, read: true }))
+    )
+  }
 
   return (
     <motion.div
@@ -158,31 +230,41 @@ export function HomePage({ leads, onNavigate }: HomePageProps) {
       </div>
 
       <Card className="glass-panel p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-foreground">System Status</h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Scraper', status: 'Ready', color: 'text-success' },
-            { label: 'Pipeline', status: 'Active', color: 'text-success' },
-            { label: 'AI Agent', status: 'Online', color: 'text-success' },
-            { label: 'Database', status: 'Synced', color: 'text-success' },
-          ].map((item, index) => (
-            <motion.div
-              key={item.label}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="flex items-center gap-3 p-3 rounded-lg bg-muted"
-            >
-              <div className={`w-2 h-2 rounded-full ${item.color} animate-pulse`} />
-              <div>
-                <div className="text-xs text-muted-foreground">{item.label}</div>
-                <div className="text-sm font-semibold text-foreground">{item.status}</div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'activity' | 'notifications')}>
+          <div className="flex items-center justify-between mb-6">
+            <TabsList className="glass-card">
+              <TabsTrigger value="activity" className="data-[state=active]:bg-gold data-[state=active]:text-background">
+                <Lightning size={16} weight="bold" className="mr-2" />
+                Activity Feed
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="data-[state=active]:bg-gold data-[state=active]:text-background relative">
+                <Bell size={16} weight="bold" className="mr-2" />
+                Notifications
+                {unreadCount > 0 && (
+                  <Badge className="ml-2 bg-[oklch(0.40_0.12_20)] text-white px-1.5 py-0 text-xs">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          
+          <TabsContent value="activity" className="mt-0">
+            <ActivityFeed 
+              activities={activities || []} 
+              onActivityClick={handleActivityClick}
+            />
+          </TabsContent>
+          
+          <TabsContent value="notifications" className="mt-0">
+            <NotificationPanel
+              notifications={notifications || []}
+              onNotificationRead={handleNotificationRead}
+              onNotificationClick={handleNotificationClick}
+              onClearAll={handleClearAllNotifications}
+            />
+          </TabsContent>
+        </Tabs>
       </Card>
     </motion.div>
   )
