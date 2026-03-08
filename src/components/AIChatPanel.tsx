@@ -171,25 +171,38 @@ Provide a helpful, concise response. If they ask to find leads, suggest searchin
 
       <div className="p-4 border-t border-border-subtle">
         <div className="flex gap-2 items-center">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                handleSend()
-              }
-            }}
-            placeholder="Ask Lead Sniper..."
-            className="flex-1 text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-offset-0 px-4 py-3 rounded-xl"
-            style={{
-              background: 'rgba(0, 0, 0, 0.70)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid oklch(0.42 0.14 20)',
-            }}
-            disabled={isLoading}
-          />
+          <div className="relative flex-1">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleSend()
+                }
+              }}
+              placeholder="Ask Lead Sniper..."
+              className="w-full text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-offset-0 px-4 py-3 rounded-xl border-2 border-transparent"
+              style={{
+                background: 'rgba(0, 0, 0, 0.70)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+              }}
+              disabled={isLoading}
+            />
+            <div 
+              className="absolute inset-0 rounded-xl pointer-events-none"
+              style={{
+                padding: '2px',
+                background: 'linear-gradient(135deg, var(--gradient-gold-start) 0%, var(--gradient-gold-mid) 25%, var(--gradient-silver-start) 50%, var(--gradient-gold-mid) 75%, var(--gradient-gold-start) 100%)',
+                WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                WebkitMaskComposite: 'xor',
+                maskComposite: 'exclude',
+                backgroundSize: '200% 200%',
+                animation: 'gradient-shift 3s linear infinite',
+              }}
+            />
+          </div>
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
