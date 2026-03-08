@@ -62,13 +62,13 @@ export function AIChatPanel({ onClose }: AIChatPanelProps) {
     setIsLoading(true)
 
     try {
-      const prompt = window.spark.llmPrompt`You are Lead Sniper, an AI assistant for contractor sales and lead generation. 
+      const promptText = `You are Lead Sniper, an AI assistant for contractor sales and lead generation. 
       
 User query: ${input}
 
 Provide a helpful, concise response. If they ask to find leads, suggest searching the leads database. If they ask to generate an email, provide a professional contractor outreach email template. Keep responses under 3 paragraphs.`
-
-      const response = await window.spark.llm(prompt, 'gpt-4o-mini')
+      
+      const response = await window.spark.llm(promptText, 'gpt-4o-mini')
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),

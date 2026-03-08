@@ -50,7 +50,7 @@ export function LeadsPage({ onNavigate }: LeadsPageProps) {
   const handleGenerateEmail = async (lead: Lead) => {
     toast.info('Generating email...')
     try {
-      const prompt = window.spark.llmPrompt`Generate a professional contractor outreach email for:
+      const promptText = `Generate a professional contractor outreach email for:
       
 Company: ${lead.company}
 City: ${lead.city}
@@ -58,7 +58,7 @@ Category: ${lead.category || 'contractor'}
 
 Keep it under 150 words, friendly but professional. Include a compelling subject line.`
 
-      const email = await window.spark.llm(prompt, 'gpt-4o-mini')
+      const email = await window.spark.llm(promptText, 'gpt-4o-mini')
       toast.success('Email generated! Check AI chat panel.')
       console.log(email)
     } catch (error) {
