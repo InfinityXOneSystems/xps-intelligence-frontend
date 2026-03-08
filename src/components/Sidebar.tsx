@@ -8,7 +8,9 @@ import {
   MapTrifold,
   Robot, 
   GearSix,
-  Square
+  Square,
+  Brain,
+  Scroll
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
@@ -29,8 +31,10 @@ const primaryMenuItems = [
 ]
 
 const utilityMenuItems = [
+  { id: 'agent', label: 'Agent', icon: Brain },
   { id: 'scraper', label: 'Scraper', icon: Robot },
   { id: 'canvas', label: 'Canvas', icon: Square },
+  { id: 'logs', label: 'System Logs', icon: Scroll },
   { id: 'settings', label: 'Settings', icon: GearSix }
 ]
 

@@ -32,6 +32,27 @@ const CrosshairIcon = () => (
   </svg>
 )
 
+const AGENT_COMMANDS = [
+  'scrape epoxy companies Orlando',
+  'generate outreach email',
+  'build analytics dashboard',
+  'deploy backend',
+  'analyze leads',
+]
+
+const isAgentCommand = (text: string): boolean => {
+  const lower = text.toLowerCase()
+  return (
+    lower.startsWith('scrape ') ||
+    lower.startsWith('deploy ') ||
+    lower.startsWith('build ') ||
+    lower.includes('generate') ||
+    lower.includes('analyze leads') ||
+    lower.includes('run scraper') ||
+    lower.includes('github action')
+  )
+}
+
 interface Message {
   id: string
   role: 'user' | 'assistant'
@@ -323,6 +344,7 @@ Provide a helpful response. If the task requires a tool, call it. Keep the expla
         <div className="flex items-center gap-2">
           <CrosshairIcon />
           <h2 className="font-bold text-foreground">Lead Sniper</h2>
+          <Badge variant="outline" className="text-xs">AI Agent</Badge>
         </div>
         <div className="flex items-center gap-1">
           {onClose && (
@@ -441,7 +463,7 @@ Provide a helpful response. If the task requires a tool, call it. Keep the expla
                   handleSend()
                 }
               }}
-              placeholder="Ask Lead Sniper..."
+              placeholder="Ask or run a command..."
               className="w-full text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-offset-0 px-4 py-3 rounded-xl border-2 border-transparent"
               style={{
                 background: 'rgba(0, 0, 0, 0.70)',
