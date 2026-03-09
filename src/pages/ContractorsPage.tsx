@@ -130,12 +130,13 @@ export function ContractorsPage({ onNavigate }: ContractorsPageProps) {
   const [statusFilter, setStatusFilter] = useState('all')
   const [view, setView] = useState<'table' | 'cards'>('table')
 
+  const searchLower = search.toLowerCase()
   const filtered = MOCK_CONTRACTORS.filter(c => {
     const matchSearch =
       !search ||
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.company.toLowerCase().includes(search.toLowerCase()) ||
-      c.email.toLowerCase().includes(search.toLowerCase())
+      c.name.toLowerCase().includes(searchLower) ||
+      c.company.toLowerCase().includes(searchLower) ||
+      c.email.toLowerCase().includes(searchLower)
     const matchStatus = statusFilter === 'all' || c.status === statusFilter
     return matchSearch && matchStatus
   })

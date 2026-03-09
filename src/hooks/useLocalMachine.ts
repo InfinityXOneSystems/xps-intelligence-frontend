@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react'
 import { machineApi, type FileEntry, type SystemInfo, type DockerContainer } from '@/services/api/machine'
 import { toast } from 'sonner'
 
+const MAX_OUTPUT_CHARS = 50_000
+
 export function useLocalMachine() {
   const [currentPath, setCurrentPath] = useState('/')
   const [files, setFiles] = useState<FileEntry[]>([])
@@ -28,7 +30,13 @@ export function useLocalMachine() {
   const executeCommand = useCallback(async (command: string, cwd?: string) => {
     try {
       const result = await machineApi.executeCommand(command, cwd)
-      setCommandOutput(prev => prev + `\n$ ${command}\n${result.output}`)
+      setCommandOutput(prev => {
+        const appended = prev + `\n$ ${command}\n${result.output}`
+        // Trim oldest output to stay within limit
+        return appended.length > MAX_OUTPUT_CHARS
+          ? appended.slice(appended.length - MAX_OUTPUT_CHARS)
+          : appended
+      })
       return result
     } catch (err) {
       console.error('Command execution failed:', err)

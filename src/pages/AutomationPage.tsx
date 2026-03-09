@@ -106,20 +106,18 @@ export function AutomationPage({ onNavigate }: AutomationPageProps) {
   const [workflows, setWorkflows] = useState<Workflow[]>(MOCK_WORKFLOWS)
 
   const toggleWorkflow = (id: string) => {
-    const workflow = workflows.find(w => w.id === id)
-    const willEnable = !workflow?.enabled
     setWorkflows(prev =>
-      prev.map(w =>
-        w.id === id
-          ? {
-              ...w,
-              enabled: !w.enabled,
-              status: (!w.enabled ? 'active' : 'paused') as Workflow['status'],
-            }
-          : w
-      )
+      prev.map(w => {
+        if (w.id !== id) return w
+        const willEnable = !w.enabled
+        toast.success(willEnable ? 'Workflow enabled' : 'Workflow paused')
+        return {
+          ...w,
+          enabled: willEnable,
+          status: (willEnable ? 'active' : 'paused') as Workflow['status'],
+        }
+      })
     )
-    toast.success(willEnable ? 'Workflow enabled' : 'Workflow paused')
   }
 
   const runWorkflow = (id: string) => {

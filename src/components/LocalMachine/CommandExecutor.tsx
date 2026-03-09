@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useLocalMachine } from '@/hooks/useLocalMachine'
 
+const MAX_HISTORY_SIZE = 50
+
 const SAMPLE_COMMANDS = [
   'ls -la',
   'pwd',
@@ -30,7 +32,7 @@ export function CommandExecutor() {
 
   const handleRun = async () => {
     if (!command.trim()) return
-    setHistory(prev => [command, ...prev.slice(0, 49)])
+    setHistory(prev => [command, ...prev.slice(0, MAX_HISTORY_SIZE - 1)])
     setHistoryIndex(-1)
     await executeCommand(command)
     setCommand('')
