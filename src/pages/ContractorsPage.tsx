@@ -438,6 +438,23 @@ export function ContractorsPage({ onNavigate }: ContractorsPageProps) {
   )
 }
 
+// ─── View Mode Options ────────────────────────────────────────────────────────
+
+const VIEW_MODES: { mode: ViewMode; label: string }[] = [
+  { mode: 'list', label: 'List' },
+  { mode: 'card', label: 'Card' },
+  { mode: 'table', label: 'Table' },
+  { mode: 'kanban', label: 'Kanban' },
+]
+
+// ─── Data Source Options ─────────────────────────────────────────────────────
+
+const DATA_SOURCES: { key: 'google' | 'yelp' | 'directories'; label: string }[] = [
+  { key: 'google', label: 'Google Maps' },
+  { key: 'yelp', label: 'Yelp' },
+  { key: 'directories', label: 'Business Directories' },
+]
+
 // ─── Tab 1: Contractors Database ─────────────────────────────────────────────
 
 function DatabaseTab() {
@@ -521,13 +538,16 @@ function DatabaseTab() {
           </div>
           <Button variant="outline" size="sm"><Funnel size={14} className="mr-1.5" />Filters</Button>
           <div className="flex items-center border border-border rounded-lg overflow-hidden">
-            {([['list', <List key="l" size={14} />], ['card', <SquaresFour key="c" size={14} />], ['table', <Table key="t" size={14} />], ['kanban', <Kanban key="k" size={14} />]] as [ViewMode, React.ReactNode][]).map(([mode, icon]) => (
-              <button
-                key={mode}
-                onClick={() => setViewMode(mode)}
-                className={cn('px-2.5 py-1.5 transition-colors', viewMode === mode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted')}
-              >{icon}</button>
-            ))}
+            {VIEW_MODES.map(({ mode }) => {
+              const ViewIcon = mode === 'list' ? List : mode === 'card' ? SquaresFour : mode === 'table' ? Table : Kanban
+              return (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  className={cn('px-2.5 py-1.5 transition-colors', viewMode === mode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted')}
+                ><ViewIcon size={14} /></button>
+              )
+            })}
           </div>
           <Button size="sm"><Plus size={14} className="mr-1.5" />Add</Button>
         </div>
@@ -885,7 +905,7 @@ function LeadGenTab() {
             <div>
               <Label className="text-xs mb-2 block">Data Sources</Label>
               <div className="space-y-2">
-                {([['google', 'Google Maps'], ['yelp', 'Yelp'], ['directories', 'Business Directories']] as const).map(([key, label]) => (
+                {DATA_SOURCES.map(({ key, label }) => (
                   <div key={key} className="flex items-center gap-2">
                     <Checkbox
                       id={key}
@@ -1190,7 +1210,12 @@ function TakeoffTab() {
     intervalRef.current = setInterval(() => {
       p += 8
       setAnalysisProgress(Math.min(p, 100))
-      if (p >= 100) { clearInterval(intervalRef.current!); intervalRef.current = null; setAnalyzing(false); setStep('materials') }
+      if (p >= 100) {
+        clearInterval(intervalRef.current!)
+        intervalRef.current = null
+        setAnalyzing(false)
+        setStep('materials')
+      }
     }, 200)
   }
 
