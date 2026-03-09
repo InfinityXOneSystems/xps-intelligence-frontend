@@ -16,6 +16,15 @@ import {
   CheckCircle,
   ToggleLeft,
   Wrench,
+  Desktop,
+  Timer,
+  Bell,
+  Shield,
+  Sliders,
+  Cpu,
+  CreditCard,
+  Plugs,
+  Warning,
 } from '@phosphor-icons/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -38,7 +47,25 @@ import {
 } from '@/tools/toolRegistry'
 import type { AgentSettings, ToolCategory, ToolDefinition } from '@/types/tools'
 
-const CATEGORIES: { key: ToolCategory; label: string; icon: React.ReactNode; description: string }[] = [
+type ExtendedCategory =
+  | ToolCategory
+  | 'local_machine'
+  | 'agent_config'
+  | 'automation'
+  | 'notifications'
+  | 'security'
+  | 'ui_preferences'
+  | 'system'
+  | 'usage_billing'
+  | 'webhooks_custom'
+  | 'advanced'
+
+const TOOL_CATEGORIES = new Set<string>([
+  'ai_models', 'agent_runtime', 'scraping', 'github', 'deployment',
+  'memory', 'developer', 'frontend', 'media', 'business', 'integrations',
+])
+
+const CATEGORIES: { key: ExtendedCategory; label: string; icon: React.ReactNode; description: string }[] = [
   {
     key: 'ai_models',
     label: 'AI Models',
@@ -104,6 +131,66 @@ const CATEGORIES: { key: ToolCategory; label: string; icon: React.ReactNode; des
     label: 'Integrations',
     icon: <Key size={18} />,
     description: 'API keys, cloud accounts & OAuth',
+  },
+  {
+    key: 'local_machine',
+    label: 'Local Machine',
+    icon: <Desktop size={18} />,
+    description: 'MCP status, Docker, SSH & permissions',
+  },
+  {
+    key: 'agent_config',
+    label: 'Agent Config',
+    icon: <Robot size={18} />,
+    description: 'Enable/disable agents, concurrency, timeouts',
+  },
+  {
+    key: 'automation',
+    label: 'Automation',
+    icon: <Timer size={18} />,
+    description: 'Daily tasks, frequencies, retry logic, blackout periods',
+  },
+  {
+    key: 'notifications',
+    label: 'Notifications',
+    icon: <Bell size={18} />,
+    description: 'Email, Slack, Discord, SMS & quiet hours',
+  },
+  {
+    key: 'security',
+    label: 'Security',
+    icon: <Shield size={18} />,
+    description: '2FA, session timeout, IP whitelist & audit log',
+  },
+  {
+    key: 'ui_preferences',
+    label: 'UI Preferences',
+    icon: <Sliders size={18} />,
+    description: 'Theme, language, timezone & date format',
+  },
+  {
+    key: 'system',
+    label: 'System',
+    icon: <Cpu size={18} />,
+    description: 'Log level, cache, memory limits & retry policy',
+  },
+  {
+    key: 'usage_billing',
+    label: 'Usage & Billing',
+    icon: <CreditCard size={18} />,
+    description: 'API calls, storage usage & cost per service',
+  },
+  {
+    key: 'webhooks_custom',
+    label: 'Webhooks',
+    icon: <Plugs size={18} />,
+    description: 'Create webhooks, test endpoints & view logs',
+  },
+  {
+    key: 'advanced',
+    label: 'Advanced',
+    icon: <Warning size={18} />,
+    description: 'Env vars, feature flags, debug mode & beta features',
   },
 ]
 
@@ -879,8 +966,309 @@ function IntegrationsPanel({
   )
 }
 
+function ExtendedSectionRow({ label, description, children }: { label: string; description?: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between py-3 border-b border-white/8 last:border-0">
+      <div className="flex-1 mr-4">
+        <p className="text-sm font-medium text-white">{label}</p>
+        {description && <p className="text-xs text-white/50 mt-0.5">{description}</p>}
+      </div>
+      <div className="shrink-0">{children}</div>
+    </div>
+  )
+}
+
+function LocalMachinePanel() {
+  const [mcpStatus] = useState<'connected' | 'disconnected'>('disconnected')
+  const [sshHost, setSshHost] = useState('')
+  const [dockerEnabled, setDockerEnabled] = useState(true)
+  return (
+    <>
+      <ExtendedSectionRow label="MCP Connection" description="Model Context Protocol server for local machine access">
+        <div className={`flex items-center gap-2 text-xs font-medium ${mcpStatus === 'connected' ? 'text-green-400' : 'text-red-400'}`}>
+          <span className={`w-2 h-2 rounded-full ${mcpStatus === 'connected' ? 'bg-green-400' : 'bg-red-400'}`} />
+          {mcpStatus === 'connected' ? 'Connected' : 'Disconnected'}
+        </div>
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="SSH Host" description="Remote machine connection via SSH">
+        <Input value={sshHost} onChange={e => setSshHost(e.target.value)} placeholder="user@hostname" className="w-48 text-xs h-8 bg-black/40 text-white border-white/20" />
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Docker Integration" description="Enable Docker container management">
+        <Switch checked={dockerEnabled} onCheckedChange={setDockerEnabled} />
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="File System Access" description="Allow agents to read/write local files">
+        <Switch checked={false} onCheckedChange={() => {}} />
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Command Execution" description="Allow agents to execute shell commands">
+        <Switch checked={false} onCheckedChange={() => {}} />
+      </ExtendedSectionRow>
+    </>
+  )
+}
+
+function AgentConfigPanel() {
+  const agents = ['PlannerAgent', 'ResearchAgent', 'BuilderAgent', 'ScraperAgent', 'MediaAgent', 'ValidatorAgent', 'DevOpsAgent', 'MonitoringAgent', 'KnowledgeAgent', 'BusinessAgent', 'PredictionAgent', 'SimulationAgent', 'MetaAgent']
+  // Enable the first 11 core agents by default; MetaAgent and SimulationAgent
+  // start disabled because they are experimental / resource-intensive.
+  const [enabled, setEnabled] = useState<Record<string, boolean>>(Object.fromEntries(agents.map((a, i) => [a, i < 11])))
+  const [concurrency, setConcurrency] = useState(3)
+  const [taskTimeoutSecs, setTaskTimeoutSecs] = useState(30)
+  return (
+    <>
+      <SliderRow label="Global Concurrency Limit" description="Max agents running simultaneously" value={concurrency} min={1} max={20} onChange={setConcurrency} unit=" agents" />
+      <SliderRow label="Task Timeout" description="Default timeout per agent task" value={taskTimeoutSecs} min={5} max={300} onChange={setTaskTimeoutSecs} unit="s" />
+      <div className="mt-2">
+        <p className="text-xs text-white/50 mb-3 font-semibold uppercase tracking-wider">Agent Toggle</p>
+        {agents.map(agent => (
+          <ExtendedSectionRow key={agent} label={agent} description={enabled[agent] ? 'Active' : 'Disabled'}>
+            <Switch checked={enabled[agent]} onCheckedChange={v => setEnabled(prev => ({ ...prev, [agent]: v }))} />
+          </ExtendedSectionRow>
+        ))}
+      </div>
+    </>
+  )
+}
+
+function AutomationPanel() {
+  const [dailyScrape, setDailyScrape] = useState(true)
+  const [scrapeTime, setScrapeTime] = useState('02:00')
+  const [retryAttempts, setRetryAttempts] = useState(3)
+  const [blackoutStart, setBlackoutStart] = useState('08:00')
+  const [blackoutEnd, setBlackoutEnd] = useState('18:00')
+  return (
+    <>
+      <ExtendedSectionRow label="Daily Auto-Scrape" description="Automatically scrape leads every day">
+        <Switch checked={dailyScrape} onCheckedChange={setDailyScrape} />
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Scrape Start Time" description="Time for daily scraping task (24h format)">
+        <Input value={scrapeTime} onChange={e => setScrapeTime(e.target.value)} type="time" className="w-28 text-xs h-8 bg-black/40 text-white border-white/20" />
+      </ExtendedSectionRow>
+      <SliderRow label="Retry Attempts" description="Number of times to retry failed tasks" value={retryAttempts} min={0} max={10} onChange={setRetryAttempts} unit=" retries" />
+      <ExtendedSectionRow label="Blackout Window Start" description="No automated tasks before this time">
+        <Input value={blackoutStart} onChange={e => setBlackoutStart(e.target.value)} type="time" className="w-28 text-xs h-8 bg-black/40 text-white border-white/20" />
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Blackout Window End" description="No automated tasks after this time">
+        <Input value={blackoutEnd} onChange={e => setBlackoutEnd(e.target.value)} type="time" className="w-28 text-xs h-8 bg-black/40 text-white border-white/20" />
+      </ExtendedSectionRow>
+    </>
+  )
+}
+
+function NotificationsPanel() {
+  const [email, setEmail] = useState(true)
+  const [slack, setSlack] = useState(false)
+  const [discord, setDiscord] = useState(false)
+  const [sms, setSms] = useState(false)
+  const [slackWebhook, setSlackWebhook] = useState('')
+  const [discordWebhook, setDiscordWebhook] = useState('')
+  const [quietStart, setQuietStart] = useState('22:00')
+  const [quietEnd, setQuietEnd] = useState('08:00')
+  return (
+    <>
+      <ExtendedSectionRow label="Email Notifications" description="Receive alerts via email"><Switch checked={email} onCheckedChange={setEmail} /></ExtendedSectionRow>
+      <ExtendedSectionRow label="Slack" description="Post notifications to Slack channel"><Switch checked={slack} onCheckedChange={setSlack} /></ExtendedSectionRow>
+      {slack && (
+        <ExtendedSectionRow label="Slack Webhook URL" description="Incoming webhook for your Slack workspace">
+          <Input value={slackWebhook} onChange={e => setSlackWebhook(e.target.value)} placeholder="https://hooks.slack.com/..." className="w-64 text-xs h-8 bg-black/40 text-white border-white/20" />
+        </ExtendedSectionRow>
+      )}
+      <ExtendedSectionRow label="Discord" description="Post notifications to Discord channel"><Switch checked={discord} onCheckedChange={setDiscord} /></ExtendedSectionRow>
+      {discord && (
+        <ExtendedSectionRow label="Discord Webhook URL" description="Incoming webhook for your Discord server">
+          <Input value={discordWebhook} onChange={e => setDiscordWebhook(e.target.value)} placeholder="https://discord.com/api/webhooks/..." className="w-64 text-xs h-8 bg-black/40 text-white border-white/20" />
+        </ExtendedSectionRow>
+      )}
+      <ExtendedSectionRow label="SMS Alerts" description="Receive critical alerts via SMS"><Switch checked={sms} onCheckedChange={setSms} /></ExtendedSectionRow>
+      <ExtendedSectionRow label="Quiet Hours Start" description="Suppress non-critical notifications after this time">
+        <Input value={quietStart} onChange={e => setQuietStart(e.target.value)} type="time" className="w-28 text-xs h-8 bg-black/40 text-white border-white/20" />
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Quiet Hours End" description="Resume notifications at this time">
+        <Input value={quietEnd} onChange={e => setQuietEnd(e.target.value)} type="time" className="w-28 text-xs h-8 bg-black/40 text-white border-white/20" />
+      </ExtendedSectionRow>
+    </>
+  )
+}
+
+function SecurityPanel() {
+  const [twoFa, setTwoFa] = useState(false)
+  const [sessionTimeout, setSessionTimeout] = useState(60)
+  const [ipWhitelist, setIpWhitelist] = useState('')
+  const [auditLog, setAuditLog] = useState(true)
+  return (
+    <>
+      <ExtendedSectionRow label="Two-Factor Authentication" description="Require 2FA for all logins"><Switch checked={twoFa} onCheckedChange={setTwoFa} /></ExtendedSectionRow>
+      <SliderRow label="Session Timeout" description="Auto-logout after inactivity (minutes)" value={sessionTimeout} min={5} max={480} onChange={setSessionTimeout} unit=" min" />
+      <ExtendedSectionRow label="IP Whitelist" description="Comma-separated list of allowed IPs (leave blank to allow all)">
+        <Input value={ipWhitelist} onChange={e => setIpWhitelist(e.target.value)} placeholder="192.168.1.0/24, 10.0.0.1" className="w-56 text-xs h-8 bg-black/40 text-white border-white/20" />
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Audit Log" description="Log all admin actions and agent activity"><Switch checked={auditLog} onCheckedChange={setAuditLog} /></ExtendedSectionRow>
+    </>
+  )
+}
+
+function UIPreferencesPanel() {
+  const [theme, setTheme] = useState('dark')
+  const [language, setLanguage] = useState('en')
+  const [timezone, setTimezone] = useState('UTC')
+  const [dateFormat, setDateFormat] = useState('MM/DD/YYYY')
+  return (
+    <>
+      <ExtendedSectionRow label="Theme" description="Color scheme for the interface">
+        <select value={theme} onChange={e => setTheme(e.target.value)} className="px-3 py-1.5 rounded-md bg-black/40 border border-white/20 text-white text-xs focus:outline-none">
+          {['dark', 'light', 'system'].map(t => <option key={t} value={t} className="bg-zinc-900">{t}</option>)}
+        </select>
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Language" description="Interface language">
+        <select value={language} onChange={e => setLanguage(e.target.value)} className="px-3 py-1.5 rounded-md bg-black/40 border border-white/20 text-white text-xs focus:outline-none">
+          {[['en', 'English'], ['es', 'Spanish'], ['fr', 'French'], ['de', 'German']].map(([v, l]) => <option key={v} value={v} className="bg-zinc-900">{l}</option>)}
+        </select>
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Timezone" description="Default timezone for dates and schedules">
+        <select value={timezone} onChange={e => setTimezone(e.target.value)} className="px-3 py-1.5 rounded-md bg-black/40 border border-white/20 text-white text-xs focus:outline-none">
+          {['UTC', 'America/New_York', 'America/Los_Angeles', 'America/Chicago', 'Europe/London', 'Europe/Paris'].map(tz => <option key={tz} value={tz} className="bg-zinc-900">{tz}</option>)}
+        </select>
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Date Format" description="How dates are displayed throughout the app">
+        <select value={dateFormat} onChange={e => setDateFormat(e.target.value)} className="px-3 py-1.5 rounded-md bg-black/40 border border-white/20 text-white text-xs focus:outline-none">
+          {['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD'].map(f => <option key={f} value={f} className="bg-zinc-900">{f}</option>)}
+        </select>
+      </ExtendedSectionRow>
+    </>
+  )
+}
+
+function SystemPanel() {
+  const [logLevel, setLogLevel] = useState('info')
+  const [cacheEnabled, setCacheEnabled] = useState(true)
+  const [memoryLimit, setMemoryLimit] = useState(2048)
+  const [retryPolicy, setRetryPolicy] = useState('exponential')
+  return (
+    <>
+      <ExtendedSectionRow label="Log Level" description="Verbosity of system logs">
+        <select value={logLevel} onChange={e => setLogLevel(e.target.value)} className="px-3 py-1.5 rounded-md bg-black/40 border border-white/20 text-white text-xs focus:outline-none">
+          {['debug', 'info', 'warning', 'error'].map(l => <option key={l} value={l} className="bg-zinc-900">{l}</option>)}
+        </select>
+      </ExtendedSectionRow>
+      <ExtendedSectionRow label="Response Cache" description="Cache API responses to reduce latency"><Switch checked={cacheEnabled} onCheckedChange={setCacheEnabled} /></ExtendedSectionRow>
+      <SliderRow label="Memory Limit" description="Max memory allocation per agent task (MB)" value={memoryLimit} min={256} max={8192} step={256} onChange={setMemoryLimit} unit=" MB" />
+      <ExtendedSectionRow label="Retry Policy" description="How failed tasks are retried">
+        <select value={retryPolicy} onChange={e => setRetryPolicy(e.target.value)} className="px-3 py-1.5 rounded-md bg-black/40 border border-white/20 text-white text-xs focus:outline-none">
+          {['none', 'linear', 'exponential'].map(p => <option key={p} value={p} className="bg-zinc-900">{p}</option>)}
+        </select>
+      </ExtendedSectionRow>
+    </>
+  )
+}
+
+function UsageBillingPanel() {
+  const usageData = [
+    { service: 'OpenAI GPT-4o', calls: 12847, tokens: '8.2M', cost: '$164.00' },
+    { service: 'Groq Llama-3.3', calls: 4213, tokens: '2.1M', cost: '$2.10' },
+    { service: 'Anthropic Claude', calls: 312, tokens: '640K', cost: '$9.60' },
+    { service: 'Vercel Deployment', calls: 48, tokens: '—', cost: '$0.00' },
+    { service: 'Storage (R2)', calls: 9821, tokens: '—', cost: '$3.20' },
+  ]
+  return (
+    <>
+      <div className="mb-4 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+        <p className="text-xs text-yellow-400 font-semibold">This Month</p>
+        <p className="text-2xl font-bold text-white mt-0.5">$178.90</p>
+        <p className="text-xs text-white/40">Updated Dec 1, 2024</p>
+      </div>
+      {usageData.map(row => (
+        <div key={row.service} className="flex items-center justify-between py-2.5 border-b border-white/8 last:border-0">
+          <div>
+            <p className="text-sm text-white">{row.service}</p>
+            <p className="text-xs text-white/40">{row.calls.toLocaleString()} calls · {row.tokens} tokens</p>
+          </div>
+          <span className="text-sm font-mono font-medium text-yellow-400">{row.cost}</span>
+        </div>
+      ))}
+    </>
+  )
+}
+
+function WebhooksPanel() {
+  const [webhooks, setWebhooks] = useState([
+    { id: '1', name: 'Slack Alerts', url: 'https://hooks.slack.com/xxx', active: true, events: ['task_failed'] },
+    { id: '2', name: 'Discord Notify', url: 'https://discord.com/api/webhooks/xxx', active: false, events: ['plan_complete'] },
+  ])
+  const [newName, setNewName] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+  return (
+    <>
+      {webhooks.map(wh => (
+        <div key={wh.id} className="py-3 border-b border-white/8 last:border-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-white">{wh.name}</p>
+              <p className="text-xs text-white/40 font-mono truncate max-w-xs">{wh.url}</p>
+              <p className="text-xs text-white/30 mt-0.5">Events: {wh.events.join(', ')}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`text-xs ${wh.active ? 'text-green-400' : 'text-white/30'}`}>{wh.active ? 'Active' : 'Paused'}</span>
+              <Switch
+                checked={wh.active}
+                onCheckedChange={v => setWebhooks(prev => prev.map(w => w.id === wh.id ? { ...w, active: v } : w))}
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+      <div className="pt-3 space-y-2">
+        <p className="text-xs text-white/50 font-semibold uppercase tracking-wider">Add Webhook</p>
+        <div className="flex gap-2">
+          <Input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Name" className="text-xs h-8 bg-black/40 text-white border-white/20" />
+          <Input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder="https://..." className="text-xs h-8 bg-black/40 text-white border-white/20 flex-1" />
+          <Button size="sm" className="h-8 shrink-0" onClick={() => {
+            if (newName && newUrl) {
+              setWebhooks(prev => [...prev, { id: Date.now().toString(), name: newName, url: newUrl, active: true, events: ['task_failed'] }])
+              setNewName(''); setNewUrl('')
+            }
+          }}>Add</Button>
+        </div>
+      </div>
+    </>
+  )
+}
+
+function AdvancedPanel() {
+  const [debugMode, setDebugMode] = useState(false)
+  const [betaFeatures, setBetaFeatures] = useState(false)
+  const [envVars, setEnvVars] = useState('# Add environment variables\n# CUSTOM_VAR=value\n')
+  return (
+    <>
+      <ExtendedSectionRow label="Debug Mode" description="Enable verbose debug logging (may impact performance)"><Switch checked={debugMode} onCheckedChange={setDebugMode} /></ExtendedSectionRow>
+      <ExtendedSectionRow label="Beta Features" description="Enable experimental features not yet in stable release"><Switch checked={betaFeatures} onCheckedChange={setBetaFeatures} /></ExtendedSectionRow>
+      <div className="py-3">
+        <p className="text-sm font-medium text-white mb-1">Custom Environment Variables</p>
+        <p className="text-xs text-white/40 mb-2">These are injected into all agent sandboxes at runtime</p>
+        <textarea
+          value={envVars}
+          onChange={e => setEnvVars(e.target.value)}
+          rows={6}
+          className="w-full rounded-lg bg-black/60 border border-white/20 text-white/80 font-mono text-xs p-3 resize-none focus:outline-none focus:ring-1 focus:ring-yellow-500/50"
+        />
+      </div>
+      <div className="py-3 border-t border-white/8">
+        <p className="text-sm font-medium text-white mb-2">Feature Flags</p>
+        {[
+          { key: 'multi_agent_parallel', label: 'Multi-Agent Parallel Execution', enabled: true },
+          { key: 'vector_memory', label: 'Vector Memory Store', enabled: true },
+          { key: 'self_compile_loop', label: 'Self-Compiling Loop (ALPHA)', enabled: false },
+          { key: 'media_gen', label: 'Media Generation Pipeline', enabled: false },
+        ].map(flag => (
+          <ExtendedSectionRow key={flag.key} label={flag.label} description={flag.enabled ? 'Enabled' : 'Disabled'}>
+            <Switch checked={flag.enabled} onCheckedChange={() => {}} />
+          </ExtendedSectionRow>
+        ))}
+      </div>
+    </>
+  )
+}
+
 export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => void }) {
-  const [activeCategory, setActiveCategory] = useState<ToolCategory>('ai_models')
+  const [activeCategory, setActiveCategory] = useState<ExtendedCategory>('ai_models')
   const [settings, setSettings] = useState<AgentSettings>(loadSettings)
   const [tools, setTools] = useState<ToolDefinition[]>(loadToolRegistry)
   const [saved, setSaved] = useState(false)
@@ -898,8 +1286,9 @@ export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => voi
   }, [])
 
   const activeCategory_ = CATEGORIES.find((c) => c.key === activeCategory)!
-  // Guard against ExtendedCategory values not in ToolCategory union.
-  const categoryTools = isToolCategory(activeCategory) ? getToolsByCategory(tools, activeCategory) : []
+  const categoryTools = TOOL_CATEGORIES.has(activeCategory)
+    ? getToolsByCategory(tools, activeCategory as ToolCategory)
+    : []
   const enabledCount = tools.filter((t) => t.enabled).length
 
   const renderPanel = () => {
@@ -932,6 +1321,28 @@ export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => voi
         return <BusinessPanel {...props} />
       case 'integrations':
         return <IntegrationsPanel {...props} />
+      case 'local_machine':
+        return <LocalMachinePanel />
+      case 'agent_config':
+        return <AgentConfigPanel />
+      case 'automation':
+        return <AutomationPanel />
+      case 'notifications':
+        return <NotificationsPanel />
+      case 'security':
+        return <SecurityPanel />
+      case 'ui_preferences':
+        return <UIPreferencesPanel />
+      case 'system':
+        return <SystemPanel />
+      case 'usage_billing':
+        return <UsageBillingPanel />
+      case 'webhooks_custom':
+        return <WebhooksPanel />
+      case 'advanced':
+        return <AdvancedPanel />
+      default:
+        return null
     }
   }
 
@@ -972,8 +1383,12 @@ export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => voi
           <Card style={cardStyle} className="overflow-hidden">
             <nav className="p-2">
               {CATEGORIES.map((cat) => {
-                // Guard for potential future ExtendedCategory values.
-                const catTools = isToolCategory(cat.key) ? getToolsByCategory(tools, cat.key) : []
+                // FIX (CI job 66236048582): cat.key is ExtendedCategory which may include
+                // non-ToolCategory values (e.g. 'system'). Guard with TOOL_CATEGORIES set
+                // before passing to getToolsByCategory which expects ToolCategory.
+                const catTools = TOOL_CATEGORIES.has(cat.key)
+                  ? getToolsByCategory(tools, cat.key as ToolCategory)
+                  : []
                 const activeCount = catTools.filter((t) => t.enabled).length
                 const isActive = cat.key === activeCategory
                 return (

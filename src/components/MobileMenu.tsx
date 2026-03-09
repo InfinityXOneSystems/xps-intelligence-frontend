@@ -19,9 +19,9 @@ import {
   Trophy,
   MagnifyingGlass,
   MapTrifold,
-  Buildings,
   Lightning,
   FileText,
+  Buildings,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
