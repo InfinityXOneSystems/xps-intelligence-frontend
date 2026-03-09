@@ -1,5 +1,3 @@
-// Fix TS2304: 'Buildings' was referenced in menuItems but not imported;
-// Hammer was also removed from the import as its duplicate entry is deleted below.
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   House,
@@ -37,10 +35,8 @@ const menuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'dashboard', label: 'Dashboard', icon: ChartBar },
   { id: 'leads', label: 'Leads', icon: Users },
-  { id: 'contractors', label: 'Contractors', icon: HardHat },
-  { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
-  // Buildings icon properly imported above; duplicate Hammer-based entry removed.
   { id: 'contractors', label: 'Contractors', icon: Buildings },
+  { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
   { id: 'roadmap', label: 'Roadmap', icon: MapTrifold },
