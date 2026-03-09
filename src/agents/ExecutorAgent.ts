@@ -9,7 +9,7 @@ import type { AgentTask } from '@/lib/agentTypes'
 
 export class ExecutorAgent extends BaseAgent {
   constructor() {
-    super('BuilderAgent') // Executor maps to the BuilderAgent role in the 13-agent roster
+    super('DevOpsAgent') // Executor maps to the DevOpsAgent role: runs commands and manages infrastructure
   }
 
   protected async run(task: AgentTask, ctx: AgentContext): Promise<AgentResult> {
