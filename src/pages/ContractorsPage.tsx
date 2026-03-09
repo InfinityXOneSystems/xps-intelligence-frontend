@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Buildings,
@@ -376,7 +376,7 @@ export function ContractorsPage({ onNavigate }: ContractorsPageProps) {
           <h1 className="text-4xl font-bold">Contractors</h1>
         </div>
         <p className="text-muted-foreground text-base">
-          Full lifecycle contractor management — leads, outreach, takeoffs, proposals, projects &amp; billing
+          Full lifecycle contractor management — leads, outreach, takeoffs, proposals, projects & billing
         </p>
       </motion.div>
 
@@ -798,6 +798,9 @@ function LeadGenTab() {
   const [location, setLocation] = useState('')
   const [sources, setSources] = useState({ google: true, yelp: true, directories: false })
   const [done, setDone] = useState(false)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current) }, [])
 
   const previewLeads = [
     { company: 'Apex Concrete Orlando', city: 'Orlando, FL', score: 87, phone: '(407) 555-1234', email: 'info@apexconcrete.com', source: 'Google Maps' },
@@ -837,7 +840,7 @@ function LeadGenTab() {
       setLeadsFound(s.leads)
       setQualified(s.qual)
       i++
-      setTimeout(tick, 900)
+      timeoutRef.current = setTimeout(tick, 900)
     }
     tick()
   }
@@ -1172,6 +1175,9 @@ function TakeoffTab() {
     { id: 'ti4', description: 'Concrete Primer', quantity: 12000, unit: 'sq ft', unitPrice: 0.35 },
     { id: 'ti5', description: 'Diamond Grinding', quantity: 12000, unit: 'sq ft', unitPrice: 0.45 },
   ])
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => () => { if (intervalRef.current) clearInterval(intervalRef.current) }, [])
 
   const materialsTotal = items.reduce((sum, i) => sum + i.quantity * i.unitPrice, 0)
   const laborTotal = materialsTotal * 1.2
@@ -1181,10 +1187,10 @@ function TakeoffTab() {
   const startAnalysis = () => {
     setAnalyzing(true)
     let p = 0
-    const tick = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       p += 8
       setAnalysisProgress(Math.min(p, 100))
-      if (p >= 100) { clearInterval(tick); setAnalyzing(false); setStep('materials') }
+      if (p >= 100) { clearInterval(intervalRef.current!); intervalRef.current = null; setAnalyzing(false); setStep('materials') }
     }, 200)
   }
 
@@ -1311,7 +1317,7 @@ function TakeoffTab() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Materials &amp; Pricing</CardTitle>
+                  <CardTitle className="text-base">Materials & Pricing</CardTitle>
                   <Button variant="outline" size="sm"><Plus size={13} className="mr-1.5" />Add Item</Button>
                 </div>
               </CardHeader>
@@ -1352,7 +1358,7 @@ function TakeoffTab() {
                     <div className="flex justify-between font-bold text-base"><span>Total</span><span>${grandTotal.toLocaleString('en', { maximumFractionDigits: 0 })}</span></div>
                   </div>
                 </div>
-                <Button className="mt-4" onClick={() => setStep('review')}>Review &amp; Save <ArrowRight size={14} className="ml-2" /></Button>
+                <Button className="mt-4" onClick={() => setStep('review')}>Review & Save <ArrowRight size={14} className="ml-2" /></Button>
               </CardContent>
             </Card>
           </motion.div>
@@ -1363,7 +1369,7 @@ function TakeoffTab() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
-                  <CheckCircle size={16} className="text-green-400" />Review &amp; Save Takeoff
+                  <CheckCircle size={16} className="text-green-400" />Review & Save Takeoff
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-5">
@@ -1542,7 +1548,7 @@ function ProposalTab() {
 
           {step === 'review' && (
             <Card>
-              <CardHeader><CardTitle className="text-base">Review &amp; Send</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base">Review & Send</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-muted/30 rounded-xl p-4 space-y-2 text-sm">
                   <div className="font-bold text-lg">{title}</div>
