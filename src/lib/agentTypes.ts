@@ -16,7 +16,7 @@ export type TaskType =
   | 'predict'
   | 'simulate'
 
-// The twelve first-class agents defined in AGENTS.md
+// The thirteen first-class agents defined in AGENTS.md
 export type AgentRole =
   | 'PlannerAgent'
   | 'ResearchAgent'
@@ -30,6 +30,8 @@ export type AgentRole =
   | 'BusinessAgent'
   | 'PredictionAgent'
   | 'SimulationAgent'
+  // MetaAgent continuously redesigns system architecture and self-improves
+  | 'MetaAgent'
 
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed'
 
@@ -114,6 +116,13 @@ export const AGENT_DEFINITIONS: AgentDefinition[] = [
     description: 'Runs scenario simulations and what-if analysis',
     primaryTools: ['run_worker_agent'],
     taskTypes: ['report', 'analyze_leads'],
+  },
+  {
+    // MetaAgent: continuously redesigns system architecture and self-improves
+    role: 'MetaAgent',
+    description: 'Continuously redesigns system architecture and self-improves',
+    primaryTools: ['run_planner_agent', 'run_supervisor_agent'],
+    taskTypes: ['plan', 'report'],
   },
 ]
 

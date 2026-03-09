@@ -60,6 +60,8 @@ const ALL_AGENT_ROLES: AgentRole[] = [
   'BusinessAgent',
   'PredictionAgent',
   'SimulationAgent',
+  // MetaAgent added to complete the thirteen-agent roster
+  'MetaAgent',
 ]
 
 const SIMULATED_FAILURE_RATE = 0.05 // 5% chance of task failure in simulation
@@ -145,6 +147,13 @@ const AGENT_EXEC_LOGS: Record<AgentRole, string[]> = {
     'Running scenario iterations...',
     'Collecting outcomes...',
     'Simulation complete',
+  ],
+  // MetaAgent: continuously redesigns architecture and triggers self-improvement cycles
+  MetaAgent: [
+    'Analyzing repository structure...',
+    'Detecting architecture gaps...',
+    'Generating improvement proposals...',
+    'Self-improvement cycle complete',
   ],
 }
 
