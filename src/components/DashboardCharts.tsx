@@ -3,6 +3,13 @@ import { motion } from 'framer-motion'
 import { BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import type { Lead } from '@/types/lead'
 
+// Pre-compute mock revenue data once at module load (simulated chart data)
+const REVENUE_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+const STATIC_REVENUE_DATA = REVENUE_MONTHS.map((month, i) => ({
+  month,
+  revenue: Math.floor(Math.random() * 100000) + 50000 + (i * 10000)
+}))
+
 interface DashboardChartsProps {
   leads: Lead[]
 }
@@ -47,13 +54,7 @@ export function DashboardCharts({ leads }: DashboardChartsProps) {
       }))
   }, [leads])
 
-  const revenueData = useMemo(() => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-    return months.map((month, i) => ({
-      month,
-      revenue: Math.floor(Math.random() * 100000) + 50000 + (i * 10000)
-    }))
-  }, [])
+  const revenueData = STATIC_REVENUE_DATA
 
   const COLORS = [
     'oklch(0.82 0.15 70)',

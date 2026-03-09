@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import {
   Brain,
@@ -99,7 +99,7 @@ const CATEGORIES: { key: ToolCategory; label: string; icon: React.ReactNode; des
     key: 'integrations',
     label: 'Integrations',
     icon: <Key size={18} />,
-    description: 'API keys & OAuth connectors',
+    description: 'API keys, cloud accounts & OAuth',
   },
 ]
 
@@ -633,6 +633,70 @@ function BusinessPanel({
   )
 }
 
+function ApiKeyRow({
+  label,
+  description,
+  value,
+  placeholder,
+  onChange,
+}: {
+  label: string
+  description?: string
+  value: string
+  placeholder?: string
+  onChange: (v: string) => void
+}) {
+  const [visible, setVisible] = useState(false)
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Clear timer on unmount to prevent state updates on unmounted component
+  useEffect(() => {
+    return () => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+    }
+  }, [])
+
+  const toggle = () => {
+    setVisible((prev) => {
+      const next = !prev
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+      if (next) {
+        // Auto-hide key after 30 seconds for security
+        hideTimerRef.current = setTimeout(() => setVisible(false), 30_000)
+      }
+      return next
+    })
+  }
+
+  return (
+    <div className="flex items-center justify-between py-3 border-b border-white/8 last:border-0">
+      <div className="flex-1 mr-4">
+        <p className="text-sm font-medium text-white">{label}</p>
+        {description && <p className="text-xs text-white/50 mt-0.5">{description}</p>}
+      </div>
+      <div className="flex items-center gap-1.5 shrink-0">
+        <Input
+          type={visible ? 'text' : 'password'}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-48 text-xs h-8 bg-black/40 text-white border-white/20 font-mono"
+          placeholder={placeholder ?? 'sk-…'}
+        />
+        <button
+          type="button"
+          onClick={toggle}
+          className="text-white/30 hover:text-white/70 transition-colors text-xs px-1"
+          title={visible ? 'Hide (auto-hides in 30s)' : 'Show'}
+          aria-label={visible ? 'Hide value (auto-hides in 30 seconds)' : 'Show value'}
+          aria-pressed={visible}
+        >
+          {visible ? '🙈' : '👁'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function IntegrationsPanel({
   settings,
   tools,
@@ -648,15 +712,12 @@ function IntegrationsPanel({
   const [newKeyName, setNewKeyName] = useState('')
   const [newKeyValue, setNewKeyValue] = useState('')
 
+  const update = (patch: Partial<AgentSettings['integrations']>) =>
+    onSettingsChange({ ...settings, integrations: { ...s, ...patch } })
+
   const addApiKey = () => {
     if (!newKeyName.trim() || !newKeyValue.trim()) return
-    onSettingsChange({
-      ...settings,
-      integrations: {
-        ...s,
-        apiKeys: { ...s.apiKeys, [newKeyName.trim()]: newKeyValue.trim() },
-      },
-    })
+    update({ apiKeys: { ...s.apiKeys, [newKeyName.trim()]: newKeyValue.trim() } })
     setNewKeyName('')
     setNewKeyValue('')
   }
@@ -664,22 +725,112 @@ function IntegrationsPanel({
   const removeApiKey = (key: string) => {
     const updated = { ...s.apiKeys }
     delete updated[key]
-    onSettingsChange({ ...settings, integrations: { ...s, apiKeys: updated } })
+    update({ apiKeys: updated })
   }
 
   return (
     <>
-      <SectionRow label="Token Vault" description="Encrypted storage for sensitive credentials">
+      {/* Token Vault */}
+      <SectionRow label="Token Vault" description="Stores credentials in browser local storage (plaintext JSON — do not store production secrets)">
         <Switch
           checked={s.tokenVaultEnabled}
-          onCheckedChange={(v) =>
-            onSettingsChange({ ...settings, integrations: { ...s, tokenVaultEnabled: v } })
-          }
+          onCheckedChange={(v) => update({ tokenVaultEnabled: v })}
         />
       </SectionRow>
 
+      {/* ─── AI Provider Keys ─── */}
       <div className="py-3 border-b border-white/8">
-        <p className="text-sm font-medium text-white mb-3">API Key Manager</p>
+        <p className="text-xs font-semibold text-yellow-400/80 uppercase tracking-wider mb-1">AI Providers</p>
+      </div>
+      <ApiKeyRow
+        label="Groq"
+        description="Fast LLM inference via Groq Cloud"
+        value={s.groqApiKey}
+        placeholder="gsk_…"
+        onChange={(v) => update({ groqApiKey: v })}
+      />
+      <ApiKeyRow
+        label="OpenAI"
+        description="GPT-4o and assistants API"
+        value={s.openaiApiKey}
+        placeholder="sk-…"
+        onChange={(v) => update({ openaiApiKey: v })}
+      />
+      <ApiKeyRow
+        label="Anthropic"
+        description="Claude models via Anthropic API"
+        value={s.anthropicApiKey}
+        placeholder="sk-ant-…"
+        onChange={(v) => update({ anthropicApiKey: v })}
+      />
+      <ApiKeyRow
+        label="Google Gemini"
+        description="Gemini Pro & Ultra via Google AI Studio"
+        value={s.geminiApiKey}
+        placeholder="AIza…"
+        onChange={(v) => update({ geminiApiKey: v })}
+      />
+
+      {/* ─── Cloud Accounts ─── */}
+      <div className="py-3 border-b border-white/8">
+        <p className="text-xs font-semibold text-yellow-400/80 uppercase tracking-wider mb-1">Cloud Accounts</p>
+      </div>
+      <ApiKeyRow
+        label="AWS Access Key ID"
+        description="Amazon Web Services IAM access key"
+        value={s.awsAccessKeyId}
+        placeholder="AKIA…"
+        onChange={(v) => update({ awsAccessKeyId: v })}
+      />
+      <ApiKeyRow
+        label="AWS Secret Access Key"
+        description="Paired secret for AWS IAM access key"
+        value={s.awsSecretAccessKey}
+        placeholder="wJalr…"
+        onChange={(v) => update({ awsSecretAccessKey: v })}
+      />
+      <SectionRow label="AWS Region" description="Default AWS region for API calls">
+        <Input
+          value={s.awsRegion}
+          onChange={(e) => update({ awsRegion: e.target.value })}
+          className="w-36 text-xs h-8 bg-black/40 text-white border-white/20"
+          placeholder="us-east-1"
+        />
+      </SectionRow>
+      <ApiKeyRow
+        label="GCP Project ID"
+        description="Google Cloud Platform project identifier"
+        value={s.gcpProjectId}
+        placeholder="my-project-123"
+        onChange={(v) => update({ gcpProjectId: v })}
+      />
+      <ApiKeyRow
+        label="GCP API Key"
+        description="Google Cloud Platform API key"
+        value={s.gcpApiKey}
+        placeholder="AIza…"
+        onChange={(v) => update({ gcpApiKey: v })}
+      />
+      <ApiKeyRow
+        label="Cloudflare Account ID"
+        description="Cloudflare account identifier"
+        value={s.cloudflareAccountId}
+        placeholder="a1b2c3…"
+        onChange={(v) => update({ cloudflareAccountId: v })}
+      />
+      <ApiKeyRow
+        label="Cloudflare API Token"
+        description="Scoped API token for Cloudflare services"
+        value={s.cloudflareApiToken}
+        placeholder="…"
+        onChange={(v) => update({ cloudflareApiToken: v })}
+      />
+
+      {/* ─── Custom / Additional Keys ─── */}
+      <div className="py-3 border-b border-white/8">
+        <p className="text-xs font-semibold text-yellow-400/80 uppercase tracking-wider mb-1">Custom Keys</p>
+      </div>
+      <div className="py-3 border-b border-white/8">
         <div className="space-y-2 mb-3">
           {Object.entries(s.apiKeys).map(([name, value]) => (
             <div key={name} className="flex items-center gap-2">
@@ -696,7 +847,7 @@ function IntegrationsPanel({
             </div>
           ))}
           {Object.keys(s.apiKeys).length === 0 && (
-            <p className="text-xs text-white/30 italic">No API keys registered</p>
+            <p className="text-xs text-white/30 italic">No custom keys registered</p>
           )}
         </div>
         <div className="flex gap-2">
