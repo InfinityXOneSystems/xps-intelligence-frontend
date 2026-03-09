@@ -15,7 +15,7 @@ import {
   Code,
   Browser,
   ChartBar,
-  Hammer,
+  Buildings,
   FileText,
   Lightning,
 } from '@phosphor-icons/react'
@@ -36,7 +36,6 @@ const primaryMenuItems = [
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
   { id: 'roadmap', label: 'Roadmap', icon: MapTrifold },
-  { id: 'contractors', label: 'Contractors', icon: Hammer },
   { id: 'reports', label: 'Reports', icon: ChartBar },
 ]
 
