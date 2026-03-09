@@ -15,13 +15,29 @@
 
 ```
 src/
-  App.tsx              — Root router, renders all pages
+  App.tsx              — Root router, renders all pages (VITE_API_URL || http://localhost:5000/api)
+  agents/              — Agent implementation layer
+    base/
+      BaseAgent.ts     — Abstract base class: lifecycle, retry, abort, logging
+    index.ts           — Public barrel export for all agents
+    PlannerAgent.ts    — Goal decomposition and task routing
+    ResearchAgent.ts   — Web search and synthesis
+    BuilderAgent.ts    — Code generation and scaffolding
+    ExecutorAgent.ts   — Shell/sandbox command execution
+    ValidatorAgent.ts  — Lint, type-check, security scan
+    MonitorAgent.ts    — Health metrics and log aggregation
+    ScraperAgent.ts    — Playwright-driven lead and data collection
+    MediaAgent.ts      — Image/video/audio generation
+    KnowledgeAgent.ts  — Vector and task memory persistence
+    PredictorAgent.ts  — Lead scoring and ML inference
+    SimulatorAgent.ts  — Scenario simulation and what-if analysis
+    MetaAgent.ts       — Architecture redesign and self-improvement
   lib/
-    agentTypes.ts      — TaskType, AgentRole, AgentTask, AgentPlan, OrchestratorConfig
+    agentTypes.ts      — TaskType, AgentRole (13 agents), AgentTask, AgentPlan, OrchestratorConfig
     agentPlanner.ts    — Agent planner with localStorage persistence (key: xps_agent_memory)
     orchestrator.ts    — Parallel multi-agent execution engine
     llm.ts             — LLM router (Groq/Gemini/HuggingFace)
-    api.ts             — API client
+    api.ts             — ApiClient (VITE_API_URL || http://localhost:5000/api)
     websocket.ts       — WebSocket client
   pages/
     AgentPage.tsx      — Agent dashboard
@@ -57,6 +73,8 @@ src/
     comprehensive-validation.yml    — Full validation pipeline (lint, types, security, build)
     dependency-updates.yml          — Weekly automated dependency updates
 .pre-commit-config.yaml             — Pre-commit hooks (ESLint, TypeScript, file checks)
+docker-compose.yml                  — Multi-service orchestration: frontend(5000), backend(3000), db(5432), cache(6379)
+.env.local.example                  — Environment variable template (VITE_API_URL=http://localhost:5000/api)
 src/types/validation.ts             — Validation result types (ValidationResult, SecurityScanResult, etc.)
 .infinity/
   ACTIVE_MEMORY.md     — This file (system memory index)

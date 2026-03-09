@@ -56,7 +56,7 @@ function App() {
             <div className="text-center max-w-md">
               <p className="text-destructive mb-4">Failed to connect to API</p>
               <p className="text-sm text-muted-foreground mb-4">
-                Make sure your backend server is running at {import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}
+                Make sure your backend server is running at {import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}
               </p>
               <button 
                 onClick={() => window.location.reload()} 
@@ -103,8 +103,6 @@ function App() {
         return <CodeEditorPage onNavigate={setCurrentPage} />
       case 'sandbox':
         return <SandboxPage onNavigate={setCurrentPage} />
-      case 'contractors':
-        return <ContractorsPage onNavigate={setCurrentPage} />
       case 'automation':
         return <AutomationPage onNavigate={setCurrentPage} />
       case 'reports':
