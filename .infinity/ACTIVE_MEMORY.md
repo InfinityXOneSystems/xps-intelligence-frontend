@@ -51,9 +51,13 @@ src/
     tools.ts           — ToolCategory types
 .github/
   workflows/
-    ci.yml             — Lint, audit, type-check, build
-    deploy.yml         — Vercel deployment
-    agent-scraper.yml  — Agent scraper workflow
+    ci.yml                          — Lint, audit, type-check, build
+    deploy.yml                      — Vercel deployment
+    agent-scraper.yml               — Agent scraper workflow
+    comprehensive-validation.yml    — Full validation pipeline (lint, types, security, build)
+    dependency-updates.yml          — Weekly automated dependency updates
+.pre-commit-config.yaml             — Pre-commit hooks (ESLint, TypeScript, file checks)
+src/types/validation.ts             — Validation result types (ValidationResult, SecurityScanResult, etc.)
 .infinity/
   ACTIVE_MEMORY.md     — This file (system memory index)
   HEALING_HISTORY.md   — Log of all system repairs and fixes
@@ -75,6 +79,7 @@ src/
 | BusinessAgent | Lead discovery and analytics | Active |
 | PredictionAgent | Forecasting and scoring | Active |
 | SimulationAgent | Scenario simulation | Active |
+| MetaAgent | Continuously redesigns system architecture | Active |
 
 ## Task Types
 
