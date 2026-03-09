@@ -17,6 +17,9 @@ import {
   Trophy,
   MagnifyingGlass,
   MapTrifold,
+  Hammer,
+  Lightning,
+  FileText,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
@@ -36,14 +39,18 @@ const menuItems = [
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
   { id: 'roadmap', label: 'Roadmap', icon: MapTrifold },
+  { id: 'contractors', label: 'Contractors', icon: Hammer },
+  { id: 'reports', label: 'Reports', icon: ChartBar },
   { id: 'agent', label: 'Agent Control', icon: Brain },
   { id: 'tasks', label: 'Task Queue', icon: Queue },
   { id: 'scraper', label: 'Scraper', icon: Robot },
   { id: 'editor', label: 'Code Editor', icon: Code },
   { id: 'sandbox', label: 'Sandbox', icon: Browser },
   { id: 'canvas', label: 'Canvas', icon: Square },
+  { id: 'automation', label: 'Automation', icon: Lightning },
   { id: 'team', label: 'Team', icon: UserList },
   { id: 'logs', label: 'System Logs', icon: Scroll },
+  { id: 'docs', label: 'Docs', icon: FileText },
   { id: 'settings', label: 'Settings', icon: GearSix }
 ]
 

@@ -21,6 +21,10 @@ import { TaskQueuePage } from '@/pages/TaskQueuePage'
 import { CodeEditorPage } from '@/pages/CodeEditorPage'
 import { SandboxPage } from '@/pages/SandboxPage'
 import { PipelinePage } from '@/pages/PipelinePage'
+import { ContractorsPage } from '@/pages/ContractorsPage'
+import { AutomationPage } from '@/pages/AutomationPage'
+import { ReportsPage } from '@/pages/ReportsPage'
+import { DocsPage } from '@/pages/DocsPage'
 import { useLeads } from '@/hooks/useLeadsApi'
 
 function App() {
@@ -97,6 +101,14 @@ function App() {
         return <CodeEditorPage onNavigate={setCurrentPage} />
       case 'sandbox':
         return <SandboxPage onNavigate={setCurrentPage} />
+      case 'contractors':
+        return <ContractorsPage onNavigate={setCurrentPage} />
+      case 'automation':
+        return <AutomationPage onNavigate={setCurrentPage} />
+      case 'reports':
+        return <ReportsPage onNavigate={setCurrentPage} />
+      case 'docs':
+        return <DocsPage onNavigate={setCurrentPage} />
       default:
         return <HomePage onNavigate={setCurrentPage} />
     }
