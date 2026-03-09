@@ -37,6 +37,7 @@ src/
     HomePage.tsx       — Home
     LeadsPage.tsx      — Leads
     ProspectsPage.tsx  — Prospects
+    ContractorsPage.tsx— Contractors management system (7-tab full lifecycle: DB, Lead Gen, Email, Takeoff, Proposal, Project, Billing)
     LeaderboardPage.tsx— Leaderboard
     RoadmapPage.tsx    — Roadmap
   components/

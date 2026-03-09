@@ -1,401 +1,388 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {
+  Users,
   MagnifyingGlass,
   Plus,
-  HardHat,
+  Export,
+  Star,
   Phone,
   Envelope,
-  Star,
-  Pencil,
-  Trash,
   MapPin,
   Buildings,
-  X,
-  CheckCircle,
+  ArrowsClockwise,
 } from '@phosphor-icons/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { BackButton } from '@/components/BackButton'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
-import {
-  getContractors,
-  addContractor,
-  deleteContractor,
-  type Contractor,
-} from '@/services/contractorService'
 
 interface ContractorsPageProps {
   onNavigate: (page: string) => void
 }
 
-const statusColors: Record<Contractor['status'], string> = {
-  active: 'bg-green-500/15 text-green-400 border-green-500/30',
-  inactive: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30',
-  pending: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+interface Contractor {
+  id: string
+  name: string
+  company: string
+  email: string
+  phone: string
+  city: string
+  state: string
+  category: string
+  status: 'new' | 'contacted' | 'qualified' | 'converted' | 'lost'
+  score: number
+  source: string
 }
 
-const SPECIALTIES = [
-  'All Specialties',
-  'General Contractor',
-  'Roofing',
-  'Electrical',
-  'Plumbing',
-  'HVAC',
-  'Concrete & Foundation',
-  'Landscaping',
-  'Interior Remodeling',
-  'Painting',
-  'Tile & Flooring',
+const MOCK_CONTRACTORS: Contractor[] = [
+  {
+    id: '1',
+    name: 'John Martinez',
+    company: 'Pro Epoxy Solutions',
+    email: 'john@proepoxy.com',
+    phone: '(555) 123-4567',
+    city: 'Los Angeles',
+    state: 'CA',
+    category: 'Epoxy Flooring',
+    status: 'qualified',
+    score: 87,
+    source: 'Google Maps',
+  },
+  {
+    id: '2',
+    name: 'Sarah Chen',
+    company: 'Elite Flooring Inc',
+    email: 'sarah@eliteflooring.com',
+    phone: '(555) 234-5678',
+    city: 'San Francisco',
+    state: 'CA',
+    category: 'Flooring',
+    status: 'contacted',
+    score: 72,
+    source: 'Yelp',
+  },
+  {
+    id: '3',
+    name: 'Mike Johnson',
+    company: 'MJ Construction',
+    email: 'mike@mjconstruction.com',
+    phone: '(555) 345-6789',
+    city: 'Phoenix',
+    state: 'AZ',
+    category: 'General Contractor',
+    status: 'new',
+    score: 65,
+    source: 'Google Maps',
+  },
+  {
+    id: '4',
+    name: 'Lisa Park',
+    company: 'Diamond Coatings',
+    email: 'lisa@diamondcoatings.com',
+    phone: '(555) 456-7890',
+    city: 'Las Vegas',
+    state: 'NV',
+    category: 'Epoxy Flooring',
+    status: 'converted',
+    score: 95,
+    source: 'Directory',
+  },
+  {
+    id: '5',
+    name: 'David Torres',
+    company: 'Southwest Concrete',
+    email: 'david@swconcrete.com',
+    phone: '(555) 567-8901',
+    city: 'Tucson',
+    state: 'AZ',
+    category: 'Concrete',
+    status: 'new',
+    score: 58,
+    source: 'Scraper',
+  },
+  {
+    id: '6',
+    name: 'Amanda White',
+    company: 'Pure Floors LLC',
+    email: 'amanda@purefloors.com',
+    phone: '(555) 678-9012',
+    city: 'Denver',
+    state: 'CO',
+    category: 'Flooring',
+    status: 'qualified',
+    score: 81,
+    source: 'Google Maps',
+  },
 ]
 
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-1">
-      <Star size={14} weight="fill" className="text-yellow-400" />
-      <span className="text-sm font-medium text-white">{rating.toFixed(1)}</span>
-    </div>
-  )
-}
-
-interface AddContractorDialogProps {
-  open: boolean
-  onClose: () => void
-  onAdd: (contractor: Omit<Contractor, 'id' | 'createdAt'>) => void
-}
-
-function AddContractorDialog({ open, onClose, onAdd }: AddContractorDialogProps) {
-  const [form, setForm] = useState({
-    name: '',
-    company: '',
-    specialty: '',
-    location: '',
-    phone: '',
-    email: '',
-    rating: 4.0,
-    status: 'active' as Contractor['status'],
-    website: '',
-    notes: '',
-  })
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!form.name || !form.company || !form.email) {
-      toast.error('Name, company and email are required')
-      return
-    }
-    onAdd(form)
-    setForm({ name: '', company: '', specialty: '', location: '', phone: '', email: '', rating: 4.0, status: 'active', website: '', notes: '' })
-  }
-
-  if (!open) return null
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-lg mx-4 bg-background border border-white/12 rounded-2xl shadow-2xl"
-      >
-        <div className="flex items-center justify-between p-6 border-b border-white/8">
-          <div className="flex items-center gap-3">
-            <HardHat size={20} className="text-yellow-400" />
-            <h2 className="text-lg font-bold text-white">Add Contractor</h2>
-          </div>
-          <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">
-            <X size={20} />
-          </button>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs text-white/60 mb-1.5 block">Full Name *</label>
-              <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="John Smith" className="bg-black/40 border-white/20 text-white" />
-            </div>
-            <div>
-              <label className="text-xs text-white/60 mb-1.5 block">Company *</label>
-              <Input value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))} placeholder="Smith Construction LLC" className="bg-black/40 border-white/20 text-white" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs text-white/60 mb-1.5 block">Specialty</label>
-              <Input value={form.specialty} onChange={e => setForm(f => ({ ...f, specialty: e.target.value }))} placeholder="General Contractor" className="bg-black/40 border-white/20 text-white" />
-            </div>
-            <div>
-              <label className="text-xs text-white/60 mb-1.5 block">Location</label>
-              <Input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Houston, TX" className="bg-black/40 border-white/20 text-white" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs text-white/60 mb-1.5 block">Email *</label>
-              <Input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="john@smithconst.com" className="bg-black/40 border-white/20 text-white" />
-            </div>
-            <div>
-              <label className="text-xs text-white/60 mb-1.5 block">Phone</label>
-              <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="(555) 123-4567" className="bg-black/40 border-white/20 text-white" />
-            </div>
-          </div>
-          <div>
-            <label className="text-xs text-white/60 mb-1.5 block">Website</label>
-            <Input value={form.website} onChange={e => setForm(f => ({ ...f, website: e.target.value }))} placeholder="https://smithconst.com" className="bg-black/40 border-white/20 text-white" />
-          </div>
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1 border-white/20 text-white/70 hover:bg-white/5">Cancel</Button>
-            <Button type="submit" className="flex-1 bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/30">
-              <Plus size={16} className="mr-2" /> Add Contractor
-            </Button>
-          </div>
-        </form>
-      </motion.div>
-    </div>
-  )
+const STATUS_COLORS: Record<string, string> = {
+  new: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  contacted: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  qualified: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+  converted: 'bg-green-500/20 text-green-400 border-green-500/30',
+  lost: 'bg-red-500/20 text-red-400 border-red-500/30',
 }
 
 export function ContractorsPage({ onNavigate }: ContractorsPageProps) {
-  const [contractors, setContractors] = useState<Contractor[]>([])
   const [search, setSearch] = useState('')
-  const [specialty, setSpecialty] = useState('All Specialties')
-  const [showAdd, setShowAdd] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [view, setView] = useState<'table' | 'cards'>('table')
 
-  useEffect(() => {
-    getContractors().then(r => {
-      setContractors(r.contractors)
-      setLoading(false)
-    })
-  }, [])
+  const searchLower = search.toLowerCase()
+  const filtered = MOCK_CONTRACTORS.filter(c => {
+    const matchSearch =
+      !search ||
+      c.name.toLowerCase().includes(searchLower) ||
+      c.company.toLowerCase().includes(searchLower) ||
+      c.email.toLowerCase().includes(searchLower)
+    const matchStatus = statusFilter === 'all' || c.status === statusFilter
+    return matchSearch && matchStatus
+  })
 
-  const filtered = useMemo(() => {
-    let list = contractors
-    if (search) {
-      const q = search.toLowerCase()
-      list = list.filter(c =>
-        c.name.toLowerCase().includes(q) ||
-        c.company.toLowerCase().includes(q) ||
-        c.location.toLowerCase().includes(q) ||
-        c.email.toLowerCase().includes(q)
-      )
-    }
-    if (specialty !== 'All Specialties') {
-      list = list.filter(c => c.specialty === specialty)
-    }
-    return list
-  }, [contractors, search, specialty])
-
-  const stats = useMemo(() => ({
-    total: contractors.length,
-    active: contractors.filter(c => c.status === 'active').length,
-    newThisMonth: contractors.filter(c => {
-      const d = new Date(c.createdAt)
-      if (isNaN(d.getTime())) return false
-      const now = new Date()
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
-    }).length,
-    avgRating: contractors.length
-      ? (contractors.reduce((sum, c) => sum + c.rating, 0) / contractors.length).toFixed(1)
-      : '0.0',
-  }), [contractors])
-
-  const handleAdd = async (contractor: Omit<Contractor, 'id' | 'createdAt'>) => {
-    const created = await addContractor(contractor)
-    setContractors(prev => [created, ...prev])
-    setShowAdd(false)
-    toast.success(`${contractor.name} added successfully`)
-  }
-
-  const handleDelete = async (id: string, name: string) => {
-    await deleteContractor(id)
-    setContractors(prev => prev.filter(c => c.id !== id))
-    toast.success(`${name} removed`)
-  }
-
-  const cardStyle = {
-    background: 'var(--card)',
-    backdropFilter: 'blur(32px) saturate(180%)',
-    border: '1px solid rgba(255,255,255,0.08)',
+  const stats = {
+    total: MOCK_CONTRACTORS.length,
+    new: MOCK_CONTRACTORS.filter(c => c.status === 'new').length,
+    contacted: MOCK_CONTRACTORS.filter(c => c.status === 'contacted').length,
+    qualified: MOCK_CONTRACTORS.filter(c => c.status === 'qualified').length,
+    converted: MOCK_CONTRACTORS.filter(c => c.status === 'converted').length,
   }
 
   return (
-    <div className="space-y-8">
-      <BackButton onBack={() => onNavigate('home')} />
-
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-bold text-white">Contractor Database</h1>
-          <p className="text-white/50 mt-2 text-base">Manage your vetted contractor network</p>
+        <div className="flex items-center gap-4">
+          <BackButton onBack={() => onNavigate('home')} />
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Contractors Database</h1>
+            <p className="text-sm text-muted-foreground">Manage and track contractor leads</p>
+          </div>
         </div>
-        <Button
-          onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/30"
-        >
-          <Plus size={18} />
-          Add Contractor
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => toast.info('Export coming soon')}>
+            <Export size={16} className="mr-2" />
+            Export
+          </Button>
+          <Button size="sm" onClick={() => toast.info('Add contractor coming soon')}>
+            <Plus size={16} className="mr-2" />
+            Add Contractor
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
-          { label: 'Total Contractors', value: stats.total, icon: HardHat, color: 'text-blue-400' },
-          { label: 'Active', value: stats.active, icon: CheckCircle, color: 'text-green-400' },
-          { label: 'Added This Month', value: stats.newThisMonth, icon: Plus, color: 'text-yellow-400' },
-          { label: 'Avg Rating', value: stats.avgRating, icon: Star, color: 'text-amber-400' },
-        ].map((stat) => {
-          const Icon = stat.icon
-          return (
-            <motion.div key={stat.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-              <Card style={cardStyle}>
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-3">
-                    <Icon size={20} className={stat.color} />
+          { label: 'Total', value: stats.total, color: 'text-foreground' },
+          { label: 'New', value: stats.new, color: 'text-blue-400' },
+          { label: 'Contacted', value: stats.contacted, color: 'text-yellow-400' },
+          { label: 'Qualified', value: stats.qualified, color: 'text-purple-400' },
+          { label: 'Converted', value: stats.converted, color: 'text-green-400' },
+        ].map(stat => (
+          <motion.div key={stat.label} whileHover={{ scale: 1.02 }}>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
+                <div className="text-xs text-muted-foreground mt-1">{stat.label}</div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <MagnifyingGlass
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            placeholder="Search contractors..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <div className="flex gap-2">
+          <select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+            className="px-3 py-2 rounded-md border border-border bg-background text-sm text-foreground"
+          >
+            <option value="all">All Status</option>
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="qualified">Qualified</option>
+            <option value="converted">Converted</option>
+            <option value="lost">Lost</option>
+          </select>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSearch('')
+              setStatusFilter('all')
+            }}
+          >
+            <ArrowsClockwise size={16} />
+          </Button>
+        </div>
+        <div className="flex gap-1 border border-border rounded-md p-1">
+          <Button
+            variant={view === 'table' ? 'secondary' : 'ghost'}
+            size="sm"
+            onClick={() => setView('table')}
+          >
+            Table
+          </Button>
+          <Button
+            variant={view === 'cards' ? 'secondary' : 'ghost'}
+            size="sm"
+            onClick={() => setView('cards')}
+          >
+            Cards
+          </Button>
+        </div>
+      </div>
+
+      {/* Table View */}
+      {view === 'table' && (
+        <Card>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left p-4 text-muted-foreground font-medium">Name / Company</th>
+                  <th className="text-left p-4 text-muted-foreground font-medium">Contact</th>
+                  <th className="text-left p-4 text-muted-foreground font-medium">Location</th>
+                  <th className="text-left p-4 text-muted-foreground font-medium">Category</th>
+                  <th className="text-left p-4 text-muted-foreground font-medium">Status</th>
+                  <th className="text-left p-4 text-muted-foreground font-medium">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((contractor, i) => (
+                  <motion.tr
+                    key={contractor.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="border-b border-border/50 hover:bg-muted/50 transition-colors cursor-pointer"
+                  >
+                    <td className="p-4">
+                      <div className="font-medium text-foreground">{contractor.name}</div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <Buildings size={12} />
+                        {contractor.company}
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <Envelope size={12} />
+                        <span className="text-xs">{contractor.email}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-muted-foreground mt-0.5">
+                        <Phone size={12} />
+                        <span className="text-xs">{contractor.phone}</span>
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <MapPin size={12} />
+                        {contractor.city}, {contractor.state}
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <span className="text-xs text-muted-foreground">{contractor.category}</span>
+                    </td>
+                    <td className="p-4">
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full border ${STATUS_COLORS[contractor.status]}`}
+                      >
+                        {contractor.status}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-1">
+                        <Star size={12} className="text-yellow-400" weight="fill" />
+                        <span className="text-xs font-medium">{contractor.score}</span>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+            {filtered.length === 0 && (
+              <div className="text-center py-12 text-muted-foreground">
+                <Users size={40} className="mx-auto mb-3 opacity-50" />
+                <p>No contractors found</p>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
+
+      {/* Cards View */}
+      {view === 'cards' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((contractor, i) => (
+            <motion.div
+              key={contractor.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+            >
+              <Card className="hover:border-primary/30 transition-colors cursor-pointer">
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-2xl font-bold text-white">{stat.value}</p>
-                      <p className="text-xs text-white/50">{stat.label}</p>
+                      <CardTitle className="text-sm">{contractor.name}</CardTitle>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                        <Buildings size={11} />
+                        {contractor.company}
+                      </div>
                     </div>
+                    <div className="flex items-center gap-1">
+                      <Star size={12} className="text-yellow-400" weight="fill" />
+                      <span className="text-xs font-bold">{contractor.score}</span>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Envelope size={11} />
+                    {contractor.email}
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Phone size={11} />
+                    {contractor.phone}
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <MapPin size={11} />
+                    {contractor.city}, {contractor.state}
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-xs text-muted-foreground">{contractor.category}</span>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full border ${STATUS_COLORS[contractor.status]}`}
+                    >
+                      {contractor.status}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
             </motion.div>
-          )
-        })}
-      </div>
-
-      {/* Filters */}
-      <Card style={cardStyle}>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <MagnifyingGlass size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
-              <Input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Search contractors by name, company, location..."
-                className="pl-9 bg-black/40 border-white/20 text-white placeholder:text-white/30"
-              />
-            </div>
-            <select
-              value={specialty}
-              onChange={e => setSpecialty(e.target.value)}
-              className="px-3 py-2 rounded-md bg-black/40 border border-white/20 text-white/70 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500/50"
-            >
-              {SPECIALTIES.map(s => (
-                <option key={s} value={s} className="bg-zinc-900">{s}</option>
-              ))}
-            </select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Table */}
-      <Card style={cardStyle}>
-        <CardHeader className="pb-3 border-b border-white/8">
-          <CardTitle className="text-white text-base">
-            {filtered.length} contractor{filtered.length !== 1 ? 's' : ''}
-            {search || specialty !== 'All Specialties' ? ' (filtered)' : ''}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="flex items-center justify-center py-16">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400" />
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center py-16 text-white/40">
-              <HardHat size={32} className="mx-auto mb-3 opacity-30" />
+          ))}
+          {filtered.length === 0 && (
+            <div className="col-span-3 text-center py-12 text-muted-foreground">
+              <Users size={40} className="mx-auto mb-3 opacity-50" />
               <p>No contractors found</p>
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-white/8">
-                    {['Name & Company', 'Specialty', 'Location', 'Contact', 'Rating', 'Status', 'Actions'].map(h => (
-                      <th key={h} className="text-left text-xs font-semibold text-white/40 uppercase tracking-wider px-5 py-3">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((c, i) => (
-                    <motion.tr
-                      key={c.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: i * 0.03 }}
-                      className="border-b border-white/5 hover:bg-white/3 transition-colors"
-                    >
-                      <td className="px-5 py-4">
-                        <p className="text-sm font-semibold text-white">{c.name}</p>
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <Buildings size={11} className="text-white/40" />
-                          <p className="text-xs text-white/50">{c.company}</p>
-                        </div>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="text-sm text-white/70">{c.specialty || '—'}</span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-1">
-                          <MapPin size={12} className="text-white/40" />
-                          <span className="text-sm text-white/70">{c.location || '—'}</span>
-                        </div>
-                      </td>
-                      <td className="px-5 py-4">
-                        <div className="space-y-1">
-                          {c.email && (
-                            <div className="flex items-center gap-1">
-                              <Envelope size={11} className="text-white/40" />
-                              <span className="text-xs text-white/60 truncate max-w-[160px]">{c.email}</span>
-                            </div>
-                          )}
-                          {c.phone && (
-                            <div className="flex items-center gap-1">
-                              <Phone size={11} className="text-white/40" />
-                              <span className="text-xs text-white/60">{c.phone}</span>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-5 py-4">
-                        <StarRating rating={c.rating} />
-                      </td>
-                      <td className="px-5 py-4">
-                        <Badge className={cn('text-xs border', statusColors[c.status])}>
-                          {c.status}
-                        </Badge>
-                      </td>
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => toast.info(`Editing ${c.name}`)}
-                            className="p-1.5 text-white/40 hover:text-white/80 transition-colors rounded"
-                          >
-                            <Pencil size={14} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(c.id, c.name)}
-                            className="p-1.5 text-white/40 hover:text-red-400 transition-colors rounded"
-                          >
-                            <Trash size={14} />
-                          </button>
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
           )}
-        </CardContent>
-      </Card>
-
-      <AddContractorDialog open={showAdd} onClose={() => setShowAdd(false)} onAdd={handleAdd} />
+        </div>
+      )}
     </div>
   )
 }
