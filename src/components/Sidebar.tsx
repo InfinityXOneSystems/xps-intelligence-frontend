@@ -1,3 +1,5 @@
+// Fix TS2304: 'Buildings' was referenced in primaryMenuItems but not imported;
+// Hammer was also removed from the import as its duplicate entry is deleted below.
 import { motion } from 'framer-motion'
 import { 
   House,
@@ -15,7 +17,7 @@ import {
   Code,
   Browser,
   ChartBar,
-  Hammer,
+  Buildings,
   FileText,
   Lightning,
 } from '@phosphor-icons/react'
@@ -32,11 +34,11 @@ const primaryMenuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'leads', label: 'Leads', icon: Users },
   { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
+  // Buildings icon properly imported above; duplicate Hammer-based entry removed.
   { id: 'contractors', label: 'Contractors', icon: Buildings },
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
   { id: 'roadmap', label: 'Roadmap', icon: MapTrifold },
-  { id: 'contractors', label: 'Contractors', icon: Hammer },
   { id: 'reports', label: 'Reports', icon: ChartBar },
 ]
 

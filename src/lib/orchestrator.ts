@@ -60,6 +60,9 @@ const ALL_AGENT_ROLES: AgentRole[] = [
   'BusinessAgent',
   'PredictionAgent',
   'SimulationAgent',
+  // MetaAgent added to match the AgentRole union type; omitting it would cause
+  // a type error in AGENT_EXEC_LOGS (Record<AgentRole, string[]> requires all keys).
+  'MetaAgent',
 ]
 
 const SIMULATED_FAILURE_RATE = 0.05 // 5% chance of task failure in simulation
@@ -145,6 +148,14 @@ const AGENT_EXEC_LOGS: Record<AgentRole, string[]> = {
     'Running scenario iterations...',
     'Collecting outcomes...',
     'Simulation complete',
+  ],
+  // MetaAgent key added to satisfy Record<AgentRole, string[]>; required because
+  // AgentRole now includes 'MetaAgent' and TypeScript enforces exhaustive Records.
+  MetaAgent: [
+    'Analyzing repository structure...',
+    'Detecting missing components...',
+    'Generating architecture improvements...',
+    'Triggering self-improvement cycle...',
   ],
 }
 

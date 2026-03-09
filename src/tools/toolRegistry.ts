@@ -481,6 +481,43 @@ export function getToolsByCategory(tools: ToolDefinition[], category: ToolCatego
   return tools.filter((t) => t.category === category)
 }
 
+/**
+ * Exhaustive tuple of every valid ToolCategory value.
+ * Must stay in sync with the ToolCategory union in src/types/tools.ts.
+ * Used by isToolCategory() to perform a runtime membership check so that
+ * callers receiving an ExtendedCategory (e.g. 'system', 'advanced') can
+ * narrow the type to ToolCategory before passing it to getToolsByCategory.
+ */
+export const TOOL_CATEGORY_VALUES: readonly ToolCategory[] = [
+  'ai_models',
+  'agent_runtime',
+  'scraping',
+  'github',
+  'deployment',
+  'memory',
+  'developer',
+  'frontend',
+  'media',
+  'business',
+  'integrations',
+] as const
+
+/**
+ * Type guard: returns true when `value` is a valid ToolCategory.
+ *
+ * Use this to narrow an ExtendedCategory (or arbitrary string) before
+ * passing it as the `category` argument of getToolsByCategory.
+ *
+ * @example
+ *   if (isToolCategory(activeCategory)) {
+ *     const tools = getToolsByCategory(allTools, activeCategory)
+ *   }
+ */
+export function isToolCategory(value: unknown): value is ToolCategory {
+  // Safe runtime check — no unsafe cast required.
+  return typeof value === 'string' && (TOOL_CATEGORY_VALUES as readonly string[]).includes(value)
+}
+
 export function findTool(tools: ToolDefinition[], name: string): ToolDefinition | undefined {
   return tools.find((t) => t.name === name)
 }

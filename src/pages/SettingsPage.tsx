@@ -31,6 +31,10 @@ import {
   loadToolRegistry,
   saveToolRegistry,
   getToolsByCategory,
+  // isToolCategory: type guard that narrows unknown/ExtendedCategory values to
+  // ToolCategory before passing to getToolsByCategory, preventing cast errors
+  // if additional categories (e.g. 'system', 'advanced') are introduced later.
+  isToolCategory,
 } from '@/tools/toolRegistry'
 import type { AgentSettings, ToolCategory, ToolDefinition } from '@/types/tools'
 
@@ -894,7 +898,8 @@ export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => voi
   }, [])
 
   const activeCategory_ = CATEGORIES.find((c) => c.key === activeCategory)!
-  const categoryTools = getToolsByCategory(tools, activeCategory)
+  // Guard against ExtendedCategory values not in ToolCategory union.
+  const categoryTools = isToolCategory(activeCategory) ? getToolsByCategory(tools, activeCategory) : []
   const enabledCount = tools.filter((t) => t.enabled).length
 
   const renderPanel = () => {
@@ -967,7 +972,8 @@ export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => voi
           <Card style={cardStyle} className="overflow-hidden">
             <nav className="p-2">
               {CATEGORIES.map((cat) => {
-                const catTools = getToolsByCategory(tools, cat.key)
+                // Guard for potential future ExtendedCategory values.
+                const catTools = isToolCategory(cat.key) ? getToolsByCategory(tools, cat.key) : []
                 const activeCount = catTools.filter((t) => t.enabled).length
                 const isActive = cat.key === activeCategory
                 return (

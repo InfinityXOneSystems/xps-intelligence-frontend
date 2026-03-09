@@ -18,6 +18,8 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { BackButton } from '@/components/BackButton'
 import { toast } from 'sonner'
+// TaskType from AgentTypes union for type safety in Workflow.taskType.
+import type { TaskType } from '@/lib/agentTypes'
 
 interface AutomationPageProps {
   onNavigate: (page: string) => void
@@ -34,6 +36,8 @@ interface Workflow {
   nextRun?: string
   status: 'active' | 'paused' | 'error'
   runs: number
+  // taskType uses TaskType union for strict type checking (not plain string).
+  taskType: TaskType
 }
 
 const MOCK_WORKFLOWS: Workflow[] = [
@@ -48,6 +52,8 @@ const MOCK_WORKFLOWS: Workflow[] = [
     nextRun: 'Tomorrow 6:00 AM',
     status: 'active',
     runs: 47,
+    // Cast to TaskType for strict type checking.
+    taskType: 'scrape' as TaskType,
   },
   {
     id: '2',
@@ -60,6 +66,7 @@ const MOCK_WORKFLOWS: Workflow[] = [
     nextRun: 'On trigger',
     status: 'active',
     runs: 234,
+    taskType: 'analyze_leads' as TaskType,
   },
   {
     id: '3',
@@ -72,6 +79,7 @@ const MOCK_WORKFLOWS: Workflow[] = [
     nextRun: 'Paused',
     status: 'paused',
     runs: 12,
+    taskType: 'report' as TaskType,
   },
   {
     id: '4',
@@ -84,6 +92,7 @@ const MOCK_WORKFLOWS: Workflow[] = [
     nextRun: 'Tomorrow 10:00 AM',
     status: 'error',
     runs: 89,
+    taskType: 'generate_email' as TaskType,
   },
 ]
 
