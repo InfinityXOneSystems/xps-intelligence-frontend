@@ -30,6 +30,7 @@ export type AgentRole =
   | 'BusinessAgent'
   | 'PredictionAgent'
   | 'SimulationAgent'
+  // MetaAgent continuously redesigns system architecture and self-improves
   | 'MetaAgent'
 
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed'

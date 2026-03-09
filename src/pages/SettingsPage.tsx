@@ -1004,6 +1004,8 @@ function LocalMachinePanel() {
 
 function AgentConfigPanel() {
   const agents = ['PlannerAgent', 'ResearchAgent', 'BuilderAgent', 'ScraperAgent', 'MediaAgent', 'ValidatorAgent', 'DevOpsAgent', 'MonitoringAgent', 'KnowledgeAgent', 'BusinessAgent', 'PredictionAgent', 'SimulationAgent', 'MetaAgent']
+  // Enable the first 11 core agents by default; MetaAgent and SimulationAgent
+  // start disabled because they are experimental / resource-intensive.
   const [enabled, setEnabled] = useState<Record<string, boolean>>(Object.fromEntries(agents.map((a, i) => [a, i < 11])))
   const [concurrency, setConcurrency] = useState(3)
   const [taskTimeoutSecs, setTaskTimeoutSecs] = useState(30)
@@ -1377,7 +1379,12 @@ export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => voi
           <Card style={cardStyle} className="overflow-hidden">
             <nav className="p-2">
               {CATEGORIES.map((cat) => {
-                const catTools = getToolsByCategory(tools, cat.key)
+                // FIX (CI job 66236048582): cat.key is ExtendedCategory which may include
+                // non-ToolCategory values (e.g. 'system'). Guard with TOOL_CATEGORIES set
+                // before passing to getToolsByCategory which expects ToolCategory.
+                const catTools = TOOL_CATEGORIES.has(cat.key)
+                  ? getToolsByCategory(tools, cat.key as ToolCategory)
+                  : []
                 const activeCount = catTools.filter((t) => t.enabled).length
                 const isActive = cat.key === activeCategory
                 return (

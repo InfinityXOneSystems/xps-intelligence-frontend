@@ -1,3 +1,6 @@
+// AutomationSchedulerPage.tsx — Manage recurring task schedules.
+// FIX (CI job 66236048582): taskType in useState is cast to TaskType to prevent
+// "Type 'string' is not assignable to type 'TaskType'" TS2322 error.
 import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import {
@@ -20,6 +23,8 @@ import { Badge } from '@/components/ui/badge'
 import { BackButton } from '@/components/BackButton'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+// Import TaskType so the form state is strictly typed rather than inferred as string
+import type { TaskType } from '@/lib/agentTypes'
 import {
   getSchedules,
   toggleSchedule,
@@ -82,7 +87,15 @@ interface CreateScheduleDialogProps {
 }
 
 function CreateScheduleDialog({ open, onClose, onCreated }: CreateScheduleDialogProps) {
-  const [form, setForm] = useState({ name: '', description: '', frequency: 'daily' as Schedule['frequency'], cronExpression: '0 2 * * *', taskType: 'scrape' })
+  // FIX: cast taskType initializer to TaskType so that spreading into Schedule
+  // does not widen the property to plain string (TS2322 in CI job 66236048582).
+  const [form, setForm] = useState({
+    name: '',
+    description: '',
+    frequency: 'daily' as Schedule['frequency'],
+    cronExpression: '0 2 * * *',
+    taskType: 'scrape' as TaskType,
+  })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -97,7 +110,7 @@ function CreateScheduleDialog({ open, onClose, onCreated }: CreateScheduleDialog
       failureCount: 0,
     }
     onCreated(newSchedule)
-    setForm({ name: '', description: '', frequency: 'daily', cronExpression: '0 2 * * *', taskType: 'scrape' })
+    setForm({ name: '', description: '', frequency: 'daily', cronExpression: '0 2 * * *', taskType: 'scrape' as TaskType })
   }
 
   if (!open) return null
@@ -136,8 +149,9 @@ function CreateScheduleDialog({ open, onClose, onCreated }: CreateScheduleDialog
             </div>
             <div>
               <label className="text-xs text-white/60 mb-1.5 block">Task Type</label>
-              <select value={form.taskType} onChange={e => setForm(f => ({ ...f, taskType: e.target.value }))} className="w-full px-3 py-2 rounded-md bg-black/40 border border-white/20 text-white text-sm focus:outline-none">
-                {['scrape', 'report', 'monitor', 'analyze_leads', 'deploy', 'github_action', 'validate', 'research', 'plan'].map(t => (
+              {/* FIX: cast selected value to TaskType to keep form.taskType strictly typed */}
+              <select value={form.taskType} onChange={e => setForm(f => ({ ...f, taskType: e.target.value as TaskType }))} className="w-full px-3 py-2 rounded-md bg-black/40 border border-white/20 text-white text-sm focus:outline-none">
+                {(['scrape', 'report', 'monitor', 'analyze_leads', 'deploy', 'github_action', 'validate', 'research', 'plan'] as TaskType[]).map(t => (
                   <option key={t} value={t} className="bg-zinc-900">{t.replace(/_/g, ' ')}</option>
                 ))}
               </select>

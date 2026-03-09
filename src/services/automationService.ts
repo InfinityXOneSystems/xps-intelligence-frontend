@@ -1,3 +1,5 @@
+// automationService.ts — CRUD and trigger operations for Automation Schedules.
+// Schedule.taskType is strictly typed as TaskType to prevent string-widening errors.
 import type { TaskType } from '@/lib/agentTypes'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
@@ -11,6 +13,7 @@ export interface Schedule {
   nextRun: string
   lastRun?: string
   status: 'active' | 'paused' | 'failed' | 'disabled'
+  /** Strictly typed as TaskType — prevents 'string' widening errors */
   taskType: TaskType
   config: Record<string, unknown>
   successCount: number
@@ -144,7 +147,9 @@ export async function updateSchedule(id: string, updates: Partial<Schedule>): Pr
     return res.json()
   } catch {
     const existing = MOCK_SCHEDULES.find(s => s.id === id)
-    if (!existing) return { ...updates, id, successCount: 0, failureCount: 0 } as Schedule
+    // Fallback: merge updates onto the found mock entry; throw if the id is unknown
+    // to avoid constructing a structurally-incomplete Schedule with a type assertion.
+    if (!existing) throw new Error(`Schedule "${id}" not found in mock data`)
     return { ...existing, ...updates }
   }
 }
