@@ -65,7 +65,8 @@ export async function connectIntegration(
     return res.json()
   } catch {
     const existing = MOCK_INTEGRATIONS.find(i => i.id === id)
-    return { ...existing!, config: { ...existing!.config, ...config }, status: 'connected', lastSync: new Date().toISOString() }
+    if (!existing) return { id, name: id, type: 'api', provider: id, status: 'connected', config, lastSync: new Date().toISOString() }
+    return { ...existing, config: { ...existing.config, ...config }, status: 'connected', lastSync: new Date().toISOString() }
   }
 }
 
@@ -76,7 +77,8 @@ export async function disconnectIntegration(id: string): Promise<Integration> {
     return res.json()
   } catch {
     const existing = MOCK_INTEGRATIONS.find(i => i.id === id)
-    return { ...existing!, status: 'disconnected', config: {} }
+    if (!existing) return { id, name: id, type: 'api', provider: id, status: 'disconnected', config: {} }
+    return { ...existing, status: 'disconnected', config: {} }
   }
 }
 

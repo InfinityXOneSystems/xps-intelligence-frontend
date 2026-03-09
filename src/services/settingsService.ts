@@ -109,7 +109,7 @@ export async function getTokens(): Promise<TokenEntry[]> {
   }
 }
 
-export async function addToken(token: Omit<TokenEntry, 'id' | 'createdAt' | 'successCount' | 'failureCount'>): Promise<TokenEntry> {
+export async function addToken(token: Omit<TokenEntry, 'id' | 'createdAt'>): Promise<TokenEntry> {
   try {
     const res = await fetch(`${API_BASE}/settings/tokens`, {
       method: 'POST',

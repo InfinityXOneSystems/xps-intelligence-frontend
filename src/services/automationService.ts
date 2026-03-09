@@ -144,7 +144,8 @@ export async function updateSchedule(id: string, updates: Partial<Schedule>): Pr
     return res.json()
   } catch {
     const existing = MOCK_SCHEDULES.find(s => s.id === id)
-    return { ...existing!, ...updates }
+    if (!existing) return { ...updates, id, successCount: 0, failureCount: 0 } as Schedule
+    return { ...existing, ...updates }
   }
 }
 

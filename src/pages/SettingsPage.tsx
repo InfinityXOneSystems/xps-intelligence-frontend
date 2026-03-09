@@ -1006,11 +1006,11 @@ function AgentConfigPanel() {
   const agents = ['PlannerAgent', 'ResearchAgent', 'BuilderAgent', 'ScraperAgent', 'MediaAgent', 'ValidatorAgent', 'DevOpsAgent', 'MonitoringAgent', 'KnowledgeAgent', 'BusinessAgent', 'PredictionAgent', 'SimulationAgent', 'MetaAgent']
   const [enabled, setEnabled] = useState<Record<string, boolean>>(Object.fromEntries(agents.map((a, i) => [a, i < 11])))
   const [concurrency, setConcurrency] = useState(3)
-  const [timeout, setTimeout_] = useState(30)
+  const [taskTimeoutSecs, setTaskTimeoutSecs] = useState(30)
   return (
     <>
       <SliderRow label="Global Concurrency Limit" description="Max agents running simultaneously" value={concurrency} min={1} max={20} onChange={setConcurrency} unit=" agents" />
-      <SliderRow label="Task Timeout" description="Default timeout per agent task" value={timeout} min={5} max={300} onChange={setTimeout_} unit="s" />
+      <SliderRow label="Task Timeout" description="Default timeout per agent task" value={taskTimeoutSecs} min={5} max={300} onChange={setTaskTimeoutSecs} unit="s" />
       <div className="mt-2">
         <p className="text-xs text-white/50 mb-3 font-semibold uppercase tracking-wider">Agent Toggle</p>
         {agents.map(agent => (

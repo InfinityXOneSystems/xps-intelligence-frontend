@@ -116,7 +116,8 @@ export async function updateContractor(id: string, updates: Partial<Contractor>)
     return res.json()
   } catch {
     const existing = MOCK_CONTRACTORS.find(c => c.id === id)
-    return { ...existing!, ...updates }
+    if (!existing) return { ...updates, id, name: '', company: '', specialty: '', location: '', phone: '', email: '', rating: 0, status: 'active', createdAt: new Date().toISOString() } as Contractor
+    return { ...existing, ...updates }
   }
 }
 

@@ -69,7 +69,8 @@ export async function toggleAgent(role: AgentRole, enabled: boolean): Promise<Ag
     return res.json()
   } catch {
     const existing = MOCK_CONFIGS.find(c => c.role === role)
-    return { ...existing!, enabled }
+    if (!existing) return { role, enabled, concurrencyLimit: 3, timeoutMs: 30000, maxRetries: 3, priority: 'normal', description: '' }
+    return { ...existing, enabled }
   }
 }
 
@@ -84,7 +85,8 @@ export async function updateAgentConfig(role: AgentRole, config: Partial<AgentCo
     return res.json()
   } catch {
     const existing = MOCK_CONFIGS.find(c => c.role === role)
-    return { ...existing!, ...config }
+    if (!existing) return { role, enabled: true, concurrencyLimit: 3, timeoutMs: 30000, maxRetries: 3, priority: 'normal', description: '', ...config }
+    return { ...existing, ...config }
   }
 }
 

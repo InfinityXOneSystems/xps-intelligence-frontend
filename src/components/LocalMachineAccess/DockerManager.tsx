@@ -40,11 +40,14 @@ export function DockerManager({ open, onClose }: DockerManagerProps) {
     setActionLoading(prev => ({ ...prev, [id]: true }))
     const result = await dockerAction(id, action)
     if (result.success) {
-      setContainers(prev => prev.map(c => {
-        if (c.id !== id) return c
-        if (action === 'remove') return null as unknown as DockerContainer
-        return { ...c, status: action === 'start' ? 'running' : action === 'stop' ? 'stopped' : c.status }
-      }).filter(Boolean))
+      if (action === 'remove') {
+        setContainers(prev => prev.filter(c => c.id !== id))
+      } else {
+        setContainers(prev => prev.map(c => {
+          if (c.id !== id) return c
+          return { ...c, status: action === 'start' ? 'running' : 'stopped' }
+        }))
+      }
       toast.success(result.message)
     }
     setActionLoading(prev => ({ ...prev, [id]: false }))
