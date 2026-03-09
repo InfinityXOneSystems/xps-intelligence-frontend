@@ -32,6 +32,7 @@ const primaryMenuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'leads', label: 'Leads', icon: Users },
   { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
+  { id: 'contractors', label: 'Contractors', icon: Buildings },
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
   { id: 'roadmap', label: 'Roadmap', icon: MapTrifold },
