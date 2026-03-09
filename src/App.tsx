@@ -83,6 +83,8 @@ function App() {
         return <ScraperPage onNavigate={setCurrentPage} />
       case 'canvas':
         return <CanvasPage onNavigate={setCurrentPage} />
+      case 'contractors':
+        return <ContractorsPage onNavigate={setCurrentPage} />
       case 'pipeline':
         return <PipelinePage onNavigate={setCurrentPage} />
       case 'leaderboard':

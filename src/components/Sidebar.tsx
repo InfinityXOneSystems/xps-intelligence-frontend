@@ -33,6 +33,7 @@ interface SidebarProps {
 const primaryMenuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'leads', label: 'Leads', icon: Users },
+  { id: 'contractors', label: 'Contractors', icon: HardHat },
   { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
   // Buildings icon properly imported above; duplicate Hammer-based entry removed.
   { id: 'contractors', label: 'Contractors', icon: Buildings },
