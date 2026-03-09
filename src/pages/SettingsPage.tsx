@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import {
   Brain,
@@ -649,6 +649,13 @@ function ApiKeyRow({
   const [visible, setVisible] = useState(false)
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Clear timer on unmount to prevent state updates on unmounted component
+  useEffect(() => {
+    return () => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+    }
+  }, [])
+
   const toggle = () => {
     setVisible((prev) => {
       const next = !prev
@@ -676,9 +683,12 @@ function ApiKeyRow({
           placeholder={placeholder ?? 'sk-…'}
         />
         <button
+          type="button"
           onClick={toggle}
           className="text-white/30 hover:text-white/70 transition-colors text-xs px-1"
           title={visible ? 'Hide (auto-hides in 30s)' : 'Show'}
+          aria-label={visible ? 'Hide value (auto-hides in 30 seconds)' : 'Show value'}
+          aria-pressed={visible}
         >
           {visible ? '🙈' : '👁'}
         </button>
@@ -721,7 +731,7 @@ function IntegrationsPanel({
   return (
     <>
       {/* Token Vault */}
-      <SectionRow label="Token Vault" description="Encrypted local storage for sensitive credentials">
+      <SectionRow label="Token Vault" description="Stores credentials in browser local storage (plaintext JSON — do not store production secrets)">
         <Switch
           checked={s.tokenVaultEnabled}
           onCheckedChange={(v) => update({ tokenVaultEnabled: v })}
