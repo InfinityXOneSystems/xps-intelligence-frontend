@@ -79,6 +79,7 @@ src/types/validation.ts             — Validation result types (ValidationResul
 | BusinessAgent | Lead discovery and analytics | Active |
 | PredictionAgent | Forecasting and scoring | Active |
 | SimulationAgent | Scenario simulation | Active |
+| MetaAgent | Continuously redesigns system architecture | Active |
 
 ## Task Types
 
