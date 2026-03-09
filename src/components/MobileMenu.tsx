@@ -17,6 +17,7 @@ import {
   Trophy,
   MagnifyingGlass,
   MapTrifold,
+  HardHat,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
@@ -32,6 +33,7 @@ const menuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'dashboard', label: 'Dashboard', icon: ChartBar },
   { id: 'leads', label: 'Leads', icon: Users },
+  { id: 'contractors', label: 'Contractors', icon: HardHat },
   { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },

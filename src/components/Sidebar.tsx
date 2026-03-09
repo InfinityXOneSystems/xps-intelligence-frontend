@@ -14,6 +14,7 @@ import {
   Queue,
   Code,
   Browser,
+  HardHat,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
@@ -27,6 +28,7 @@ interface SidebarProps {
 const primaryMenuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'leads', label: 'Leads', icon: Users },
+  { id: 'contractors', label: 'Contractors', icon: HardHat },
   { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },

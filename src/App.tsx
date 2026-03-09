@@ -21,6 +21,7 @@ import { TaskQueuePage } from '@/pages/TaskQueuePage'
 import { CodeEditorPage } from '@/pages/CodeEditorPage'
 import { SandboxPage } from '@/pages/SandboxPage'
 import { PipelinePage } from '@/pages/PipelinePage'
+import { ContractorsPage } from '@/pages/ContractorsPage'
 import { useLeads } from '@/hooks/useLeadsApi'
 
 function App() {
@@ -79,6 +80,8 @@ function App() {
         return <ScraperPage onNavigate={setCurrentPage} />
       case 'canvas':
         return <CanvasPage onNavigate={setCurrentPage} />
+      case 'contractors':
+        return <ContractorsPage onNavigate={setCurrentPage} />
       case 'pipeline':
         return <PipelinePage onNavigate={setCurrentPage} />
       case 'leaderboard':
