@@ -40,6 +40,10 @@ import {
   loadToolRegistry,
   saveToolRegistry,
   getToolsByCategory,
+  // isToolCategory: type guard that narrows unknown/ExtendedCategory values to
+  // ToolCategory before passing to getToolsByCategory, preventing cast errors
+  // if additional categories (e.g. 'system', 'advanced') are introduced later.
+  isToolCategory,
 } from '@/tools/toolRegistry'
 import type { AgentSettings, ToolCategory, ToolDefinition } from '@/types/tools'
 
