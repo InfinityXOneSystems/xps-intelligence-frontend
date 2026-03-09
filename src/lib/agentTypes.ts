@@ -118,7 +118,6 @@ export const AGENT_DEFINITIONS: AgentDefinition[] = [
     taskTypes: ['report', 'analyze_leads'],
   },
   {
-    // MetaAgent: continuously redesigns system architecture and self-improves
     role: 'MetaAgent',
     description: 'Continuously redesigns system architecture and self-improves',
     primaryTools: ['run_planner_agent', 'run_supervisor_agent'],
