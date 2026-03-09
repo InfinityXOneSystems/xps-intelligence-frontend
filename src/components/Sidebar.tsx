@@ -14,6 +14,9 @@ import {
   Queue,
   Code,
   Browser,
+  HardHat,
+  ChartPie,
+  Timer,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
@@ -41,6 +44,9 @@ const utilityMenuItems = [
   { id: 'sandbox', label: 'Sandbox', icon: Browser },
   { id: 'canvas', label: 'Canvas', icon: Square },
   { id: 'logs', label: 'System Logs', icon: Scroll },
+  { id: 'contractors', label: 'Contractors', icon: HardHat },
+  { id: 'reports', label: 'Reports', icon: ChartPie },
+  { id: 'automation', label: 'Automation', icon: Timer },
   { id: 'settings', label: 'Settings', icon: GearSix }
 ]
 

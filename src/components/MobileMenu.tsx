@@ -17,6 +17,9 @@ import {
   Trophy,
   MagnifyingGlass,
   MapTrifold,
+  HardHat,
+  ChartPie,
+  Timer,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
@@ -44,6 +47,9 @@ const menuItems = [
   { id: 'canvas', label: 'Canvas', icon: Square },
   { id: 'team', label: 'Team', icon: UserList },
   { id: 'logs', label: 'System Logs', icon: Scroll },
+  { id: 'contractors', label: 'Contractors', icon: HardHat },
+  { id: 'reports', label: 'Reports', icon: ChartPie },
+  { id: 'automation', label: 'Automation', icon: Timer },
   { id: 'settings', label: 'Settings', icon: GearSix }
 ]
 
