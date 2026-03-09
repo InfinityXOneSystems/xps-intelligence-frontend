@@ -192,6 +192,7 @@ export function ContractorsPage({ onNavigate }: ContractorsPageProps) {
     active: contractors.filter(c => c.status === 'active').length,
     newThisMonth: contractors.filter(c => {
       const d = new Date(c.createdAt)
+      if (isNaN(d.getTime())) return false
       const now = new Date()
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
     }).length,
