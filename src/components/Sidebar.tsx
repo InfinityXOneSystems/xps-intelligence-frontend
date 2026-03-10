@@ -1,9 +1,8 @@
 import { motion } from 'framer-motion'
-// TAP Protocol: All icon references must be explicitly imported from '@phosphor-icons/react'.
-// HardHat is used for the Contractors menu item (construction/hard-hat semantic).
 import { 
   House,
   Users, 
+  Buildings,
   Trophy,
   MagnifyingGlass,
   FunnelSimple, 
@@ -19,7 +18,6 @@ import {
   ChartBar,
   FileText,
   Lightning,
-  HardHat,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
@@ -33,7 +31,7 @@ interface SidebarProps {
 const primaryMenuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'leads', label: 'Leads', icon: Users },
-  { id: 'contractors', label: 'Contractors', icon: HardHat },
+  { id: 'contractors', label: 'Contractors', icon: Buildings },
   { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
