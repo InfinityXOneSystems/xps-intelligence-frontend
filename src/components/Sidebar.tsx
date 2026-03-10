@@ -1,9 +1,22 @@
-// Fix TS2304: 'Buildings' was referenced in primaryMenuItems but not imported;
-// Hammer was also removed from the import as its duplicate entry is deleted below.
+/**
+ * @file Sidebar.tsx
+ * @module components/Sidebar
+ * @description Primary navigation sidebar for the XPS Intelligence platform.
+ *   Renders collapsible primary (business) and utility (tools) menu sections
+ *   with animated transitions. Controlled by the parent layout via currentPage
+ *   and onNavigate props.
+ *
+ * @quantum-standard Quantum Standard — single authoritative import per symbol;
+ *   no duplicate identifiers; full JSDoc header on every component file.
+ *
+ * @author XPS Intelligence System
+ * @since 1.0.0
+ */
 import { motion } from 'framer-motion'
 import { 
   House,
   Users, 
+  Buildings,
   Trophy,
   MagnifyingGlass,
   FunnelSimple, 
@@ -33,10 +46,8 @@ interface SidebarProps {
 const primaryMenuItems = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'leads', label: 'Leads', icon: Users },
-  { id: 'contractors', label: 'Contractors', icon: HardHat },
-  { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
-  // Buildings icon properly imported above; duplicate Hammer-based entry removed.
   { id: 'contractors', label: 'Contractors', icon: Buildings },
+  { id: 'prospects', label: 'Prospects', icon: MagnifyingGlass },
   { id: 'pipeline', label: 'Pipeline', icon: FunnelSimple },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
   { id: 'roadmap', label: 'Roadmap', icon: MapTrifold },

@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Toaster } from '@/components/ui/sonner'
+import { toast } from 'sonner'
 import { ThemeProvider } from '@/hooks/use-theme'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { Sidebar } from '@/components/Sidebar'
@@ -35,39 +36,29 @@ function App() {
   
   const { data: _leads = [], isLoading, error } = useLeads()
 
+  useEffect(() => {
+    if (error) {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+      toast.warning('Backend unavailable — running in demo mode', {
+        description: `Could not reach ${apiUrl}. Showing demo data.`,
+        duration: 8000,
+        id: 'api-connection-error',
+      })
+    }
+  }, [error])
+
   const LEADS_REQUIRED_PAGES = new Set(['home', 'dashboard', 'leads', 'prospects', 'leaderboard'])
 
   const renderPage = () => {
-    if (LEADS_REQUIRED_PAGES.has(currentPage)) {
-      if (isLoading) {
-        return (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading leads...</p>
-            </div>
+    if (LEADS_REQUIRED_PAGES.has(currentPage) && isLoading) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading leads...</p>
           </div>
-        )
-      }
-
-      if (error) {
-        return (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center max-w-md">
-              <p className="text-destructive mb-4">Failed to connect to API</p>
-              <p className="text-sm text-muted-foreground mb-4">
-                Make sure your backend server is running at {import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}
-              </p>
-              <button 
-                onClick={() => window.location.reload()} 
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-              >
-                Retry
-              </button>
-            </div>
-          </div>
-        )
-      }
+        </div>
+      )
     }
     
     switch (currentPage) {

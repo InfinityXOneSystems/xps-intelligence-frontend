@@ -1,89 +1,57 @@
-version: '3.9'
-
-# XPS Intelligence — multi-service orchestration
-# Usage:
-#   docker compose up -d
-#
-# Services:
-#   frontend  — Vite dev server  (http://localhost:5000)
-#   backend   — Node/Express API (http://localhost:3000)
-#   db        — PostgreSQL 16    (localhost:5432)
-#   cache     — Redis 7          (localhost:6379)
-
 services:
+  # ─── XPS Intelligence Frontend ────────────────────────────────────────────
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
-    environment:
-      - VITE_API_URL=http://backend:3000/api
-    depends_on:
-      backend:
-        condition: service_healthy
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:5000"]
-      interval: 15s
-      timeout: 5s
-      retries: 3
-
-  backend:
-    image: node:20-alpine
-    working_dir: /app
-    volumes:
-      - ./backend:/app
+    container_name: xps-frontend
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://xps:xps@db:5432/xps
-      - REDIS_URL=redis://cache:6379
-    command: ["node", "server.js"]
-    depends_on:
-      db:
-        condition: service_healthy
-      cache:
-        condition: service_healthy
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: xps
-      POSTGRES_PASSWORD: xps
-      POSTGRES_DB: xps
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:3000/api}
+      - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:3000}
     volumes:
-      - db_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+      - .:/app
+      - /app/node_modules
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U xps"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  cache:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - cache_data:/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
       retries: 3
+      start_period: 30s
+    networks:
+      - xps-net
 
-volumes:
-  db_data:
-  cache_data:
+  # ─── GitHub Webhook Receiver ──────────────────────────────────────────────
+  webhook-receiver:
+    build:
+      context: ./docker/webhook-receiver
+      dockerfile: Dockerfile
+    container_name: xps-webhook-receiver
+    ports:
+      - "3001:3001"
+    environment:
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
+      - GITHUB_APP_ID=${GITHUB_APP_ID}
+      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY}
+      - GITHUB_REPO_OWNER=${GITHUB_REPO_OWNER:-InfinityXOneSystems}
+      - GITHUB_REPO_NAME=${GITHUB_REPO_NAME:-XPS-INTELLIGENCE-FRONTEND}
+      - SYNC_BRANCHES=${SYNC_BRANCHES:-main,master,develop}
+      - REPO_DIR=/workspace
+      - HANDLER_SCRIPT=/scripts/docker-webhook-handler.sh
+      - REPORTER_SCRIPT=/scripts/report-to-github.js
+      - WEBHOOK_PORT=3001
+    volumes:
+      - .:/workspace
+      - ./scripts:/scripts:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - xps-net
+
+networks:
+  xps-net:
+    driver: bridge

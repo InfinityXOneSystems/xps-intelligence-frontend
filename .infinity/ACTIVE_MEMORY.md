@@ -119,3 +119,24 @@ src/types/validation.ts             — Validation result types (ValidationResul
   "retryDelayMs": 500
 }
 ```
+
+## CI / Workflow Status
+
+| Workflow | Status | Notes |
+|----------|--------|-------|
+| CI (lint, typecheck, build) | ✅ Passing | Runs on push/PR to main |
+| Comprehensive Validation | ✅ Passing | Runs on push/PR to main |
+| Deploy to Vercel | ⚠️ Skipped when secrets absent | Requires `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` secrets |
+| Dependabot Auto-Merge | ✅ Active | Patch/minor: auto-merge; Major: manual review required |
+
+## Known Constraints
+
+- `eslint` is pinned to `^9.39.4` — do NOT upgrade to v10+ until `eslint-plugin-react-hooks` supports eslint v10 peer dependency.
+- Navigation icons (`Sidebar.tsx`, `MobileMenu.tsx`) use `@phosphor-icons/react`. The `Buildings` icon is used for "Contractors". Do not reference icons that are not verified exports of the installed package version.
+- `recharts` is pinned at `^2.15.x` in package.json. `src/components/ui/chart.tsx` uses v3-only types — upgrade requires code changes.
+
+## Maintenance
+
+- Dependency update policy: `docs/maintenance/dependency-update-policy.md`
+- Auto-merge workflow: `.github/workflows/dependabot-auto-merge.yml`
+- For memory regeneration: run `Run_Memory_Script.ps1` (Windows) or restore this file from last known-good commit.
