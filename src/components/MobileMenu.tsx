@@ -3,6 +3,7 @@ import {
   House,
   ChartBar, 
   Users, 
+  Buildings,
   Robot, 
   FunnelSimple, 
   UserList,
@@ -19,7 +20,6 @@ import {
   MapTrifold,
   Lightning,
   FileText,
-  Buildings,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import logoImage from '@/assets/images/XPS-Logo-Transparent.webp'
