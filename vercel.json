@@ -1,6 +1,9 @@
-{
+﻿{
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "env": {
+    "VITE_API_URL": "https://railway-xpsintelligencesystem-production.up.railway.app/api"
+  },
   "headers": [
     {
       "source": "/api/(.*)",
@@ -11,8 +14,5 @@
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" }
       ]
     }
-  ],
-  "env": {
-    "BACKEND_URL": "https://xps-intelligence-system.up.railway.app"
-  }
+  ]
 }
