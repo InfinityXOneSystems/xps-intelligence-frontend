@@ -62,8 +62,21 @@ jobs:
           name: dist
           path: dist/
 
+      - name: Check Vercel secrets
+        id: check-secrets
+        run: |
+          if [[ -z "$VERCEL_TOKEN" ]]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "⚠️  VERCEL_TOKEN secret not configured — skipping deployment. Set VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID in repository secrets to enable production deploys."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
       - name: Deploy to Vercel
         id: deploy
+        if: steps.check-secrets.outputs.configured == 'true'
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
