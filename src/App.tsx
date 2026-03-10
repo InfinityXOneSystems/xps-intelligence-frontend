@@ -103,8 +103,6 @@ function App() {
         return <CodeEditorPage onNavigate={setCurrentPage} />
       case 'sandbox':
         return <SandboxPage onNavigate={setCurrentPage} />
-      case 'contractors':
-        return <ContractorsPage onNavigate={setCurrentPage} />
       case 'automation':
         return <AutomationPage onNavigate={setCurrentPage} />
       case 'reports':
