@@ -9,11 +9,8 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'AI_GROQ_API_KEY is not configured' })
   }
 
-  if (!process.env.AI_GROQ_API_KEY) {
-    return res.status(503).json({ error: 'LLM not configured — AI_GROQ_API_KEY is missing' })
-  }
-
   try {
+    const groq = new Groq({ apiKey: process.env.AI_GROQ_API_KEY });
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [
@@ -22,7 +19,9 @@ export default async function handler(req, res) {
     });
 
     return res.status(200).json({
-      message: response.choices[0].message.content
+      message: response.choices[0].message.content,
+      model: "llama-3.3-70b-versatile",
+      provider: "groq"
     });
   } catch (error) {
     console.error(error);

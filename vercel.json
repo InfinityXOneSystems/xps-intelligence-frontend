@@ -4,5 +4,58 @@
   "env": {
     "VITE_API_URL": "https://xpsintelligencesystem-production.up.railway.app/api",
     "VITE_WS_URL": "wss://xpsintelligencesystem-production.up.railway.app"
-  }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization,X-Hub-Signature-256,X-Docker-Event" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/health",
+      "destination": "/api/health"
+    },
+    {
+      "source": "/api/chat",
+      "destination": "/api/chat"
+    },
+    {
+      "source": "/api/agent",
+      "destination": "/api/agent"
+    },
+    {
+      "source": "/api/orchestrator",
+      "destination": "/api/orchestrator"
+    },
+    {
+      "source": "/api/scraper-trigger",
+      "destination": "/api/scraper-trigger"
+    },
+    {
+      "source": "/api/leads-sync",
+      "destination": "/api/leads-sync"
+    },
+    {
+      "source": "/api/docker-sync",
+      "destination": "/api/docker-sync"
+    },
+    {
+      "source": "/api/groq-test",
+      "destination": "/api/groq-test"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

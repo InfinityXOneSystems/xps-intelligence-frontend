@@ -1,0 +1,202 @@
+name: 🔄 Cross-Repo Sync
+
+# Keeps XPS-INTELLIGENCE-FRONTEND, XPS_INTELLIGENCE_SYSTEM, and XPS-LEADS
+# in sync by triggering workflows in related repos when main changes.
+# Also syncs Docker Desktop via webhook.
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target repos to sync (all|backend|leads|docker)'
+        required: false
+        default: 'all'
+        type: choice
+        options: [all, backend, leads, docker]
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  sync-backend:
+    name: 🚀 Sync → XPS_INTELLIGENCE_SYSTEM
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >-
+      github.event_name != 'workflow_dispatch' ||
+      inputs.target == 'all' ||
+      inputs.target == 'backend'
+
+    steps:
+      - name: Notify backend repo of frontend update
+        env:
+          BACKEND_REPO_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "$BACKEND_REPO_TOKEN" ]; then
+            echo "::notice::GH_PAT not configured — skipping backend sync"
+            exit 0
+          fi
+
+          HTTP_CODE=$(curl -s -o /tmp/backend_dispatch.json -w "%{http_code}" \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${BACKEND_REPO_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/InfinityXOneSystems/XPS_INTELLIGENCE_SYSTEM/dispatches" \
+            -d '{
+              "event_type": "frontend_updated",
+              "client_payload": {
+                "frontend_sha": "${{ github.sha }}",
+                "frontend_ref": "${{ github.ref }}",
+                "triggered_by": "${{ github.actor }}",
+                "run_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              }
+            }')
+
+          echo "Backend sync response: $HTTP_CODE"
+          if [ "$HTTP_CODE" = "204" ]; then
+            echo "✅ Backend repo notified"
+          else
+            echo "::warning::Backend sync returned $HTTP_CODE"
+            cat /tmp/backend_dispatch.json 2>/dev/null || true
+          fi
+
+  sync-leads-index:
+    name: 📊 Sync → XPS-LEADS Index
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >-
+      github.event_name != 'workflow_dispatch' ||
+      inputs.target == 'all' ||
+      inputs.target == 'leads'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update leads repo README/index with latest frontend SHA
+        env:
+          LEADS_REPO_TOKEN: ${{ secrets.LEADS_REPO_TOKEN || secrets.GH_PAT }}
+        run: |
+          if [ -z "$LEADS_REPO_TOKEN" ]; then
+            echo "::notice::LEADS_REPO_TOKEN not configured — skipping leads index sync"
+            exit 0
+          fi
+
+          LEADS_OWNER="${{ vars.LEADS_REPO_OWNER || 'InfinityXOneSystems' }}"
+          LEADS_REPO="${{ vars.LEADS_REPO_NAME || 'XPS-LEADS' }}"
+
+          # Create or update sync status file in leads repo
+          SYNC_CONTENT=$(cat << EOF
+          {
+            "frontend_sha": "${{ github.sha }}",
+            "frontend_ref": "${{ github.ref }}",
+            "synced_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "run_id": "${{ github.run_id }}",
+            "actor": "${{ github.actor }}"
+          }
+          EOF
+          )
+          CONTENT=$(echo "$SYNC_CONTENT" | base64 -w 0)
+          FILE_PATH=".sync/frontend-status.json"
+
+          # Get existing SHA
+          EXISTING_SHA=$(curl -s \
+            -H "Authorization: Bearer ${LEADS_REPO_TOKEN}" \
+            "https://api.github.com/repos/${LEADS_OWNER}/${LEADS_REPO}/contents/${FILE_PATH}" \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('sha',''))" 2>/dev/null || echo "")
+
+          if [ -n "$EXISTING_SHA" ]; then
+            PAYLOAD="{\"message\":\"sync: update frontend status\",\"content\":\"${CONTENT}\",\"sha\":\"${EXISTING_SHA}\"}"
+          else
+            PAYLOAD="{\"message\":\"sync: initialize frontend status tracking\",\"content\":\"${CONTENT}\"}"
+          fi
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X PUT \
+            -H "Authorization: Bearer ${LEADS_REPO_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${LEADS_OWNER}/${LEADS_REPO}/contents/${FILE_PATH}" \
+            -d "$PAYLOAD")
+
+          echo "Leads repo sync: $HTTP_CODE"
+
+  sync-docker:
+    name: 🐳 Sync → Docker Desktop
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >-
+      github.event_name != 'workflow_dispatch' ||
+      inputs.target == 'all' ||
+      inputs.target == 'docker'
+
+    steps:
+      - name: Trigger Docker Desktop webhook
+        env:
+          DOCKER_WEBHOOK_URL: ${{ vars.DOCKER_WEBHOOK_URL }}
+          GITHUB_WEBHOOK_SECRET: ${{ secrets.GITHUB_WEBHOOK_SECRET }}
+        run: |
+          if [ -z "$DOCKER_WEBHOOK_URL" ]; then
+            echo "::notice::DOCKER_WEBHOOK_URL not configured — skipping Docker sync"
+            exit 0
+          fi
+
+          PAYLOAD=$(cat << 'EOF'
+          {
+            "event": "push",
+            "ref": "${{ github.ref }}",
+            "after": "${{ github.sha }}",
+            "repository": {
+              "name": "${{ github.event.repository.name }}",
+              "full_name": "${{ github.repository }}",
+              "owner": { "login": "${{ github.repository_owner }}" }
+            },
+            "pusher": { "name": "${{ github.actor }}" }
+          }
+          EOF
+          )
+
+          SIGNATURE=""
+          if [ -n "$GITHUB_WEBHOOK_SECRET" ]; then
+            SIGNATURE=$(echo -n "$PAYLOAD" | \
+              openssl dgst -sha256 -hmac "$GITHUB_WEBHOOK_SECRET" | \
+              sed 's/.*= /sha256=/')
+          fi
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 15 \
+            -X POST "${DOCKER_WEBHOOK_URL}/webhook" \
+            -H "Content-Type: application/json" \
+            -H "X-GitHub-Event: push" \
+            -H "X-Hub-Signature-256: ${SIGNATURE}" \
+            -d "$PAYLOAD")
+
+          echo "Docker webhook response: $HTTP_CODE"
+          if [ "$HTTP_CODE" = "202" ] || [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Docker Desktop notified"
+          else
+            echo "::warning::Docker webhook returned $HTTP_CODE"
+          fi
+
+  sync-summary:
+    name: 📋 Sync Summary
+    runs-on: ubuntu-latest
+    needs: [sync-backend, sync-leads-index, sync-docker]
+    if: always()
+
+    steps:
+      - name: Report sync status
+        run: |
+          echo "## 🔄 Cross-Repo Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Target | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| XPS_INTELLIGENCE_SYSTEM | ${{ needs.sync-backend.result == 'success' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| XPS-LEADS | ${{ needs.sync-leads-index.result == 'success' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Docker Desktop | ${{ needs.sync-docker.result == 'success' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY

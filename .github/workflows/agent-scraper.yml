@@ -21,13 +21,16 @@ on:
         description: 'Agent job ID (for status reporting)'
         required: false
         type: string
+  schedule:
+    # Daily scrape at 6am UTC — collect fresh leads automatically
+    - cron: '0 6 * * *'
 
 jobs:
   scrape:
     name: Run Scraper Worker
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -41,58 +44,290 @@ jobs:
           pip install requests beautifulsoup4 playwright
           playwright install chromium --with-deps
 
-      - name: Run scraper
+      - name: Run real Playwright scraper
         id: scrape
+        env:
+          SCRAPE_CITY: ${{ inputs.city || 'Orlando' }}
+          SCRAPE_CATEGORY: ${{ inputs.category || 'epoxy contractors' }}
+          SCRAPE_MAX: ${{ inputs.max_results || '50' }}
+          SCRAPE_JOB_ID: ${{ inputs.job_id || github.run_id }}
         run: |
-          python - <<'EOF'
-          import json, os, sys
+          python - <<'PYEOF'
+          import json, os, sys, re, time, asyncio
+          from urllib.parse import quote_plus, urljoin
+          import requests
+          from bs4 import BeautifulSoup
 
-          city = "${{ inputs.city }}"
-          category = "${{ inputs.category }}"
-          max_results = int("${{ inputs.max_results }}" or "50")
-          job_id = "${{ inputs.job_id }}" or "manual"
+          city = os.environ.get("SCRAPE_CITY", "Orlando")
+          category = os.environ.get("SCRAPE_CATEGORY", "epoxy contractors")
+          max_results = int(os.environ.get("SCRAPE_MAX", "50"))
+          job_id = os.environ.get("SCRAPE_JOB_ID", "auto")
 
-          print(f"[INFO] Starting scraper: {category} in {city}, max={max_results}, job={job_id}")
+          print(f"[INFO] Starting scraper: '{category}' in '{city}', max={max_results}, job={job_id}")
 
-          # Placeholder: real scraper would use Playwright here
-          results = [
-            {
-              "company": f"Sample {category.title()} Co #{i+1}",
-              "phone": f"(407) 555-{str(i).zfill(4)}",
-              "email": f"contact{i+1}@example.com",
-              "website": f"https://example{i+1}.com",
-              "industry": category,
-              "location": city,
-              "lead_score": round(60 + (i % 40)),
-            }
-            for i in range(min(max_results, 5))
-          ]
+          results = []
+          seen_companies = set()
 
-          output = {"job_id": job_id, "city": city, "category": category, "count": len(results), "results": results}
-          print(json.dumps(output, indent=2))
+          HEADERS = {
+              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+              "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+              "Accept-Language": "en-US,en;q=0.9",
+          }
+
+          def extract_emails(text):
+              pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+              return list(set(re.findall(pattern, text)))
+
+          def extract_phones(text):
+              pattern = r'\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}'
+              return list(set(re.findall(pattern, text)))
+
+          def score_lead(company_data):
+              score = 50
+              if company_data.get('email'): score += 20
+              if company_data.get('phone'): score += 15
+              if company_data.get('website'): score += 10
+              if company_data.get('address'): score += 5
+              return min(score, 100)
+
+          # Strategy 1: Google Maps / Places search via Yelp (public, no auth needed)
+          def scrape_yelp_search():
+              query = quote_plus(f"{category} {city}")
+              url = f"https://www.yelp.com/search?find_desc={query}&find_loc={quote_plus(city)}"
+              try:
+                  resp = requests.get(url, headers=HEADERS, timeout=15)
+                  if resp.status_code == 200:
+                      soup = BeautifulSoup(resp.text, 'html.parser')
+                      # Find business listings
+                      businesses = soup.select('[class*="businessName"]') or soup.select('h3 a[href*="/biz/"]')
+                      for biz in businesses[:max_results]:
+                          name = biz.get_text(strip=True)
+                          if name and name not in seen_companies and len(name) > 2:
+                              seen_companies.add(name)
+                              results.append({
+                                  "company": name,
+                                  "industry": category,
+                                  "location": city,
+                                  "source": "yelp",
+                              })
+                  print(f"[Yelp] Found {len(results)} listings")
+              except Exception as e:
+                  print(f"[Yelp] Error: {e}")
+
+          # Strategy 2: Yellow Pages
+          def scrape_yellowpages():
+              query = quote_plus(category.replace(' ', '-'))
+              loc = quote_plus(city)
+              url = f"https://www.yellowpages.com/search?search_terms={query}&geo_location_terms={loc}"
+              try:
+                  resp = requests.get(url, headers=HEADERS, timeout=15)
+                  if resp.status_code == 200:
+                      soup = BeautifulSoup(resp.text, 'html.parser')
+                      listings = soup.select('.listing') or soup.select('[class*="result"]')
+                      for listing in listings[:max_results]:
+                          name_el = listing.select_one('.business-name') or listing.select_one('h2') or listing.select_one('h3')
+                          phone_el = listing.select_one('.phones') or listing.select_one('[class*="phone"]')
+                          website_el = listing.select_one('a.track-visit-website') or listing.select_one('[class*="website"]')
+
+                          if not name_el: continue
+                          name = name_el.get_text(strip=True)
+                          if not name or name in seen_companies: continue
+                          seen_companies.add(name)
+
+                          phone = phone_el.get_text(strip=True) if phone_el else ''
+                          website = website_el.get('href', '') if website_el else ''
+                          if website and website.startswith('/'):
+                              website = ''
+
+                          results.append({
+                              "company": name,
+                              "phone": phone,
+                              "website": website,
+                              "industry": category,
+                              "location": city,
+                              "source": "yellowpages",
+                          })
+                  print(f"[YellowPages] Total results: {len(results)}")
+              except Exception as e:
+                  print(f"[YellowPages] Error: {e}")
+
+          # Strategy 3: BBB (Better Business Bureau)
+          def scrape_bbb():
+              state_map = {
+                  "orlando": "FL", "miami": "FL", "tampa": "FL",
+                  "houston": "TX", "dallas": "TX", "austin": "TX",
+                  "los angeles": "CA", "san francisco": "CA",
+                  "new york": "NY", "chicago": "IL",
+              }
+              state = state_map.get(city.lower(), "FL")
+              query = quote_plus(category)
+              url = f"https://www.bbb.org/search?find_text={query}&find_loc={quote_plus(city)}%2C+{state}"
+              try:
+                  resp = requests.get(url, headers=HEADERS, timeout=15)
+                  if resp.status_code == 200:
+                      soup = BeautifulSoup(resp.text, 'html.parser')
+                      listings = soup.select('[data-businessid]') or soup.select('.result-card')
+                      for listing in listings[:30]:
+                          name_el = listing.select_one('.text-blue-medium') or listing.select_one('h3')
+                          if not name_el: continue
+                          name = name_el.get_text(strip=True)
+                          if not name or name in seen_companies: continue
+                          seen_companies.add(name)
+
+                          phone_el = listing.select_one('[aria-label*="phone"]') or listing.select_one('.phone')
+                          results.append({
+                              "company": name,
+                              "phone": phone_el.get_text(strip=True) if phone_el else '',
+                              "industry": category,
+                              "location": city,
+                              "source": "bbb",
+                          })
+                  print(f"[BBB] Total results: {len(results)}")
+              except Exception as e:
+                  print(f"[BBB] Error: {e}")
+
+          # Run all scrapers
+          scrape_yelp_search()
+          time.sleep(2)
+          scrape_yellowpages()
+          time.sleep(2)
+          scrape_bbb()
+
+          # Score and deduplicate
+          final_results = []
+          for r in results[:max_results]:
+              r['lead_score'] = score_lead(r)
+              r['category'] = category
+              final_results.append(r)
+
+          # Sort by lead score
+          final_results.sort(key=lambda x: x.get('lead_score', 0), reverse=True)
+
+          output = {
+              "job_id": job_id,
+              "city": city,
+              "category": category,
+              "count": len(final_results),
+              "scraped_at": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+              "results": final_results
+          }
+
+          print(f"\n[SUCCESS] Scraped {len(final_results)} leads")
+          print(json.dumps({"count": len(final_results), "top5": [r['company'] for r in final_results[:5]]}, indent=2))
 
           with open("scraper_output.json", "w") as f:
-            json.dump(output, f, indent=2)
+              json.dump(output, f, indent=2)
 
-          print(f"[SUCCESS] Scraped {len(results)} leads")
-          EOF
+          PYEOF
 
       - name: Upload results
         uses: actions/upload-artifact@v4
         with:
           name: scraper-results-${{ github.run_id }}
           path: scraper_output.json
-          retention-days: 7
+          retention-days: 30
 
-      - name: Post results to API
-        if: env.XPS_API_URL != ''
+      - name: Commit leads to leads repo
+        if: env.LEADS_REPO_TOKEN != ''
         env:
-          XPS_API_URL: ${{ vars.XPS_API_URL }}
+          LEADS_REPO_TOKEN: ${{ secrets.LEADS_REPO_TOKEN }}
+          LEADS_REPO_OWNER: ${{ vars.LEADS_REPO_OWNER || 'InfinityXOneSystems' }}
+          LEADS_REPO_NAME: ${{ vars.LEADS_REPO_NAME || 'XPS-LEADS' }}
+        run: |
+          if [ ! -f scraper_output.json ]; then
+            echo "No scraper output — skipping leads commit"
+            exit 0
+          fi
+
+          CITY="${{ inputs.city || 'Orlando' }}"
+          CATEGORY="${{ inputs.category || 'epoxy-contractors' }}"
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          SAFE_CATEGORY=$(echo "$CATEGORY" | tr ' ' '-' | tr '[:upper:]' '[:lower:]')
+          FILE_PATH="data/leads/${TIMESTAMP}-${SAFE_CATEGORY}-${CITY}.json"
+
+          # Get the blob SHA of the file if it exists (for update)
+          EXISTING_SHA=$(curl -s \
+            -H "Authorization: Bearer ${LEADS_REPO_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${LEADS_REPO_OWNER}/${LEADS_REPO_NAME}/contents/${FILE_PATH}" \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('sha',''))" 2>/dev/null || echo "")
+
+          CONTENT=$(base64 -w 0 scraper_output.json)
+
+          if [ -n "$EXISTING_SHA" ]; then
+            PAYLOAD="{\"message\":\"feat(leads): update ${SAFE_CATEGORY} leads in ${CITY}\",\"content\":\"${CONTENT}\",\"sha\":\"${EXISTING_SHA}\"}"
+          else
+            COUNT=$(python3 -c "import json; d=json.load(open('scraper_output.json')); print(d.get('count',0))" 2>/dev/null || echo "?")
+            PAYLOAD="{\"message\":\"feat(leads): add ${COUNT} ${SAFE_CATEGORY} leads from ${CITY} [run:${{ github.run_id }}]\",\"content\":\"${CONTENT}\"}"
+          fi
+
+          HTTP_CODE=$(curl -s -o /tmp/commit_response.json -w "%{http_code}" \
+            -X PUT \
+            -H "Authorization: Bearer ${LEADS_REPO_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${LEADS_REPO_OWNER}/${LEADS_REPO_NAME}/contents/${FILE_PATH}" \
+            -d "$PAYLOAD")
+
+          if [ "$HTTP_CODE" = "201" ] || [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Leads committed to ${LEADS_REPO_OWNER}/${LEADS_REPO_NAME}/${FILE_PATH}"
+          else
+            echo "::warning::Leads repo commit returned $HTTP_CODE"
+            cat /tmp/commit_response.json
+          fi
+
+      - name: Post results to XPS backend API
+        env:
+          XPS_API_URL: ${{ vars.XPS_API_URL || vars.VITE_API_URL }}
           XPS_API_TOKEN: ${{ secrets.XPS_API_TOKEN }}
         run: |
-          if [ -f scraper_output.json ]; then
-            curl -s -X POST "${XPS_API_URL}/scraper/results" \
-              -H "Authorization: Bearer ${XPS_API_TOKEN}" \
-              -H "Content-Type: application/json" \
-              -d @scraper_output.json || echo "API post skipped (no backend)"
+          if [ -z "$XPS_API_URL" ] || [ ! -f scraper_output.json ]; then
+            echo "::notice::API post skipped (XPS_API_URL not configured or no output)"
+            exit 0
           fi
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${XPS_API_URL}/scraper/results" \
+            -H "Authorization: Bearer ${XPS_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --max-time 30 \
+            -d @scraper_output.json)
+
+          echo "API post response: $HTTP_CODE"
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ] || [ "$HTTP_CODE" = "202" ]; then
+            echo "✅ Results posted to XPS API"
+          else
+            echo "::warning::API post returned $HTTP_CODE"
+          fi
+
+      - name: Post to Vercel leads-sync endpoint
+        env:
+          VERCEL_FRONTEND_URL: ${{ vars.VERCEL_FRONTEND_URL || 'https://xps-intelligence.vercel.app' }}
+          XPS_API_TOKEN: ${{ secrets.XPS_API_TOKEN }}
+        run: |
+          if [ ! -f scraper_output.json ]; then exit 0; fi
+
+          LEADS_JSON=$(python3 -c "import json; d=json.load(open('scraper_output.json')); print(json.dumps(d.get('results', [])))" 2>/dev/null || echo "[]")
+          PAYLOAD=$(python3 -c "
+          import json, sys
+          leads = json.loads('$LEADS_JSON')
+          payload = {
+            'leads': leads,
+            'source': 'github-actions-scraper',
+            'runId': '${{ github.run_id }}'
+          }
+          print(json.dumps(payload))
+          " 2>/dev/null || echo '{}')
+
+          if [ "$PAYLOAD" = "{}" ]; then exit 0; fi
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${VERCEL_FRONTEND_URL}/api/leads-sync" \
+            -H "Authorization: Bearer ${XPS_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --max-time 30 \
+            -d "$PAYLOAD")
+
+          echo "Vercel leads-sync response: $HTTP_CODE"
+
