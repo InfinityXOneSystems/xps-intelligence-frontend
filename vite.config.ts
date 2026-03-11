@@ -22,7 +22,18 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src')
     }
   },
-  // Expose both VITE_* (local dev) and NEXT_PUBLIC_* (Supabase Vercel integration)
-  // env vars to the browser bundle at build time.
-  envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
+  // Expose NEXT_PUBLIC_* vars (Supabase Vercel integration) to the browser bundle.
+  // API_URL and WS_URL are injected via the `define` block below — no VITE_ prefix needed.
+  envPrefix: ['NEXT_PUBLIC_'],
+
+  // Inject API_URL and WS_URL at build time so the app reads them without a VITE_ prefix.
+  // Vercel, Railway CI, and local .env.local set `API_URL` and `WS_URL` directly.
+  define: {
+    'import.meta.env.API_URL': JSON.stringify(
+      process.env.API_URL || 'http://localhost:3000/api'
+    ),
+    'import.meta.env.WS_URL': JSON.stringify(
+      process.env.WS_URL || 'ws://localhost:3000'
+    ),
+  },
 });

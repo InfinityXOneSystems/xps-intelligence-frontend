@@ -33,8 +33,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_URL: ${{ vars.VITE_API_URL || 'http://localhost:3000/api' }}
-          VITE_WS_URL: ${{ vars.VITE_WS_URL || 'ws://localhost:3000' }}
+          API_URL: ${{ vars.API_URL || 'http://localhost:3000/api' }}
+          WS_URL: ${{ vars.WS_URL || 'ws://localhost:3000' }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4

@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { toast } from 'sonner'
 import { ThemeProvider } from '@/hooks/use-theme'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { API_BASE } from '@/lib/config'
 import { Sidebar } from '@/components/Sidebar'
 import { TopBar } from '@/components/TopBar'
 import { MobileMenu } from '@/components/MobileMenu'
@@ -46,7 +47,7 @@ function App() {
 
   useEffect(() => {
     if (error) {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+      const apiUrl = API_BASE
       toast.warning('Backend unavailable — running in demo mode', {
         description: `Could not reach ${apiUrl}. Showing demo data.`,
         duration: 8000,

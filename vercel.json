@@ -2,7 +2,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "env": {
-    "VITE_API_URL": "https://xpsintelligencesystem-production.up.railway.app/api",
-    "VITE_WS_URL": "wss://xpsintelligencesystem-production.up.railway.app"
+    "API_URL": "https://xpsintelligencesystem-production.up.railway.app/api",
+    "WS_URL": "wss://xpsintelligencesystem-production.up.railway.app"
   }
 }
+

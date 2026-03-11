@@ -217,7 +217,7 @@ Run \`npx tsx scripts/validate-playwright.ts\` for E2E tests.
 ${operational ? '✅ No manual steps required. System is fully operational.' : `
 1. Review \`.infinity/DIAGNOSTIC_REPORT.md\` for remaining issues
 2. Set environment variables in Railway (DATABASE_URL, JWT_SECRET, AI_GROQ_API_KEY)
-3. Set environment variables in Vercel (VITE_API_URL, AI_GROQ_API_KEY)
+3. Set environment variables in Vercel (API_URL, AI_GROQ_API_KEY)
 4. Verify Railway backend is deployed and healthy
 5. Merge this PR to trigger automatic Vercel deployment
 `}

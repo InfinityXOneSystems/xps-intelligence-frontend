@@ -107,7 +107,7 @@ function fixActionVersions() {
 
 /**
  * FIX-002: Fix vercel.json API URL
- * Ensures VITE_API_URL ends with /api
+ * Ensures API_URL ends with /api
  */
 function fixVercelJson() {
   const path = 'vercel.json'
@@ -122,14 +122,14 @@ function fixVercelJson() {
     const text = content.charCodeAt(0) === 0xfeff ? content.slice(1) : content
     const config = JSON.parse(text) as Record<string, unknown>
     const env = config.env as Record<string, string> | undefined
-    if (!env?.VITE_API_URL) {
-      record('FIX-002', 'Fix vercel.json API URL', 'SKIPPED', 'VITE_API_URL not in vercel.json — set it manually')
+    if (!env?.API_URL) {
+      record('FIX-002', 'Fix vercel.json API URL', 'SKIPPED', 'API_URL not in vercel.json — set it manually')
       return
     }
-    if (!env.VITE_API_URL.endsWith('/api')) {
-      ;(config.env as Record<string, string>).VITE_API_URL = env.VITE_API_URL.replace(/\/?$/, '/api')
+    if (!env.API_URL.endsWith('/api')) {
+      ;(config.env as Record<string, string>).API_URL = env.API_URL.replace(/\/?$/, '/api')
       writeText(path, JSON.stringify(config, null, 2) + '\n')
-      record('FIX-002', 'Fix vercel.json API URL', 'APPLIED', 'Appended /api to VITE_API_URL')
+      record('FIX-002', 'Fix vercel.json API URL', 'APPLIED', 'Appended /api to API_URL')
     } else {
       record('FIX-002', 'Fix vercel.json API URL', 'ALREADY_FIXED')
     }
@@ -158,15 +158,15 @@ function fixConfigTs() {
  */
 
 export const API_BASE =
-  import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+  import.meta.env.API_URL || 'http://localhost:3000/api'
 
 export const WS_BASE =
-  import.meta.env.VITE_WS_URL || 'ws://localhost:3000'
+  import.meta.env.WS_URL || 'ws://localhost:3000'
 
-if (import.meta.env.DEV && !import.meta.env.VITE_API_URL) {
+if (import.meta.env.DEV && !import.meta.env.API_URL) {
   console.warn(
-    '[XPS] VITE_API_URL is not set — using http://localhost:3000/api. ' +
-      'Ensure the backend is running on port 3000.'
+    '[XPS] API_URL is not set — using http://localhost:3000/api. ' +
+      'Add API_URL to .env.local or set it in Vercel → Environment Variables.'
   )
 }
 `

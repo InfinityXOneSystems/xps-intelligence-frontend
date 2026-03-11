@@ -125,15 +125,15 @@ function checkEnvConfig() {
     vercelOk = false
   } else {
     const env = vercelJson.env as Record<string, string> | undefined
-    if (!env?.VITE_API_URL) {
-      find('HIGH', 'Config', 'vercel.json missing VITE_API_URL', 'VITE_API_URL is not set in vercel.json env block. All API calls will fail in production.', 'Add VITE_API_URL to vercel.json env with the full Railway backend URL including /api.', 'vercel.json')
+    if (!env?.API_URL) {
+      find('HIGH', 'Config', 'vercel.json missing API_URL', 'API_URL is not set in vercel.json env block. All API calls will fail in production.', 'Add API_URL to vercel.json env with the full Railway backend URL including /api.', 'vercel.json')
       vercelOk = false
-    } else if (!env.VITE_API_URL.endsWith('/api')) {
-      find('HIGH', 'Config', 'vercel.json VITE_API_URL missing /api suffix', `Current value: "${env.VITE_API_URL}" — all API calls will hit the wrong endpoint.`, 'Append /api to VITE_API_URL in vercel.json.', 'vercel.json')
+    } else if (!env.API_URL.endsWith('/api')) {
+      find('HIGH', 'Config', 'vercel.json API_URL missing /api suffix', `Current value: "${env.API_URL}" — all API calls will hit the wrong endpoint.`, 'Append /api to API_URL in vercel.json.', 'vercel.json')
       vercelOk = false
     }
-    if (!env?.VITE_WS_URL) {
-      find('MEDIUM', 'Config', 'vercel.json missing VITE_WS_URL', 'VITE_WS_URL is not set in vercel.json. WebSocket connections will fall back to localhost.', 'Add VITE_WS_URL to vercel.json env with the Railway WebSocket URL.', 'vercel.json')
+    if (!env?.WS_URL) {
+      find('MEDIUM', 'Config', 'vercel.json missing WS_URL', 'WS_URL is not set in vercel.json. WebSocket connections will fall back to localhost.', 'Add WS_URL to vercel.json env with the Railway WebSocket URL.', 'vercel.json')
     }
   }
   checks['vercel-config'] = vercelOk ? 'PASS' : 'FAIL'
@@ -142,7 +142,7 @@ function checkEnvConfig() {
   const configTs = readText('src/lib/config.ts')
   let configOk = true
   if (!configTs) {
-    find('CRITICAL', 'Config', 'src/lib/config.ts missing', 'Single source of truth for API URLs is missing. Api.ts will not have a valid base URL.', 'Create src/lib/config.ts exporting API_BASE and WS_BASE from VITE_* env vars.')
+    find('CRITICAL', 'Config', 'src/lib/config.ts missing', 'Single source of truth for API URLs is missing. Api.ts will not have a valid base URL.', 'Create src/lib/config.ts exporting API_BASE and WS_BASE from API_URL and WS_URL env vars.')
     configOk = false
   } else {
     if (!configTs.includes('localhost:3000')) {

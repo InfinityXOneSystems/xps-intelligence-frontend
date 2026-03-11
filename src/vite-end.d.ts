@@ -3,17 +3,13 @@ declare const GITHUB_RUNTIME_PERMANENT_NAME: string
 declare const BASE_KV_SERVICE_URL: string
 
 interface ImportMetaEnv {
-  // ── Backend ────────────────────────────────────────────────
-  readonly VITE_API_URL?: string
-  readonly VITE_WS_URL?: string
+  // ── Backend (injected at build time by vite.config.ts define block) ────────
+  readonly API_URL?: string
+  readonly WS_URL?: string
 
-  // ── Supabase (standard Vercel integration names) ───────────
+  // ── Supabase (standard Vercel integration names, via NEXT_PUBLIC_ envPrefix) ─
   readonly NEXT_PUBLIC_SUPABASE_URL?: string
   readonly NEXT_PUBLIC_SUPABASE_ANON_KEY?: string
-
-  // ── Supabase (local-dev VITE_ aliases) ────────────────────
-  readonly VITE_SUPABASE_URL?: string
-  readonly VITE_SUPABASE_ANON_KEY?: string
 }
 
 interface ImportMeta {

@@ -1,8 +1,7 @@
 // automationService.ts — CRUD and trigger operations for Automation Schedules.
 // Schedule.taskType is strictly typed as TaskType to prevent string-widening errors.
 import type { TaskType } from '@/lib/agentTypes'
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+import { API_BASE } from '@/lib/config'
 
 export interface Schedule {
   id: string
