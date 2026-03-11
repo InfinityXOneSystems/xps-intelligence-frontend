@@ -15,8 +15,8 @@
 import { motion } from 'framer-motion'
 import { 
   House,
-  Users, 
-  
+  Users,
+  Buildings,
   Trophy,
   MagnifyingGlass,
   FunnelSimple, 
