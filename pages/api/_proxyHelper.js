@@ -6,8 +6,19 @@
  *   export default (req, res) => proxyToRailway(req, res, '/api/system/status')
  */
 
-export const BACKEND_URL =
-  process.env.BACKEND_URL || 'https://xpsintelligencesystem-production.up.railway.app'
+export const BACKEND_URL = (() => {
+  const url = process.env.BACKEND_URL
+  if (!url) {
+    // In production (NODE_ENV=production) a missing BACKEND_URL is a hard misconfiguration.
+    // Log a clear error so it surfaces in Vercel function logs.
+    const msg =
+      '[XPS] BACKEND_URL is not set. ' +
+      'Set it in Vercel → Project → Settings → Environment Variables. ' +
+      'Control Plane proxy requests will fail until this is configured.'
+    console.error(msg)
+  }
+  return url || ''
+})()
 
 /**
  * Forward the incoming Vercel request to the Railway Control Plane.
@@ -16,6 +27,13 @@ export const BACKEND_URL =
  * @param {string} backendPath  e.g. '/api/run-scraper'
  */
 export async function proxyToRailway(req, res, backendPath) {
+  if (!BACKEND_URL) {
+    return res.status(503).json({
+      error: 'Control Plane not configured — BACKEND_URL environment variable is missing.',
+      path: backendPath,
+    })
+  }
+
   const url = `${BACKEND_URL}${backendPath}`
   const isGetOrHead = req.method === 'GET' || req.method === 'HEAD'
 

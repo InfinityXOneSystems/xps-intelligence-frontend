@@ -122,6 +122,7 @@ async function cpFetch<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
+  const method = options.method ?? 'GET'
   const res = await fetch(`${PROXY_BASE}${path}`, {
     ...options,
     headers: {
@@ -131,7 +132,10 @@ async function cpFetch<T>(
   })
   if (!res.ok) {
     const text = await res.text().catch(() => res.statusText)
-    throw new Error(`Control Plane error ${res.status}: ${text}`)
+    // Include method + path in the error so callers can identify which
+    // endpoint failed and log the request body for debugging.
+    const payload = options.body ? ` | payload: ${String(options.body).slice(0, 200)}` : ''
+    throw new Error(`Control Plane ${method} ${path} → ${res.status}: ${text}${payload}`)
   }
   return res.json() as Promise<T>
 }
