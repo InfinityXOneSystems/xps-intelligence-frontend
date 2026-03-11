@@ -22,4 +22,7 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src')
     }
   },
+  // Expose both VITE_* (local dev) and NEXT_PUBLIC_* (Supabase Vercel integration)
+  // env vars to the browser bundle at build time.
+  envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
 });

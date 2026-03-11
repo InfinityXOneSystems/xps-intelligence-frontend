@@ -3,7 +3,6 @@
   "outputDirectory": "dist",
   "env": {
     "VITE_API_URL": "https://xpsintelligencesystem-production.up.railway.app/api",
-    "VITE_WS_URL": "wss://xpsintelligencesystem-production.up.railway.app",
-    "VITE_SUPABASE_URL": "https://nxfbfbipjsfzoefpgrof.supabase.co"
+    "VITE_WS_URL": "wss://xpsintelligencesystem-production.up.railway.app"
   }
 }
