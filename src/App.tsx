@@ -27,6 +27,7 @@ import { AutomationPage } from '@/pages/AutomationPage'
 import { ReportsPage } from '@/pages/ReportsPage'
 import { DocsPage } from '@/pages/DocsPage'
 import { useLeads } from '@/hooks/useLeadsApi'
+import { wsClient } from '@/lib/websocket'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -35,6 +36,13 @@ function App() {
   const isMobile = useIsMobile()
   
   const { data: _leads = [], isLoading, error } = useLeads()
+
+  useEffect(() => {
+    const authToken = localStorage.getItem('auth_token')
+    if (authToken && !wsClient.isConnected()) {
+      wsClient.connect()
+    }
+  }, [])
 
   useEffect(() => {
     if (error) {
