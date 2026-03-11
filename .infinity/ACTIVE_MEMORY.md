@@ -7,9 +7,10 @@
 | Field | Value |
 |-------|-------|
 | Status | `OPERATIONAL` |
-| Last Updated | Auto-updated on deploy |
+| Last Updated | 2026-03-11 |
 | Governed By | Overseer-Prime |
-| Memory Version | 1.0.0 |
+| Memory Version | 2.0.0 |
+| Phase | Phase 5 — Autonomous AI |
 
 ## Repository Index
 
@@ -35,9 +36,12 @@ src/
   lib/
     agentTypes.ts      — TaskType, AgentRole (13 agents), AgentTask, AgentPlan, OrchestratorConfig
     agentPlanner.ts    — Agent planner with localStorage persistence (key: xps_agent_memory)
-    orchestrator.ts    — Parallel multi-agent execution engine
-    llm.ts             — LLM router (Groq/Gemini/HuggingFace)
-    api.ts             — ApiClient (VITE_API_URL || http://localhost:3000/api)
+    orchestrator.ts    — Parallel multi-agent execution engine (13 agents, concurrency=4)
+    llm.ts             — Smart LLM router: Groq (cloud) + Ollama (local) + Gemini + HuggingFace
+                         RouterStrategy: 'auto' | 'cloud' | 'local' | provider
+                         probeOllama() for background availability check
+    config.ts          — Runtime config: API_BASE, WS_BASE, OLLAMA_BASE, OLLAMA_MODEL
+    api.ts             — ApiClient (uses config.ts → VITE_API_URL || http://localhost:3000/api)
     websocket.ts       — WebSocket client
   pages/
     AgentPage.tsx      — Agent dashboard
@@ -53,7 +57,7 @@ src/
     HomePage.tsx       — Home
     LeadsPage.tsx      — Leads
     ProspectsPage.tsx  — Prospects
-    ContractorsPage.tsx— Contractors management system (7-tab full lifecycle: DB, Lead Gen, Email, Takeoff, Proposal, Project, Billing)
+    ContractorsPage.tsx— Contractors management system (7-tab full lifecycle)
     LeaderboardPage.tsx— Leaderboard
     RoadmapPage.tsx    — Roadmap
   components/
@@ -61,21 +65,43 @@ src/
     Sidebar.tsx        — Navigation sidebar
     TopBar.tsx         — Top bar
     AgentTimeline.tsx  — Agent execution timeline
+    ChatInterface/
+      ChatWindow.tsx   — Chat input + agent selector (all 13 agents)
+      MultiAgentChat.tsx — Multi-agent orchestrator chat
+      AgentPanel.tsx   — Per-agent status panel
   tools/
     toolRegistry.ts    — Tool registry (localStorage: xps_tool_registry)
   types/
     tools.ts           — ToolCategory types
+pages/api/             — Vercel serverless functions
+  agent.ts             — POST /api/agent — proxy to Railway backend
+  chat.js              — POST /api/chat — Groq LLM chat (AI_GROQ_API_KEY)
+  orchestrator.js      — POST /api/orchestrator — full agent plan generation (Groq)
+  health.js            — GET /api/health — system health check
+  scraper-trigger.js   — POST /api/scraper-trigger — trigger GitHub Actions scraper
+  leads-sync.js        — POST /api/leads-sync — commit leads to XPS-LEADS repo
+  docker-sync.js       — POST /api/docker-sync — relay Docker Desktop webhooks
+  groq-test.js         — POST /api/groq-test — Groq connectivity test
 .github/
   workflows/
-    ci.yml                          — Lint, audit, type-check, build
-    deploy.yml                      — Vercel deployment
-    agent-scraper.yml               — Agent scraper workflow
-    comprehensive-validation.yml    — Full validation pipeline (lint, types, security, build)
-    dependency-updates.yml          — Weekly automated dependency updates
-.pre-commit-config.yaml             — Pre-commit hooks (ESLint, TypeScript, file checks)
-docker-compose.yml                  — Multi-service orchestration: frontend(3000), backend(3000), db(5432), cache(6379)
-.env.local.example                  — Environment variable template (VITE_API_URL=http://localhost:3000/api)
-src/types/validation.ts             — Validation result types (ValidationResult, SecurityScanResult, etc.)
+    ci.yml                        — Lint, audit, type-check, build + agent integrity check
+    deploy.yml                    — Vercel deployment
+    agent-scraper.yml             — Real Playwright scraper (Yelp + YellowPages + BBB) + leads commit
+    comprehensive-validation.yml  — Full validation pipeline
+    dependency-updates.yml        — Weekly automated dependency updates
+    dependabot-auto-merge.yml     — Auto-merge patch/minor; block major (pull_request_target)
+    autonomous-pr-manager.yml     — Autonomous PR lifecycle (create, validate, resolve conflicts, merge)
+    phase5-gate.yml               — Phase 5 gate: full validation + agent integrity + Playwright
+    cross-repo-sync.yml           — Sync frontend → backend repo, leads repo, Docker Desktop
+    overseer-prime-auto-heal.yml  — Automated healing + validation pass
+    docker-sync.yml               — Docker Desktop webhook notifications
+tests/
+  e2e/
+    app.spec.ts        — Playwright E2E suite: all pages + chat + settings + API endpoints
+playwright.config.ts   — Playwright config (chromium + mobile, baseURL=localhost:4173)
+docker-compose.yml     — Multi-service: frontend(3000), backend(3000), db(5432), cache(6379)
+vercel.json            — Vercel config: rewrites, CORS headers, API routes
+.env.example           — Full env template (Ollama, Groq, leads repo, Docker, GH_PAT)
 .infinity/
   ACTIVE_MEMORY.md     — This file (system memory index)
   HEALING_HISTORY.md   — Log of all system repairs and fixes
@@ -88,7 +114,7 @@ src/types/validation.ts             — Validation result types (ValidationResul
 | PlannerAgent | Decomposes goals into tasks | Active |
 | ResearchAgent | Web search and synthesis | Active |
 | BuilderAgent | Code generation and editing | Active |
-| ScraperAgent | Lead and data collection | Active |
+| ScraperAgent | Lead and data collection (Yelp/YellowPages/BBB) | Active |
 | MediaAgent | Image/video/audio generation | Active |
 | ValidatorAgent | Lint, tests, type checks | Active |
 | DevOpsAgent | Deploy and infrastructure | Active |
@@ -99,6 +125,16 @@ src/types/validation.ts             — Validation result types (ValidationResul
 | SimulationAgent | Scenario simulation | Active |
 | MetaAgent | Continuously redesigns system architecture | Active |
 
+## LLM Router
+
+```
+Smart Router Strategy: auto | cloud | local | groq | ollama
+Priority (auto): Groq (cloud) → Ollama (local) → Gemini → HuggingFace → fallback
+Scraping tasks: prefer Ollama (local) for privacy + no rate limits
+Rate limiting: 60s cooldown per provider, automatic failover
+Background probe: probeOllama() checks localhost:11434 non-blocking
+```
+
 ## Task Types
 
 `scrape` | `generate_email` | `analyze_leads` | `deploy` | `build_ui` | `search` | `report` | `github_action` | `plan` | `research` | `validate` | `monitor` | `media` | `knowledge` | `predict` | `simulate`
@@ -108,35 +144,56 @@ src/types/validation.ts             — Validation result types (ValidationResul
 - Agent memory: `localStorage['xps_agent_memory']`
 - Settings: `localStorage['xps_agent_settings']`
 - Tool registry: `localStorage['xps_tool_registry']`
-- Auth token: `localStorage['auth_token']`
+- Auth token: `localStorage['auth_token']` (migrate to httpOnly cookie)
+- Leads repo: `InfinityXOneSystems/XPS-LEADS` (GitHub, source of truth)
 
-## Configuration
+## Repos (Source of Truth)
 
-```json
-{
-  "concurrencyLimit": 4,
-  "maxRetries": 2,
-  "retryDelayMs": 500
-}
-```
+| Repo | Purpose | Deploy |
+|------|---------|--------|
+| `InfinityXOneSystems/XPS-INTELLIGENCE-FRONTEND` | Frontend control plane | Vercel |
+| `InfinityXOneSystems/XPS_INTELLIGENCE_SYSTEM` | Backend agent orchestration | Railway |
+| `InfinityXOneSystems/XPS-LEADS` | Leads data store (source of truth) | GitHub |
 
 ## CI / Workflow Status
 
 | Workflow | Status | Notes |
 |----------|--------|-------|
-| CI (lint, typecheck, build) | ✅ Passing | Runs on push/PR to main |
+| CI (lint, typecheck, build) | ✅ Passing | Agent integrity checks included |
 | Comprehensive Validation | ✅ Passing | Runs on push/PR to main |
-| Deploy to Vercel | ⚠️ Skipped when secrets absent | Requires `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` secrets |
-| Dependabot Auto-Merge | ✅ Active | Patch/minor: auto-merge; Major: manual review required |
+| Phase 5 Gate | ✅ Active | Full gate: lint+types+build+agent+playwright |
+| Autonomous PR Manager | ✅ Active | Auto-create, validate, resolve conflicts, merge |
+| Cross-Repo Sync | ✅ Active | Syncs to backend, leads, Docker Desktop on push |
+| Agent Scraper | ✅ Active | Real Yelp/YellowPages/BBB scraping + leads commit |
+| Deploy to Vercel | ⚠️ Skipped when secrets absent | Requires `VERCEL_TOKEN` secrets |
+| Dependabot Auto-Merge | ✅ Active | pull_request_target; patch/minor auto; major manual |
+
+## Required Secrets/Vars
+
+| Name | Type | Purpose |
+|------|------|---------|
+| `AI_GROQ_API_KEY` | Secret | Groq LLM (server-side only, never VITE_) |
+| `VERCEL_TOKEN` | Secret | Vercel deployment |
+| `VERCEL_ORG_ID` | Secret | Vercel org |
+| `VERCEL_PROJECT_ID` | Secret | Vercel project |
+| `GH_PAT` | Secret | Cross-repo operations |
+| `LEADS_REPO_TOKEN` | Secret | Commit to XPS-LEADS repo |
+| `XPS_API_TOKEN` | Secret | Internal API auth |
+| `DOCKER_WEBHOOK_SECRET` | Secret | Docker Desktop webhook verification |
+| `GITHUB_WEBHOOK_SECRET` | Secret | Webhook HMAC signing |
+| `VITE_API_URL` | Var | Backend Railway URL + /api suffix |
+| `VITE_WS_URL` | Var | Backend WebSocket URL |
+| `DOCKER_WEBHOOK_URL` | Var | Docker Desktop webhook endpoint |
+| `LEADS_REPO_OWNER` | Var | Leads repo owner (default: InfinityXOneSystems) |
+| `LEADS_REPO_NAME` | Var | Leads repo name (default: XPS-LEADS) |
+| `VERCEL_FRONTEND_URL` | Var | Vercel frontend URL |
 
 ## Known Constraints
 
-- `eslint` is pinned to `^9.39.4` — do NOT upgrade to v10+ until `eslint-plugin-react-hooks` supports eslint v10 peer dependency.
-- Navigation icons (`Sidebar.tsx`, `MobileMenu.tsx`) use `@phosphor-icons/react`. The `Buildings` icon is used for "Contractors". Do not reference icons that are not verified exports of the installed package version.
-- `recharts` is pinned at `^2.15.x` in package.json. `src/components/ui/chart.tsx` uses v3-only types — upgrade requires code changes.
+- `eslint` pinned to `^9.39.4` — do NOT upgrade to v10+
+- `recharts` pinned at `^2.15.x` — chart.tsx uses v3-only types
+- `Buildings` icon: `@phosphor-icons/react` — used for Contractors nav in Sidebar.tsx
+- Ollama: available check runs in background; unreachable Ollama silently falls back to Groq
+- `VITE_OLLAMA_URL` / `VITE_OLLAMA_MODEL` are safe to VITE_ prefix (local URL, no secrets)
+- All API secrets (`AI_GROQ_API_KEY`, `JWT_SECRET`, etc.) must NEVER be VITE_ prefixed
 
-## Maintenance
-
-- Dependency update policy: `docs/maintenance/dependency-update-policy.md`
-- Auto-merge workflow: `.github/workflows/dependabot-auto-merge.yml`
-- For memory regeneration: run `Run_Memory_Script.ps1` (Windows) or restore this file from last known-good commit.

@@ -10,6 +10,8 @@ services:
     environment:
       - VITE_API_URL=${VITE_API_URL:-http://localhost:3000/api}
       - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:3000}
+      - VITE_OLLAMA_URL=${VITE_OLLAMA_URL:-http://host.docker.internal:11434}
+      - VITE_OLLAMA_MODEL=${VITE_OLLAMA_MODEL:-llama3}
     volumes:
       - .:/app
       - /app/node_modules
@@ -23,7 +25,9 @@ services:
     networks:
       - xps-net
 
-  # ─── GitHub Webhook Receiver ──────────────────────────────────────────────
+  # ─── GitHub / Docker Desktop Webhook Receiver ─────────────────────────────
+  # Receives push events from GitHub and local Docker Desktop.
+  # Set DOCKER_WEBHOOK_URL=http://host.docker.internal:3001 in Vercel/GitHub vars.
   webhook-receiver:
     build:
       context: ./docker/webhook-receiver
@@ -42,9 +46,14 @@ services:
       - HANDLER_SCRIPT=/scripts/docker-webhook-handler.sh
       - REPORTER_SCRIPT=/scripts/report-to-github.js
       - WEBHOOK_PORT=3001
+      # Local platform path sync (C:\XPS_PLATFORM on Windows host)
+      - LOCAL_PLATFORM_PATH=${LOCAL_PLATFORM_PATH:-/xps-platform}
     volumes:
       - .:/workspace
       - ./scripts:/scripts:ro
+      # Mount the local XPS_PLATFORM folder for Docker Desktop sync
+      # Windows: set LOCAL_PLATFORM_HOST_PATH=C:/XPS_PLATFORM in .env
+      - ${LOCAL_PLATFORM_HOST_PATH:-/tmp/xps-platform}:/xps-platform:ro
     depends_on:
       frontend:
         condition: service_healthy

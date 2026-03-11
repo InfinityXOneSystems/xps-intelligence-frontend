@@ -9,8 +9,8 @@ import { z } from 'zod'
 const LeadSchema = z.object({
   company: z.string().min(1),
   phone: z.string().optional(),
-  email: z.string().email().optional().or(z.literal('')),
-  website: z.string().url().optional().or(z.literal('')),
+  email: z.union([z.string().email(), z.literal(''), z.null()]).optional().transform(v => v || undefined),
+  website: z.union([z.string().url(), z.literal(''), z.null()]).optional().transform(v => v || undefined),
   industry: z.string().optional(),
   location: z.string().optional(),
   lead_score: z.number().min(0).max(100).optional(),

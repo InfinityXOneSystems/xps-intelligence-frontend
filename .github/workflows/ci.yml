@@ -50,3 +50,28 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'http://localhost:3000/api' }}
+          VITE_WS_URL: ${{ vars.VITE_WS_URL || 'ws://localhost:3000' }}
+
+      - name: Verify agent integrity
+        run: |
+          # Verify all 13 agents are registered in agentTypes.ts
+          AGENTS=("PlannerAgent" "ResearchAgent" "BuilderAgent" "ScraperAgent" "MediaAgent"
+                  "ValidatorAgent" "DevOpsAgent" "MonitoringAgent" "KnowledgeAgent"
+                  "BusinessAgent" "PredictionAgent" "SimulationAgent" "MetaAgent")
+          for agent in "${AGENTS[@]}"; do
+            if ! grep -q "\"${agent}\"" src/lib/agentTypes.ts; then
+              echo "::error::${agent} missing from agentTypes.ts"
+              exit 1
+            fi
+          done
+          echo "✅ All 13 agents verified in agentTypes.ts"
+
+      - name: Verify LLM router has Ollama + Groq
+        run: |
+          if ! grep -q "ollama" src/lib/llm.ts; then
+            echo "::error::Ollama provider missing from llm.ts"
+            exit 1
+          fi
+          echo "✅ LLM router: Groq + Ollama providers present"

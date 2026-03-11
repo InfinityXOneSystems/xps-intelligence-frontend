@@ -115,14 +115,20 @@ test.describe('Chat Interface', () => {
   })
 
   test('chat input is visible and accepts text', async ({ page }) => {
-    const input = page.locator('input[placeholder*="command"], input[placeholder*="Command"], textarea[placeholder*="command"]').first()
+    const input = page.locator('input[placeholder*="command"]')
+      .or(page.locator('input[placeholder*="Command"]'))
+      .or(page.locator('textarea[placeholder*="command"]'))
+      .first()
     await expect(input).toBeVisible({ timeout: 10_000 })
     await input.fill('Test command')
     await expect(input).toHaveValue('Test command')
   })
 
   test('can send a chat message', async ({ page }) => {
-    const input = page.locator('input[placeholder*="command"], input[placeholder*="Command"], textarea[placeholder*="command"]').first()
+    const input = page.locator('input[placeholder*="command"]')
+      .or(page.locator('input[placeholder*="Command"]'))
+      .or(page.locator('textarea[placeholder*="command"]'))
+      .first()
     if (await input.count() === 0) {
       test.skip()
       return

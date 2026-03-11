@@ -9,7 +9,11 @@
 import crypto from 'crypto'
 
 function verifySignature(payload, signature, secret) {
-  if (!secret) return true   // Skip verification if no secret configured
+  if (!secret) {
+    // No secret configured — log a warning but allow in dev (not production-safe)
+    console.warn('[docker-sync] DOCKER_WEBHOOK_SECRET not set — signature verification skipped. Set this secret in production.')
+    return true
+  }
   const expected = `sha256=${crypto.createHmac('sha256', secret).update(payload).digest('hex')}`
   try {
     return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature || ''))

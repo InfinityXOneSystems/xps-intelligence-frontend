@@ -150,18 +150,15 @@ jobs:
 
           MISSING=()
           for agent in "${AGENTS[@]}"; do
-            # Check agent file exists
-            if [ ! -f "src/agents/${agent}.ts" ] && [ ! -f "src/agents/${agent%.ts}.ts" ]; then
-              # Some agents may have different file names
-              case "$agent" in
-                MonitoringAgent) FILE="src/agents/MonitorAgent.ts" ;;
-                PredictionAgent) FILE="src/agents/PredictorAgent.ts" ;;
-                SimulationAgent) FILE="src/agents/SimulatorAgent.ts" ;;
-                *) FILE="src/agents/${agent}.ts" ;;
-              esac
-              if [ ! -f "$FILE" ]; then
-                MISSING+=("$agent")
-              fi
+            # Map agent role names to file names (some differ)
+            case "$agent" in
+              MonitoringAgent) FILE="src/agents/MonitorAgent.ts" ;;
+              PredictionAgent) FILE="src/agents/PredictorAgent.ts" ;;
+              SimulationAgent) FILE="src/agents/SimulatorAgent.ts" ;;
+              *) FILE="src/agents/${agent}.ts" ;;
+            esac
+            if [ ! -f "$FILE" ]; then
+              MISSING+=("$agent ($FILE)")
             fi
             # Verify agent role is in agentTypes.ts
             if ! grep -q "\"${agent}\"" src/lib/agentTypes.ts 2>/dev/null; then

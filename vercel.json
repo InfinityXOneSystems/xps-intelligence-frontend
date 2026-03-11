@@ -24,38 +24,6 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/api/health",
-      "destination": "/api/health"
-    },
-    {
-      "source": "/api/chat",
-      "destination": "/api/chat"
-    },
-    {
-      "source": "/api/agent",
-      "destination": "/api/agent"
-    },
-    {
-      "source": "/api/orchestrator",
-      "destination": "/api/orchestrator"
-    },
-    {
-      "source": "/api/scraper-trigger",
-      "destination": "/api/scraper-trigger"
-    },
-    {
-      "source": "/api/leads-sync",
-      "destination": "/api/leads-sync"
-    },
-    {
-      "source": "/api/docker-sync",
-      "destination": "/api/docker-sync"
-    },
-    {
-      "source": "/api/groq-test",
-      "destination": "/api/groq-test"
-    },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

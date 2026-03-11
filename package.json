@@ -9,7 +9,9 @@
         "build": "tsc -b --noCheck && vite build",
         "lint": "eslint .",
         "optimize": "vite optimize",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "test:e2e": "playwright test",
+        "test:e2e:report": "playwright show-report"
     },
     "dependencies": {
         "@aws-sdk/rds-signer": "^3.1004.0",

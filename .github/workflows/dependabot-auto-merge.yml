@@ -5,14 +5,16 @@ name: Dependabot Auto-Merge
 # - major bumps: label 'major-bump' + add a comment requesting human review
 #
 # Required: repository must have "Allow auto-merge" enabled in Settings > General.
+# Uses pull_request_target so GITHUB_TOKEN has write permissions for Dependabot PRs.
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review]
 
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   evaluate:
