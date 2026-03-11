@@ -9,53 +9,122 @@
 | Status | `OPERATIONAL` |
 | Last Updated | Auto-updated on deploy |
 | Governed By | Overseer-Prime |
-| Memory Version | 1.0.0 |
+| Memory Version | 2.0.0 |
+
+---
+
+## Three-Repository Architecture
+
+```
+┌─────────────────────────────┐   reads via   ┌──────────────────────────────────────┐
+│  FRONTEND (Vercel)          │ ─────────────► │  BACKEND (Railway + Docker)          │
+│  XPS-INTELLIGENCE-FRONTEND  │               │  XPS_INTELLIGENCE_SYSTEM             │
+│                             │   reads via   │                                      │
+│  UI / Dashboard / Pipeline  │ ─────────────► │  Vision Cortex / Invention Factory   │
+│  triggers (no data storage) │   Supabase    │  Agents / Scrapers / Pipelines       │
+└─────────────────────────────┘               └──────────────────┬───────────────────┘
+                                                                  │ commits results to
+                                                                  ▼
+                                               ┌──────────────────────────────────────┐
+                                               │  DATA LAKE                           │
+                                               │  InfinityXOneSystems/LEADS           │
+                                               │                                      │
+                                               │  raw/  processed/  exports/          │
+                                               │  intelligence/                       │
+                                               └──────────────────────────────────────┘
+```
+
+### Responsibilities (strict)
+
+| Repo | Must contain | Must NOT contain |
+|------|-------------|-----------------|
+| FRONTEND | UI, dashboard, pipeline triggers, Supabase reads | scrapers, agents, lead storage, local data files, Docker |
+| BACKEND | Agents, scrapers, Vision Cortex, Invention Factory, pipelines | lead storage, frontend code |
+| LEADS | Raw scraped data, processed results, exports | application code, secrets |
+
+### Data Flow
+
+```
+Backend agents → LEADS repo (raw/processed/exports/intelligence)
+              → Supabase   (indexed for dashboard queries)
+Frontend      ← Supabase   (lead metrics, contractors, activity)
+              ← Backend API (system status, docker, logs)
+```
+
+### XPS Control Plane (Backend, Railway)
+
+Endpoint | Method | Description
+---|---|---
+`/api/system/status` | GET | System health
+`/api/agents` | GET | Agent list + status
+`/api/run-agent` | POST | Dispatch named agent
+`/api/run-scraper` | POST | Kick off scraping job → LEADS repo
+`/api/run-vision-scan` | POST | Vision Cortex scan
+`/api/run-invention` | POST | Invention Factory
+`/api/trigger-workflow` | POST | Trigger GitHub Actions
+`/api/docker/status` | GET | Docker stack health
+`/api/logs` | GET | Backend log stream
+
+All Control Plane calls are proxied through Vercel serverless functions in `pages/api/`
+so `BACKEND_URL` is never exposed to the browser.
+
+---
 
 ## Repository Index
 
 ```
 src/
   App.tsx              — Root router, renders all pages (VITE_API_URL || http://localhost:3000/api)
-  agents/              — Agent implementation layer
+  agents/              — Agent simulation layer (UI visualization only; real execution is on Railway)
     base/
       BaseAgent.ts     — Abstract base class: lifecycle, retry, abort, logging
     index.ts           — Public barrel export for all agents
-    PlannerAgent.ts    — Goal decomposition and task routing
-    ResearchAgent.ts   — Web search and synthesis
-    BuilderAgent.ts    — Code generation and scaffolding
-    ExecutorAgent.ts   — Shell/sandbox command execution
-    ValidatorAgent.ts  — Lint, type-check, security scan
-    MonitorAgent.ts    — Health metrics and log aggregation
-    ScraperAgent.ts    — Playwright-driven lead and data collection
-    MediaAgent.ts      — Image/video/audio generation
-    KnowledgeAgent.ts  — Vector and task memory persistence
-    PredictorAgent.ts  — Lead scoring and ML inference
-    SimulatorAgent.ts  — Scenario simulation and what-if analysis
-    MetaAgent.ts       — Architecture redesign and self-improvement
+    PlannerAgent.ts    — Goal decomposition and task routing (simulation)
+    ResearchAgent.ts   — Web search and synthesis (simulation)
+    BuilderAgent.ts    — Code generation and scaffolding (simulation)
+    ExecutorAgent.ts   — Shell/sandbox command execution (simulation)
+    ValidatorAgent.ts  — Lint, type-check, security scan (simulation)
+    MonitorAgent.ts    — Health metrics and log aggregation (simulation)
+    ScraperAgent.ts    — Lead and data collection (simulation; real scraper on Railway)
+    MediaAgent.ts      — Image/video/audio generation (simulation)
+    KnowledgeAgent.ts  — Vector and task memory persistence (simulation)
+    PredictorAgent.ts  — Lead scoring and ML inference (simulation)
+    SimulatorAgent.ts  — Scenario simulation and what-if analysis (simulation)
+    MetaAgent.ts       — Architecture redesign and self-improvement (simulation)
   lib/
     agentTypes.ts      — TaskType, AgentRole (13 agents), AgentTask, AgentPlan, OrchestratorConfig
     agentPlanner.ts    — Agent planner with localStorage persistence (key: xps_agent_memory)
-    orchestrator.ts    — Parallel multi-agent execution engine
+    orchestrator.ts    — Parallel multi-agent execution engine (UI simulation)
     llm.ts             — LLM router (Groq/Gemini/HuggingFace)
     api.ts             — ApiClient (VITE_API_URL || http://localhost:3000/api)
+    leadsApi.ts        — Lead CRUD → Supabase (NOT Railway backend)
+    supabase.ts        — Supabase client singleton
     websocket.ts       — WebSocket client
   pages/
-    AgentPage.tsx      — Agent dashboard
+    AgentPage.tsx      — Agent dashboard (dispatches to /api/run-agent → Railway)
     PipelinePage.tsx   — Pipeline/orchestration view
     SettingsPage.tsx   — Settings control center
     SystemLogsPage.tsx — System logs
     TaskQueuePage.tsx  — Task queue viewer
     CodeEditorPage.tsx — Code editor panel
     SandboxPage.tsx    — Sandbox console
-    ScraperPage.tsx    — Scraper results viewer
+    ScraperPage.tsx    — Scraper control (dispatches to /api/run-scraper → Railway)
     CanvasPage.tsx     — Execution canvas
     DashboardPage.tsx  — Dashboard
     HomePage.tsx       — Home
-    LeadsPage.tsx      — Leads
+    LeadsPage.tsx      — Leads (reads from Supabase)
     ProspectsPage.tsx  — Prospects
-    ContractorsPage.tsx— Contractors management system (7-tab full lifecycle: DB, Lead Gen, Email, Takeoff, Proposal, Project, Billing)
+    ContractorsPage.tsx— Contractors (reads from Supabase)
     LeaderboardPage.tsx— Leaderboard
     RoadmapPage.tsx    — Roadmap
+  services/
+    api/
+      controlPlane.ts  — XPS Control Plane client (all 9 required endpoints)
+      contractors.ts   — Contractor CRUD → Supabase
+      scraping.ts      — Scraping job API → Railway
+      agents.ts        — Agent execution API → Railway
+      machine.ts       — Machine/Docker API → Railway
+      automation.ts    — Workflow API → Railway
   components/
     AIChatPanel.tsx    — Chat command interface
     Sidebar.tsx        — Navigation sidebar
@@ -65,6 +134,22 @@ src/
     toolRegistry.ts    — Tool registry (localStorage: xps_tool_registry)
   types/
     tools.ts           — ToolCategory types
+    supabase.ts        — Supabase DB row types (LeadRow, ContractorRow, WebhookEventRow...)
+pages/
+  api/
+    _proxyHelper.js        — Shared Railway reverse-proxy helper
+    agent.ts               — Proxy: POST /api/agent → Railway
+    agents.js              — Proxy: GET /api/agents → Railway
+    run-agent.js           — Proxy: POST /api/run-agent → Railway
+    run-scraper.js         — Proxy: POST /api/run-scraper → Railway
+    run-vision-scan.js     — Proxy: POST /api/run-vision-scan → Railway
+    run-invention.js       — Proxy: POST /api/run-invention → Railway
+    trigger-workflow.js    — Proxy: POST /api/trigger-workflow → Railway
+    logs.js                — Proxy: GET /api/logs → Railway
+    system/status.js       — Proxy: GET /api/system/status → Railway
+    docker/status.js       — Proxy: GET /api/docker/status → Railway
+    webhooks/railway.js    — Railway webhook receiver (logs to Supabase, triggers Vercel redeploy)
+    chat.js                — Chat via Groq
 .github/
   workflows/
     ci.yml                          — Lint, audit, type-check, build
@@ -74,7 +159,7 @@ src/
     dependency-updates.yml          — Weekly automated dependency updates
 .pre-commit-config.yaml             — Pre-commit hooks (ESLint, TypeScript, file checks)
 docker-compose.yml                  — Multi-service orchestration: frontend(3000), backend(3000), db(5432), cache(6379)
-.env.local.example                  — Environment variable template (VITE_API_URL=http://localhost:3000/api)
+.env.local.example                  — Environment variable template
 src/types/validation.ts             — Validation result types (ValidationResult, SecurityScanResult, etc.)
 .infinity/
   ACTIVE_MEMORY.md     — This file (system memory index)
@@ -134,6 +219,14 @@ src/types/validation.ts             — Validation result types (ValidationResul
 - `eslint` is pinned to `^9.39.4` — do NOT upgrade to v10+ until `eslint-plugin-react-hooks` supports eslint v10 peer dependency.
 - Navigation icons (`Sidebar.tsx`, `MobileMenu.tsx`) use `@phosphor-icons/react`. The `Buildings` icon is used for "Contractors". Do not reference icons that are not verified exports of the installed package version.
 - `recharts` is pinned at `^2.15.x` in package.json. `src/components/ui/chart.tsx` uses v3-only types — upgrade requires code changes.
+
+## Merge Conflict Prevention Rules
+
+1. **Never commit lead/scraping data to this repo** — output goes only to `InfinityXOneSystems/LEADS`
+2. **Never commit lead/scraping data to the backend repo** — output goes only to `InfinityXOneSystems/LEADS`
+3. **Frontend reads Supabase** for lead metrics, contractor CRM, and analytics
+4. **Frontend calls Railway** (via Vercel proxy) for pipeline triggers and system control
+5. **All API keys (GROQ, OPENAI, JWT_SECRET) are server-side only** — never prefix with `VITE_` or `NEXT_PUBLIC_`
 
 ## Maintenance
 

@@ -8,6 +8,7 @@ import {
   CheckCircle,
   XCircle,
   WarningCircle,
+  ArrowSquareOut,
 } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,6 +17,7 @@ import { Badge } from '@/components/ui/badge'
 import { BackButton } from '@/components/BackButton'
 import { AgentTimeline } from '@/components/AgentTimeline'
 import { agentPlanner } from '@/lib/agentPlanner'
+import { controlPlaneApi } from '@/services/api/controlPlane'
 import { cn } from '@/lib/utils'
 import type { AgentPlan, ToolCall } from '@/lib/agentTypes'
 
@@ -71,14 +73,29 @@ export function AgentPage({ onNavigate }: AgentPageProps) {
   const [history, setHistory] = useState<AgentPlan[]>([])
   const [isRunning, setIsRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [backendJobId, setBackendJobId] = useState<string | null>(null)
   const abortRef = useRef(false)
 
   const handleRun = useCallback(async () => {
     const cmd = command.trim()
     if (!cmd || isRunning) return
     setError(null)
+    setBackendJobId(null)
     setIsRunning(true)
     abortRef.current = false
+
+    // Dispatch to the XPS Control Plane backend — the backend executes the real agent.
+    // The local planner runs in parallel for visual feedback only.
+    try {
+      const [cpResult] = await Promise.allSettled([
+        controlPlaneApi.runAgent({ agentRole: 'PlannerAgent', command: cmd }),
+      ])
+      if (cpResult.status === 'fulfilled') {
+        setBackendJobId(cpResult.value.jobId)
+      }
+    } catch {
+      // Control Plane is unreachable — local simulation continues for preview.
+    }
 
     try {
       const plan = await agentPlanner.createPlan(cmd)
@@ -166,6 +183,17 @@ export function AgentPage({ onNavigate }: AgentPageProps) {
             >
               <WarningCircle size={14} weight="fill" />
               {error}
+            </motion.div>
+          )}
+
+          {backendJobId && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 mt-3 text-xs text-green-400"
+            >
+              <ArrowSquareOut size={12} weight="fill" />
+              Backend job dispatched — ID: {backendJobId}
             </motion.div>
           )}
         </CardContent>

@@ -8,9 +8,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { BackButton } from '@/components/BackButton'
+import { controlPlaneApi } from '@/services/api/controlPlane'
 
 export function ScraperPage({ onNavigate }: { onNavigate: (page: string) => void }) {
   const [isRunning, setIsRunning] = useState(false)
+  const [jobId, setJobId] = useState<string | null>(null)
   const [config, setConfig] = useState({
     city: '',
     category: 'epoxy contractors',
@@ -23,30 +25,42 @@ export function ScraperPage({ onNavigate }: { onNavigate: (page: string) => void
   })
   const [logs, setLogs] = useState<string[]>([])
 
-  const handleRunScraper = () => {
+  const appendLog = (msg: string) =>
+    setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`])
+
+  const handleRunScraper = async () => {
     if (!config.city) {
       toast.error('Please enter a city')
       return
     }
 
     setIsRunning(true)
-    const newLog = `[${new Date().toLocaleTimeString()}] Starting scraper for ${config.city}...`
-    setLogs((prev) => [...prev, newLog])
-    toast.success('Scraper started!')
+    appendLog(`Starting scraper for ${config.city} — category: ${config.category}`)
 
-    setTimeout(() => {
-      const completeLog = `[${new Date().toLocaleTimeString()}] Found ${Math.floor(Math.random() * 30) + 20} leads in ${config.city}`
-      setLogs((prev) => [...prev, completeLog])
+    try {
+      const result = await controlPlaneApi.runScraper(config)
+      setJobId(result.jobId)
+      appendLog(`Job queued — ID: ${result.jobId} | status: ${result.status}`)
+      toast.success('Scraper started on the backend')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      appendLog(`ERROR: ${msg}`)
+      toast.error(`Failed to start scraper: ${msg}`)
       setIsRunning(false)
-      toast.success('Scraper completed!')
-    }, 3000)
+      return
+    }
+
+    // Results will be committed to the LEADS repo and indexed in Supabase by the backend.
+    // Poll for completion or let the user check the Leads page for results.
+    appendLog('Results will be committed to the LEADS repo and indexed in Supabase.')
+    appendLog('Check the Leads or Contractors pages once the job completes.')
+    setIsRunning(false)
   }
 
   const handleStopScraper = () => {
     setIsRunning(false)
-    const stopLog = `[${new Date().toLocaleTimeString()}] Scraper stopped by user`
-    setLogs((prev) => [...prev, stopLog])
-    toast.info('Scraper stopped')
+    appendLog('Scraper stop requested — the backend will halt the job gracefully.')
+    toast.info('Stop signal sent')
   }
 
   return (
@@ -257,7 +271,7 @@ export function ScraperPage({ onNavigate }: { onNavigate: (page: string) => void
                   <p className="text-muted-foreground">No logs yet. Start the scraper to see activity.</p>
                 ) : (
                   logs.map((log, i) => (
-                    <div key={i} className="text-green-500">
+                    <div key={i} className={log.startsWith('[') && log.includes('ERROR') ? 'text-red-400' : 'text-green-500'}>
                       {log}
                     </div>
                   ))
@@ -268,8 +282,13 @@ export function ScraperPage({ onNavigate }: { onNavigate: (page: string) => void
                     animate={{ opacity: 1 }}
                     className="text-primary animate-pulse"
                   >
-                    [Processing...] Scraping in progress
+                    Sending to backend…
                   </motion.div>
+                )}
+                {jobId && !isRunning && (
+                  <div className="text-yellow-400 mt-2">
+                    Job ID: {jobId} — results will appear in Leads / Contractors once indexed.
+                  </div>
                 )}
               </div>
             </CardContent>

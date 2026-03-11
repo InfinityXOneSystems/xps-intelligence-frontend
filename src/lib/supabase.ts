@@ -18,15 +18,29 @@
  *   NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/lib/config'
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.warn(
-    '[XPS] Supabase is not fully configured. ' +
-      'Ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY ' +
-      'are set (the Supabase Vercel integration sets these automatically).'
-  )
+/**
+ * Returns a configured Supabase client, or a no-op proxy that logs warnings
+ * when env vars are missing (prevents silent runtime errors in local dev).
+ */
+function makeSupabaseClient(): SupabaseClient {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.warn(
+      '[XPS] Supabase is not fully configured. ' +
+        'Ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY ' +
+        'are set. The Supabase Vercel integration sets these automatically in production. ' +
+        'For local dev, copy .env.local.example to .env.local and fill in the values.'
+    )
+    // Return a client pointed at placeholder values so callers get Supabase-formatted errors
+    // rather than crashing with "invalid URL" before displaying anything.
+    return createClient(
+      'https://placeholder.supabase.co',
+      'placeholder-anon-key'
+    )
+  }
+  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 }
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+export const supabase = makeSupabaseClient()
