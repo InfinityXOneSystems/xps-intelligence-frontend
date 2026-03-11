@@ -9,9 +9,9 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'AI_GROQ_API_KEY is not configured' })
   }
 
-  const groq = new Groq({
-    apiKey: process.env.AI_GROQ_API_KEY
-  });
+  if (!process.env.AI_GROQ_API_KEY) {
+    return res.status(503).json({ error: 'LLM not configured — AI_GROQ_API_KEY is missing' })
+  }
 
   try {
     const response = await groq.chat.completions.create({
