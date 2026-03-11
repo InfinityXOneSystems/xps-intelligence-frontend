@@ -12,7 +12,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@aws-sdk/rds-signer": "^3.1004.0",
+        "@aws-sdk/rds-signer": "^3.1007.0",
         "@github/spark": ">=0.43.1 <1",
         "@heroicons/react": "^2.2.0",
         "@hookform/resolvers": "^5.2.2",
@@ -56,7 +56,7 @@
         "d3": "^7.9.0",
         "date-fns": "^3.6.0",
         "embla-carousel-react": "^8.5.2",
-        "framer-motion": "^12.6.2",
+        "framer-motion": "^12.35.2",
         "groq-sdk": "^0.37.0",
         "input-otp": "^1.4.2",
         "lucide-react": "^0.484.0",
@@ -90,8 +90,8 @@
         "eslint-plugin-react-refresh": "^0.5.2",
         "globals": "^17.4.0",
         "tailwindcss": "^4.1.11",
-        "typescript": "~5.7.2",
-        "typescript-eslint": "^8.38.0",
+        "typescript": "~5.9.3",
+        "typescript-eslint": "^8.57.0",
         "vite": "^7.2.6"
     },
     "workspaces": {
