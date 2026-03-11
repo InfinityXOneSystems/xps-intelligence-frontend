@@ -6,7 +6,6 @@ import {
   Buildings,
   Robot, 
   FunnelSimple, 
-  UserList,
   GearSix,
   Square,
   X,
@@ -48,7 +47,6 @@ const menuItems = [
   { id: 'sandbox', label: 'Sandbox', icon: Browser },
   { id: 'canvas', label: 'Canvas', icon: Square },
   { id: 'automation', label: 'Automation', icon: Lightning },
-  { id: 'team', label: 'Team', icon: UserList },
   { id: 'logs', label: 'System Logs', icon: Scroll },
   { id: 'docs', label: 'Docs', icon: FileText },
   { id: 'settings', label: 'Settings', icon: GearSix }

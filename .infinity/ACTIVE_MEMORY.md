@@ -15,7 +15,7 @@
 
 ```
 src/
-  App.tsx              — Root router, renders all pages (VITE_API_URL || http://localhost:5000/api)
+  App.tsx              — Root router, renders all pages (VITE_API_URL || http://localhost:3000/api)
   agents/              — Agent implementation layer
     base/
       BaseAgent.ts     — Abstract base class: lifecycle, retry, abort, logging
@@ -37,7 +37,7 @@ src/
     agentPlanner.ts    — Agent planner with localStorage persistence (key: xps_agent_memory)
     orchestrator.ts    — Parallel multi-agent execution engine
     llm.ts             — LLM router (Groq/Gemini/HuggingFace)
-    api.ts             — ApiClient (VITE_API_URL || http://localhost:5000/api)
+    api.ts             — ApiClient (VITE_API_URL || http://localhost:3000/api)
     websocket.ts       — WebSocket client
   pages/
     AgentPage.tsx      — Agent dashboard
@@ -73,8 +73,8 @@ src/
     comprehensive-validation.yml    — Full validation pipeline (lint, types, security, build)
     dependency-updates.yml          — Weekly automated dependency updates
 .pre-commit-config.yaml             — Pre-commit hooks (ESLint, TypeScript, file checks)
-docker-compose.yml                  — Multi-service orchestration: frontend(5000), backend(3000), db(5432), cache(6379)
-.env.local.example                  — Environment variable template (VITE_API_URL=http://localhost:5000/api)
+docker-compose.yml                  — Multi-service orchestration: frontend(3000), backend(3000), db(5432), cache(6379)
+.env.local.example                  — Environment variable template (VITE_API_URL=http://localhost:3000/api)
 src/types/validation.ts             — Validation result types (ValidationResult, SecurityScanResult, etc.)
 .infinity/
   ACTIVE_MEMORY.md     — This file (system memory index)
