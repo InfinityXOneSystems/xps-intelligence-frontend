@@ -1,6 +1,5 @@
 import type { AgentRole } from '@/lib/agentTypes'
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+import { API_BASE } from '@/lib/config'
 
 export interface ChatMessage {
   id: string
