@@ -4,15 +4,23 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # Vite bakes these into the static bundle at build time.
+      # Override via a .env file or CLI --build-arg flags.
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://xpsintelligencesystem-production.up.railway.app/api}
+        VITE_WS_URL: ${VITE_WS_URL:-wss://xpsintelligencesystem-production.up.railway.app}
     container_name: xps-frontend
     ports:
       - "3000:3000"
+    env_file:
+      - path: .env
+        required: false
+    # Runtime-only environment variables (not baked into the bundle).
+    # These are used by the Node.js serverless function shim when running
+    # locally via `vercel dev`; in production they live in Vercel's dashboard.
     environment:
-      - VITE_API_URL=${VITE_API_URL:-http://localhost:3000/api}
-      - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:3000}
-    volumes:
-      - .:/app
-      - /app/node_modules
+      - AI_GROQ_API_KEY=${AI_GROQ_API_KEY}
+      - BACKEND_URL=${BACKEND_URL:-https://xpsintelligencesystem-production.up.railway.app}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3000"]

@@ -8,5 +8,23 @@
   "env": {
     "VITE_API_URL": "https://xpsintelligencesystem-production.up.railway.app/api",
     "VITE_WS_URL": "wss://xpsintelligencesystem-production.up.railway.app"
-  }
+  },
+  "functions": {
+    "pages/api/chat.js": { "maxDuration": 30 },
+    "pages/api/groq-test.js": { "maxDuration": 30 },
+    "pages/api/agent.ts": { "maxDuration": 30 }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://xps-intelligence-frontend.vercel.app"
+        },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization" }
+      ]
+    }
+  ]
 }
