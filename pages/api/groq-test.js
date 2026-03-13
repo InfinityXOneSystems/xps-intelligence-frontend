@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   if (!process.env.AI_GROQ_API_KEY) {
-    return res.status(503).json({ error: 'LLM not configured — AI_GROQ_API_KEY is missing' })
+    return res.status(503).json({ error: 'AI_GROQ_API_KEY is not configured' })
   }
 
   try {
@@ -14,16 +14,14 @@ export default async function handler(req, res) {
     const response = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [{ role: 'user', content: 'Hello from Vercel!' }],
-      max_tokens: 256,
+      max_tokens: 128,
     })
 
-    const content = response.choices[0]?.message?.content
-    if (!content) {
-      return res.status(502).json({ error: 'Invalid response structure from LLM' })
-    }
-    return res.status(200).json({ message: content })
+    return res.status(200).json({
+      message: response.choices[0]?.message?.content || 'Empty response from LLM',
+    })
   } catch (error) {
-    console.error('Groq test error:', error)
-    return res.status(500).json({ error: 'LLM request failed', details: error.message })
+    console.error('groq-test error:', error)
+    return res.status(500).json({ error: error.message })
   }
 }
