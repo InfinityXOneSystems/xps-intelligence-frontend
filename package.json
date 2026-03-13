@@ -14,7 +14,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@aws-sdk/rds-signer": "^3.1007.0",
+        "@aws-sdk/rds-signer": "^3.1008.0",
         "@github/spark": ">=0.43.1 <1",
         "@heroicons/react": "^2.2.0",
         "@hookform/resolvers": "^5.2.2",
