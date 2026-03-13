@@ -16,10 +16,11 @@ yarn-error.log
 .git
 .gitignore
 
-# Environment
+# Environment — never bake secrets into the image
 .env
 .env.local
 .env.production
+.env.docker
 
 # Docker
 Dockerfile
