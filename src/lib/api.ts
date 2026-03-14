@@ -1,6 +1,6 @@
-import { API_BASE } from '@/lib/config'
+import { API_CONFIG } from '@/lib/config'
 
-const API_BASE_URL = API_BASE
+const API_BASE_URL = API_CONFIG.API_URL
 
 interface ApiError {
   message: string
@@ -36,24 +36,24 @@ class ApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`
+    const url = \\
     const token = this.getToken()
-    
+
     const config: RequestInit = {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
+        ...(token && { Authorization: \Bearer \\ }),
         ...options.headers,
       },
     }
 
     try {
       const response = await fetch(url, config)
-      
+
       if (!response.ok) {
         const error: ApiError = {
-          message: `API Error: ${response.statusText}`,
+          message: \API Error: \\,
           status: response.status,
         }
         throw error
