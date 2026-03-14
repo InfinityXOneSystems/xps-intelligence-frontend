@@ -1,6 +1,6 @@
 # Diagnostics Dashboard - System Health & Support Export
 
-A comprehensive diagnostics interface for monitoring system health, running automated tests, and exporting support bundles for debugging.
+**Experience Qualities**:
 
 **Experience Qualities**:
 1. **Transparent** - Complete visibility into system status with clear pass/fail indicators
@@ -16,24 +16,24 @@ A diagnostic tool with automated testing suite, real-time system checks, and com
 - **Functionality**: Real-time display of critical system checks across multiple categories
 - **Purpose**: Provide instant overview of application health status
 - **Trigger**: Landing on diagnostics page or clicking "Refresh Tests"
-- **Progression**: Load page → Execute all tests → Display results grouped by category → Show pass/fail counts
-- **Success criteria**: All tests execute within 3 seconds, results are clearly categorized, failure details are actionable
-
-### Automated Test Suite
-- **Functionality**: One-click execution of comprehensive system tests covering persistence, API connectivity, browser capabilities, and data integrity
 - **Purpose**: Enable rapid troubleshooting and health verification
-- **Trigger**: Clicking "Run All Tests" button or automatic on page load
-- **Progression**: Click test → Execute checks in parallel → Update UI with progress → Display results with timing → Show recommendations for failures
-- **Success criteria**: Tests complete within 5 seconds, all categories covered, clear pass/fail indication with actionable error messages
+- **Progression**: Click test → Execute checks in parallel → Update UI with progress → Display results with timing → Show r
 
-### Support Bundle Export
-- **Functionality**: Generate and download comprehensive diagnostic data package in JSON format
-- **Purpose**: Enable users to share system state with support teams for debugging
+- **Functionality**: Gen
 - **Trigger**: Clicking "Export Support Bundle" button
-- **Progression**: Click export → Gather system info → Collect test results → Sanitize sensitive data → Generate JSON → Download file
-- **Success criteria**: Bundle generates within 2 seconds, includes all relevant data, sensitive info is redacted, file is properly named with timestamp
-
+- **Success criteria**: Bundle generates within 2 seconds, includes
 ### Test Categories
+- **Purpose**: Enable quick identification of problematic areas
+- **Progression**: Execute tests → Group by category → Calculate category health → Display with visual indicators
+
+- **Functionality**: Expa
+- **Trigger**: Test execution or clicking test card for more details
+- **Success criteria**: Details are comprehensive, recommendations are helpful, ti
+## Edge Case Handling
+- **All Tests Failing**: Display prominent "Critical System Issues" warning with top-level recommendations
+- **Export with No Test Results**: Warn user to run tests first, include partial data
+
+- **Network Offline
 - **Functionality**: Organize tests into logical groups (Storage, Network, Performance, Data Integrity, Browser Features)
 - **Purpose**: Enable quick identification of problematic areas
 - **Trigger**: Automatic grouping on test execution
@@ -142,10 +142,10 @@ Animations should be **minimal and functional** - primarily for feedback rather 
   - Metric card gaps: gap-8 md:gap-12
   - Button padding: px-6 py-3
 
-- **Mobile**:
-  - Metric cards stack vertically
-  - Test categories remain expandable
-  - Export button becomes full-width
-  - Reduced padding (p-4 instead of p-6)
-  - Status badges stack on narrow screens
-  - Timing data wraps gracefully
+
+
+
+
+
+
+
