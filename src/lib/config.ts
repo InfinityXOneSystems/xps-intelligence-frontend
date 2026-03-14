@@ -1,19 +1,36 @@
-/**
- * config.ts — Single source of truth for runtime configuration.
- *
- * All environment-specific values are read here; the rest of the app
- * imports from this module instead of accessing import.meta.env directly.
- */
+// API Configuration
+// This is read from environment variables set in .env files
 
-export const API_BASE =
-  import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+export const API_CONFIG = {
+  // Backend API URL - MUST use env variable
+  API_URL: import.meta.env.VITE_API_URL || (() => {
+    const fallback = 'https://xpsintelligencesystem-production.up.railway.app/api'
+    console.warn(
+      '[XPS CONFIG] VITE_API_URL not set, using fallback: ' + fallback
+    )
+    return fallback
+  })(),
 
-export const WS_BASE =
-  import.meta.env.VITE_WS_URL || 'ws://localhost:3000'
+  // WebSocket URL
+  WS_URL: import.meta.env.VITE_WS_URL || (() => {
+    const fallback = 'wss://xpsintelligencesystem-production.up.railway.app'
+    console.warn(
+      '[XPS CONFIG] VITE_WS_URL not set, using fallback: ' + fallback
+    )
+    return fallback
+  })(),
 
-if (import.meta.env.DEV && !import.meta.env.VITE_API_URL) {
-  console.warn(
-    '[XPS] VITE_API_URL is not set — using http://localhost:3000/api. ' +
-      'Ensure the backend is running on port 3000.'
-  )
+  // App metadata
+  APP_NAME: 'XPS Intelligence',
+  APP_VERSION: '1.0.0',
+  ENVIRONMENT: import.meta.env.MODE || 'production',
+}
+
+// Log config on startup (production)
+if (import.meta.env.PROD) {
+  console.log('[XPS] Configuration loaded:', {
+    api: API_CONFIG.API_URL,
+    ws: API_CONFIG.WS_URL,
+    env: API_CONFIG.ENVIRONMENT,
+  })
 }

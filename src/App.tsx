@@ -46,7 +46,7 @@ function App() {
 
   useEffect(() => {
     if (error) {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://xpsintelligencesystem-production.up.railway.app/api'
       toast.warning('Backend unavailable — running in demo mode', {
         description: `Could not reach ${apiUrl}. Showing demo data.`,
         duration: 8000,
