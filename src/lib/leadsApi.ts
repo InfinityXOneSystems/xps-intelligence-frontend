@@ -44,14 +44,18 @@ function calculateMetrics(leads: Lead[]): DashboardMetrics {
 export const leadsApi = {
   async getAll(): Promise<Lead[]> {
     try {
+      console.log('[LeadsAPI] Fetching leads from backend...')
       const leads = await api.get<Lead[]>('/leads')
+      console.log('[LeadsAPI] Successfully fetched', leads.length, 'leads from backend')
       saveLocalLeads(leads)
       backendAvailable = true
       return leads
     } catch (error) {
-      console.warn('Backend unavailable, using local/demo data')
+      console.warn('[LeadsAPI] Backend unavailable, using local/demo data:', error)
       backendAvailable = false
-      return getLocalLeads()
+      const localLeads = await getLocalLeads()
+      console.log('[LeadsAPI] Loaded', localLeads.length, 'leads from local cache/demo')
+      return localLeads
     }
   },
 

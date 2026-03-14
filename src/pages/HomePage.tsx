@@ -9,12 +9,28 @@ interface HomePageProps {
 }
 
 export function HomePage({ onNavigate }: HomePageProps) {
-  const { data: leads = [] } = useLeads()
+  const { data: leads = [], isLoading, error } = useLeads()
   
-  const greenLeads = leads.filter(lead => lead.priority === 'green')
-  const yellowLeads = leads.filter(lead => lead.priority === 'yellow')
-  const redLeads = leads.filter(lead => lead.priority === 'red')
-  const topLeads = leads.filter(lead => lead.rating === 'A+').slice(0, 3)
+  if (error) {
+    console.warn('[HomePage] Error loading leads, using fallback data:', error)
+  }
+  
+  const safeLeads = Array.isArray(leads) ? leads : []
+  const greenLeads = safeLeads.filter(lead => lead?.priority === 'green')
+  const yellowLeads = safeLeads.filter(lead => lead?.priority === 'yellow')
+  const redLeads = safeLeads.filter(lead => lead?.priority === 'red')
+  const topLeads = safeLeads.filter(lead => lead?.rating === 'A+').slice(0, 3)
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center space-y-4">
+          <div className="text-2xl font-bold animate-pulse">Loading XPS Intelligence...</div>
+          <div className="text-muted-foreground">Initializing AI Operating System</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -49,7 +65,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           onClick={() => onNavigate('leads')}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="glass-card p-8 rounded-2xl text-left hover:border-success transition-all priority-green"
+          className="bg-card border border-border p-8 rounded-2xl text-left hover:border-success transition-all"
         >
           <div className="text-5xl font-bold text-success mb-2">{greenLeads.length}</div>
           <div className="text-lg font-medium">Green Priority</div>
@@ -63,7 +79,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           onClick={() => onNavigate('leads')}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="glass-card p-8 rounded-2xl text-left hover:border-warning transition-all priority-yellow"
+          className="bg-card border border-border p-8 rounded-2xl text-left hover:border-warning transition-all"
         >
           <div className="text-5xl font-bold text-warning mb-2">{yellowLeads.length}</div>
           <div className="text-lg font-medium">Yellow Priority</div>
@@ -77,9 +93,9 @@ export function HomePage({ onNavigate }: HomePageProps) {
           onClick={() => onNavigate('leads')}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="glass-card p-8 rounded-2xl text-left hover:border-danger transition-all priority-red"
+          className="bg-card border border-border p-8 rounded-2xl text-left hover:border-destructive transition-all"
         >
-          <div className="text-5xl font-bold text-danger mb-2">{redLeads.length}</div>
+          <div className="text-5xl font-bold text-destructive mb-2">{redLeads.length}</div>
           <div className="text-lg font-medium">Red Priority</div>
           <div className="text-sm text-muted-foreground">Needs immediate attention</div>
         </motion.button>
@@ -125,7 +141,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <Card className="glass-card p-6 rounded-2xl">
+          <Card className="p-6 rounded-2xl border-border">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">Top A+ Opportunities</h2>
               <Star size={24} className="text-warning" weight="duotone" />

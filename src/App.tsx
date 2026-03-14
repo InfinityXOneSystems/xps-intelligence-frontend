@@ -42,12 +42,17 @@ function Layout() {
   useRealtimeLeads()
 
   useEffect(() => {
+    console.log('[App] Initializing XPS Intelligence Control Plane...')
     const checkBackendHealth = async () => {
+      console.log('[App] Running backend health check...')
       const isAvailable = await api.checkHealth()
       if (!isAvailable) {
+        console.warn('[App] Backend is offline - running in local mode')
         toast.info('Running in offline mode with local data', {
           duration: 4000,
         })
+      } else {
+        console.log('[App] Backend is online and healthy')
       }
     }
     checkBackendHealth()

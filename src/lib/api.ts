@@ -31,12 +31,15 @@ class ApiClient {
 
     this.healthCheckPromise = (async () => {
       try {
+        console.log('[API] Checking backend health:', this.baseUrl + '/health')
         const response = await fetch(this.baseUrl + '/health', {
           signal: AbortSignal.timeout(5000),
         })
         this.isBackendAvailable = response.ok
+        console.log('[API] Backend health check result:', response.ok)
         return response.ok
       } catch (error) {
+        console.warn('[API] Backend unavailable:', error)
         this.isBackendAvailable = false
         return false
       } finally {
