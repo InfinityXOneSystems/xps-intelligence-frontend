@@ -10,6 +10,8 @@ interface ApiError {
 class ApiClient {
   private baseUrl: string
   private token: string | null = null
+  private isBackendAvailable: boolean | null = null
+  private healthCheckPromise: Promise<boolean> | null = null
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl
@@ -30,6 +32,35 @@ class ApiClient {
   clearToken() {
     this.token = null
     localStorage.removeItem("auth_token")
+  }
+
+  async checkHealth(): Promise<boolean> {
+    if (this.healthCheckPromise) {
+      return this.healthCheckPromise
+    }
+
+    this.healthCheckPromise = (async () => {
+      try {
+        const response = await fetch(this.baseUrl + '/health', {
+          signal: AbortSignal.timeout(5000),
+        })
+        this.isBackendAvailable = response.ok
+        return response.ok
+      } catch (error) {
+        this.isBackendAvailable = false
+        return false
+      } finally {
+        setTimeout(() => {
+          this.healthCheckPromise = null
+        }, 30000)
+      }
+    })()
+
+    return this.healthCheckPromise
+  }
+
+  getBackendStatus(): boolean | null {
+    return this.isBackendAvailable
   }
 
   private async request<T>(
@@ -64,8 +95,10 @@ class ApiClient {
         return undefined as T
       }
 
+      this.isBackendAvailable = true
       return await response.json()
     } catch (error) {
+      this.isBackendAvailable = false
       console.error("API request failed:", error)
       throw error
     }

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Sidebar } from '@/components/Sidebar'
 import { TopBar } from '@/components/TopBar'
 import { MobileMenu } from '@/components/MobileMenu'
+import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { HomePage } from '@/pages/HomePage'
 import { LeadsPage } from '@/pages/LeadsPage'
 import { ContractorsPage } from '@/pages/ContractorsPage'
@@ -26,6 +27,8 @@ import { ScraperPage } from '@/pages/ScraperPage'
 import { AgentPage } from '@/pages/AgentPage'
 import { ErrorFallback } from '@/ErrorFallback'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { useRealtimeLeads } from '@/hooks/useRealtimeLeads'
+import { api } from '@/lib/api'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,18 +44,16 @@ function AppContent() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isMobile = useIsMobile()
+  
+  useRealtimeLeads()
 
   useEffect(() => {
     const checkBackendHealth = async () => {
-      try {
-        const response = await fetch('/api/diagnostics/status', {
-          signal: AbortSignal.timeout(5000)
+      const isAvailable = await api.checkHealth()
+      if (!isAvailable) {
+        toast.info('Running in offline mode with local data', {
+          duration: 4000,
         })
-        if (!response.ok) {
-          toast.warning('Backend unavailable - using demo mode')
-        }
-      } catch (error) {
-        toast.warning('Backend unavailable - using demo mode')
       }
     }
     checkBackendHealth()
@@ -120,6 +121,7 @@ function AppContent() {
       
       <div className="flex-1 flex flex-col">
         <TopBar onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)} />
+        <ConnectionStatus />
         
         <main className="flex-1 overflow-auto p-6 md:p-8">
           {renderPage()}
