@@ -37,3 +37,10 @@ repos:
         pass_filenames: false
         additional_dependencies:
           - typescript@~5.7.2
+      
+      - id: check-package-lock-sync
+        name: Check package-lock.json sync
+        entry: npm run check-lockfile
+        language: node
+        files: (package\.json|package-lock\.json)$
+        pass_filenames: false

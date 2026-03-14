@@ -1,0 +1,50 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Checking package-lock.json sync..."
+
+if git diff --cached --name-only | grep -q "package\.json"; then
+  echo "📦 package.json modified, verifying lockfile sync..."
+  
+  if ! npm run check-lockfile; then
+    echo ""
+    echo "❌ COMMIT BLOCKED: package-lock.json is out of sync with package.json"
+    echo ""
+    echo "To fix this issue:"
+    echo "  1. Run: npm install"
+    echo "  2. Stage the updated package-lock.json: git add package-lock.json"
+    echo "  3. Try committing again"
+    echo ""
+    exit 1
+  fi
+  
+  if ! git diff --cached --name-only | grep -q "package-lock\.json"; then
+    echo ""
+    echo "⚠️  WARNING: You're committing package.json changes without package-lock.json"
+    echo ""
+    echo "To fix this:"
+    echo "  1. Run: npm install"
+    echo "  2. Stage the lockfile: git add package-lock.json"
+    echo "  3. Try committing again"
+    echo ""
+    exit 1
+  fi
+fi
+
+if git diff --cached --name-only | grep -q "package-lock\.json"; then
+  echo "🔒 package-lock.json modified, verifying sync..."
+  
+  if ! npm run check-lockfile; then
+    echo ""
+    echo "❌ COMMIT BLOCKED: package-lock.json is out of sync"
+    echo ""
+    echo "To fix this:"
+    echo "  1. Run: npm install"
+    echo "  2. Stage the updated files: git add package.json package-lock.json"
+    echo "  3. Try committing again"
+    echo ""
+    exit 1
+  fi
+fi
+
+echo "✅ Lockfile sync check passed!"

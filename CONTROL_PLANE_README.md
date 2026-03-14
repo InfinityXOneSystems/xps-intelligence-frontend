@@ -324,6 +324,59 @@ curl https://your-app.vercel.app/api/integrations/groq/test
 ### View Diagnostic Report
 Run diagnostics in the UI, then click "Copy Report" to get the full JSON output.
 
+## 🪝 Pre-Commit Hooks (Railway Build Protection)
+
+### Problem
+Railway builds fail when `package-lock.json` is out of sync with `package.json`:
+```
+npm ci can only install packages when your package.json and package-lock.json are in sync
+```
+
+### Solution: Automated Pre-Commit Validation
+We've implemented Husky pre-commit hooks that automatically:
+- ✅ Detect changes to `package.json` or `package-lock.json`
+- ✅ Verify they're in sync before allowing commits
+- ✅ Block commits with clear fix instructions if issues found
+- ✅ Integrated into CI/CD pipeline
+
+### Quick Setup
+```bash
+npm install
+```
+
+That's it! Husky hooks are auto-configured via the `prepare` script.
+
+### Usage
+```bash
+# Add a package
+npm install some-package
+
+# Commit (hook automatically validates sync)
+git add package.json package-lock.json
+git commit -m "Add some-package"
+```
+
+### If You See an Error
+```
+❌ COMMIT BLOCKED: package-lock.json is out of sync
+```
+
+**Fix:**
+```bash
+npm install
+git add package-lock.json
+git commit
+```
+
+### Manual Check
+```bash
+npm run check-lockfile
+```
+
+### Documentation
+- **Quick Start**: See [LOCKFILE_SYNC_QUICKSTART.md](./LOCKFILE_SYNC_QUICKSTART.md)
+- **Full Guide**: See [PRE_COMMIT_HOOKS.md](./PRE_COMMIT_HOOKS.md)
+
 ## 📚 Resources
 
 - [Supabase Vault Documentation](https://supabase.com/docs/guides/database/vault)

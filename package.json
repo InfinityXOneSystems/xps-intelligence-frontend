@@ -11,7 +11,9 @@
         "lint": "eslint .",
         "verify": "npm run lint && npm run type-check && npm run build",
         "optimize": "vite optimize",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "prepare": "husky || true",
+        "check-lockfile": "node scripts/check-lockfile.js"
     },
     "dependencies": {
         "@aws-sdk/rds-signer": "^3.1007.0",
@@ -92,6 +94,7 @@
         "eslint-plugin-react-hooks": "^7.0.1",
         "eslint-plugin-react-refresh": "^0.5.2",
         "globals": "^17.4.0",
+        "husky": "^9.1.7",
         "tailwindcss": "^4.1.11",
         "typescript": "~5.9.3",
         "typescript-eslint": "^8.57.0",
