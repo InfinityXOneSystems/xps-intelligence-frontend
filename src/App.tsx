@@ -24,6 +24,7 @@ import { RoadmapPage } from '@/pages/RoadmapPage'
 import { AutomationSchedulerPage } from '@/pages/AutomationSchedulerPage'
 import { ScraperPage } from '@/pages/ScraperPage'
 import { AgentPage } from '@/pages/AgentPage'
+import { SystemHealthPage } from '@/pages/SystemHealthPage'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useRealtimeLeads } from '@/hooks/useRealtimeLeads'
 import { api } from '@/lib/api'
@@ -93,6 +94,8 @@ function AppContent() {
         return <ScraperPage onNavigate={handleNavigate} />
       case 'agent':
         return <AgentPage onNavigate={handleNavigate} />
+      case 'system-health':
+        return <SystemHealthPage onNavigate={handleNavigate} />
       default:
         return <HomePage onNavigate={handleNavigate} />
     }
