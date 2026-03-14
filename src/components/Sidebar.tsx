@@ -57,9 +57,9 @@ const primaryMenuItems = [
 const utilityMenuItems = [
   { id: 'agent', label: 'Agent', icon: Brain },
   { id: 'system-health', label: 'System Health', icon: FirstAidKit },
-  { id: 'tasks', label: 'Task Queue', icon: Queue },
+  { id: 'queue', label: 'Task Queue', icon: Queue },
   { id: 'scraper', label: 'Scraper', icon: Robot },
-  { id: 'editor', label: 'Code Editor', icon: Code },
+  { id: 'code', label: 'Code Editor', icon: Code },
   { id: 'sandbox', label: 'Sandbox', icon: Browser },
   { id: 'canvas', label: 'Canvas', icon: Square },
   { id: 'automation', label: 'Automation', icon: Lightning },

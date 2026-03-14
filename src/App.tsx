@@ -25,6 +25,8 @@ import { AutomationSchedulerPage } from '@/pages/AutomationSchedulerPage'
 import { ScraperPage } from '@/pages/ScraperPage'
 import { AgentPage } from '@/pages/AgentPage'
 import { SystemHealthPage } from '@/pages/SystemHealthPage'
+import { SandboxPage } from '@/pages/SandboxPage'
+import { DashboardPage } from '@/pages/DashboardPage'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useRealtimeLeads } from '@/hooks/useRealtimeLeads'
 import { api } from '@/lib/api'
@@ -96,7 +98,12 @@ function AppContent() {
         return <AgentPage onNavigate={handleNavigate} />
       case 'system-health':
         return <SystemHealthPage onNavigate={handleNavigate} />
+      case 'sandbox':
+        return <SandboxPage onNavigate={handleNavigate} />
+      case 'dashboard':
+        return <DashboardPage onNavigate={handleNavigate} />
       default:
+        console.warn(`[Navigation] Unknown route: ${currentPage}, falling back to home`)
         return <HomePage onNavigate={handleNavigate} />
     }
   }
