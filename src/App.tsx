@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Toaster, toast } from 'sonner'
 import { ThemeProvider } from '@/hooks/use-theme'
 import { Sidebar } from '@/components/Sidebar'
@@ -30,12 +31,13 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useRealtimeLeads } from '@/hooks/useRealtimeLeads'
 import { api } from '@/lib/api'
+import { useState } from 'react'
 
-function AppContent() {
-  const [currentPage, setCurrentPage] = useState('home')
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isMobile = useIsMobile()
+  const location = useLocation()
+  const navigate = useNavigate()
   
   useRealtimeLeads()
 
@@ -51,61 +53,14 @@ function AppContent() {
     checkBackendHealth()
   }, [])
 
-  const handleNavigate = (page: string) => {
-    setCurrentPage(page)
-    setMobileMenuOpen(false)
+  const getCurrentPage = () => {
+    const path = location.pathname.slice(1) || 'home'
+    return path
   }
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return <HomePage onNavigate={handleNavigate} />
-      case 'leads':
-        return <LeadsPage onNavigate={handleNavigate} />
-      case 'contractors':
-        return <ContractorsPage onNavigate={handleNavigate} />
-      case 'prospects':
-        return <ProspectsPage onNavigate={handleNavigate} />
-      case 'pipeline':
-        return <PipelinePage onNavigate={handleNavigate} />
-      case 'leaderboard':
-        return <LeaderboardPage onNavigate={handleNavigate} />
-      case 'diagnostics':
-        return <DiagnosticsPage onNavigate={handleNavigate} />
-      case 'automation':
-        return <AutomationPage onNavigate={handleNavigate} />
-      case 'settings':
-        return <SettingsPage onNavigate={handleNavigate} />
-      case 'docs':
-        return <DocsPage onNavigate={handleNavigate} />
-      case 'logs':
-        return <SystemLogsPage onNavigate={handleNavigate} />
-      case 'queue':
-        return <TaskQueuePage onNavigate={handleNavigate} />
-      case 'code':
-        return <CodeEditorPage onNavigate={handleNavigate} />
-      case 'canvas':
-        return <CanvasPage onNavigate={handleNavigate} />
-      case 'reports':
-        return <ReportsPage onNavigate={handleNavigate} />
-      case 'roadmap':
-        return <RoadmapPage onNavigate={handleNavigate} />
-      case 'scheduler':
-        return <AutomationSchedulerPage onNavigate={handleNavigate} />
-      case 'scraper':
-        return <ScraperPage onNavigate={handleNavigate} />
-      case 'agent':
-        return <AgentPage onNavigate={handleNavigate} />
-      case 'system-health':
-        return <SystemHealthPage onNavigate={handleNavigate} />
-      case 'sandbox':
-        return <SandboxPage onNavigate={handleNavigate} />
-      case 'dashboard':
-        return <DashboardPage onNavigate={handleNavigate} />
-      default:
-        console.warn(`[Navigation] Unknown route: ${currentPage}, falling back to home`)
-        return <HomePage onNavigate={handleNavigate} />
-    }
+  const handleNavigate = (page: string) => {
+    navigate(`/${page === 'home' ? '' : page}`)
+    setMobileMenuOpen(false)
   }
 
   return (
@@ -113,9 +68,9 @@ function AppContent() {
       <div className="min-h-screen bg-background flex">
         {!isMobile && (
           <Sidebar
-            currentPage={currentPage}
+            currentPage={getCurrentPage()}
             onNavigate={handleNavigate}
-            collapsed={sidebarCollapsed}
+            collapsed={false}
           />
         )}
         
@@ -124,7 +79,31 @@ function AppContent() {
           <ConnectionStatus />
           
           <main className="flex-1 overflow-auto p-6 md:p-8">
-            {renderPage()}
+            <Routes>
+              <Route path="/" element={<HomePage onNavigate={handleNavigate} />} />
+              <Route path="/leads" element={<LeadsPage onNavigate={handleNavigate} />} />
+              <Route path="/contractors" element={<ContractorsPage onNavigate={handleNavigate} />} />
+              <Route path="/prospects" element={<ProspectsPage onNavigate={handleNavigate} />} />
+              <Route path="/pipeline" element={<PipelinePage onNavigate={handleNavigate} />} />
+              <Route path="/leaderboard" element={<LeaderboardPage onNavigate={handleNavigate} />} />
+              <Route path="/diagnostics" element={<DiagnosticsPage onNavigate={handleNavigate} />} />
+              <Route path="/automation" element={<AutomationPage onNavigate={handleNavigate} />} />
+              <Route path="/settings" element={<SettingsPage onNavigate={handleNavigate} />} />
+              <Route path="/docs" element={<DocsPage onNavigate={handleNavigate} />} />
+              <Route path="/logs" element={<SystemLogsPage onNavigate={handleNavigate} />} />
+              <Route path="/queue" element={<TaskQueuePage onNavigate={handleNavigate} />} />
+              <Route path="/code" element={<CodeEditorPage onNavigate={handleNavigate} />} />
+              <Route path="/canvas" element={<CanvasPage onNavigate={handleNavigate} />} />
+              <Route path="/reports" element={<ReportsPage onNavigate={handleNavigate} />} />
+              <Route path="/roadmap" element={<RoadmapPage onNavigate={handleNavigate} />} />
+              <Route path="/scheduler" element={<AutomationSchedulerPage onNavigate={handleNavigate} />} />
+              <Route path="/scraper" element={<ScraperPage onNavigate={handleNavigate} />} />
+              <Route path="/agent" element={<AgentPage onNavigate={handleNavigate} />} />
+              <Route path="/system-health" element={<SystemHealthPage onNavigate={handleNavigate} />} />
+              <Route path="/sandbox" element={<SandboxPage onNavigate={handleNavigate} />} />
+              <Route path="/dashboard" element={<DashboardPage onNavigate={handleNavigate} />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
           </main>
         </div>
 
@@ -132,7 +111,7 @@ function AppContent() {
           <MobileMenu
             isOpen={mobileMenuOpen}
             onClose={() => setMobileMenuOpen(false)}
-            currentPage={currentPage}
+            currentPage={getCurrentPage()}
             onNavigate={handleNavigate}
           />
         )}
@@ -144,9 +123,11 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <Layout />
+      </ThemeProvider>
+    </BrowserRouter>
   )
 }
 
