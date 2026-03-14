@@ -2,278 +2,379 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { BackButton } from '@/components/BackButton'
-import {
-  CheckCircle,
-  XCircle,
-  Warning,
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { 
+  ArrowClockwise, 
+  DownloadSimple, 
+  CheckCircle, 
+  XCircle, 
+  WarningCircle,
   Clock,
-  Download,
-  ClipboardText,
-  ArrowsClockwise,
+  Database,
+  Globe,
+  Gauge,
+  Browser,
+  ShieldCheck,
+  Play
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
-import { runDiagnostics, createSupportBundle, downloadSupportBundle } from '@/controlPlane/diagnostics/runner'
-import type { DiagnosticReport, DiagnosticCheck } from '@/controlPlane/diagnostics/types'
+import {
+  DiagnosticTest,
+  DiagnosticCategory,
+  getDefaultTests,
+  runDiagnosticTest,
+  categorizTests,
+  generateSupportBundle,
+  downloadSupportBundle,
+  getSystemInfo,
+} from '@/lib/diagnostics'
 
-const cardStyle = {
-  background: 'var(--card)',
-  backdropFilter: 'blur(32px) saturate(180%)',
-  WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
+interface DiagnosticsPageProps {
+  onNavigate: (page: string) => void
 }
 
-function StatusIcon({ status }: { status: DiagnosticCheck['status'] }) {
-  switch (status) {
-    case 'pass':
-      return <CheckCircle size={20} className="text-green-400" weight="fill" />
-    case 'fail':
-      return <XCircle size={20} className="text-red-400" weight="fill" />
-    case 'warn':
-      return <Warning size={20} className="text-yellow-400" weight="fill" />
-    default:
-      return <Clock size={20} className="text-white/30" />
-  }
-}
-
-function StatusBadge({ status }: { status: DiagnosticCheck['status'] }) {
-  const colors = {
-    pass: 'bg-green-500/20 text-green-400 border-green-500/30',
-    fail: 'bg-red-500/20 text-red-400 border-red-500/30',
-    warn: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-    skip: 'bg-white/10 text-white/50 border-white/20',
-  }
-  
-  return (
-    <Badge variant="outline" className={`${colors[status]} text-[10px] px-1.5 py-0 h-4 uppercase`}>
-      {status}
-    </Badge>
-  )
-}
-
-export function DiagnosticsPage({ onNavigate }: { onNavigate: (page: string) => void }) {
-  const [report, setReport] = useState<DiagnosticReport | null>(null)
+export function DiagnosticsPage({ onNavigate }: DiagnosticsPageProps) {
+  const [tests, setTests] = useState<DiagnosticTest[]>(getDefaultTests())
   const [isRunning, setIsRunning] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [categories, setCategories] = useState<DiagnosticCategory[]>([])
 
-  const handleRunTests = async () => {
+  const runAllTests = async () => {
     setIsRunning(true)
-    toast.info('Running diagnostics...')
+    setProgress(0)
     
-    try {
-      const result = await runDiagnostics()
-      setReport(result)
+    const defaultTests = getDefaultTests()
+    setTests(defaultTests.map(t => ({ ...t, status: 'running' as const })))
+    
+    const results: DiagnosticTest[] = []
+    
+    for (let i = 0; i < defaultTests.length; i++) {
+      const test = defaultTests[i]
+      const result = await runDiagnosticTest(test)
+      results.push(result)
       
-      const { passed, failed } = result.summary
-      if (failed === 0) {
-        toast.success(`All ${passed} tests passed!`)
-      } else {
-        toast.warning(`${passed} passed, ${failed} failed`)
-      }
-    } catch (error) {
-      toast.error('Failed to run diagnostics')
-      console.error(error)
-    } finally {
-      setIsRunning(false)
+      setTests([...results, ...defaultTests.slice(i + 1)])
+      setProgress(((i + 1) / defaultTests.length) * 100)
+    }
+    
+    setTests(results)
+    setCategories(categorizTests(results))
+    setIsRunning(false)
+    
+    const failed = results.filter(t => t.status === 'failed').length
+    const warnings = results.filter(t => t.status === 'warning').length
+    
+    if (failed > 0) {
+      toast.error(`Diagnostics complete: ${failed} test(s) failed`)
+    } else if (warnings > 0) {
+      toast.warning(`Diagnostics complete: ${warnings} warning(s)`)
+    } else {
+      toast.success('All diagnostics passed!')
     }
   }
 
-  const handleCopyReport = () => {
-    if (!report) return
-    
-    const text = JSON.stringify(report, null, 2)
-    navigator.clipboard.writeText(text)
-    toast.success('Report copied to clipboard')
+  const handleExportBundle = async () => {
+    try {
+      const bundle = await generateSupportBundle(tests)
+      downloadSupportBundle(bundle)
+      
+      const systemInfo = await getSystemInfo()
+      
+      toast.success('Support bundle downloaded', {
+        description: `File size: ${new Blob([JSON.stringify(bundle)]).size} bytes`,
+      })
+    } catch (err) {
+      toast.error('Failed to generate support bundle', {
+        description: err instanceof Error ? err.message : 'Unknown error',
+      })
+    }
   }
 
-  const handleDownloadBundle = () => {
-    if (!report) return
-    
-    const integrations = report.checks.map(check => ({
-      provider: check.id.replace('-test', ''),
-      status: check.status,
-      last_tested: check.timestamp,
-    }))
-    
-    const bundle = createSupportBundle(report, integrations)
-    downloadSupportBundle(bundle)
-    toast.success('Support bundle downloaded')
+  const getCategoryIcon = (categoryId: string) => {
+    switch (categoryId) {
+      case 'storage':
+        return <Database className="h-5 w-5" />
+      case 'network':
+        return <Globe className="h-5 w-5" />
+      case 'performance':
+        return <Gauge className="h-5 w-5" />
+      case 'browser':
+        return <Browser className="h-5 w-5" />
+      case 'data':
+        return <ShieldCheck className="h-5 w-5" />
+      default:
+        return null
+    }
   }
+
+  const getStatusIcon = (status: DiagnosticTest['status']) => {
+    switch (status) {
+      case 'passed':
+        return <CheckCircle className="h-5 w-5 text-success" weight="fill" />
+      case 'failed':
+        return <XCircle className="h-5 w-5 text-danger" weight="fill" />
+      case 'warning':
+        return <WarningCircle className="h-5 w-5 text-warning" weight="fill" />
+      case 'running':
+        return <ArrowClockwise className="h-5 w-5 animate-spin text-primary" />
+      default:
+        return <Clock className="h-5 w-5 text-muted-foreground" />
+    }
+  }
+
+  const getStatusBadge = (status: DiagnosticTest['status']) => {
+    const variants: Record<string, any> = {
+      passed: 'default',
+      failed: 'destructive',
+      warning: 'secondary',
+      running: 'outline',
+      pending: 'outline',
+      skipped: 'outline',
+    }
+    
+    return (
+      <Badge variant={variants[status] || 'outline'} className="uppercase font-mono text-xs">
+        {status}
+      </Badge>
+    )
+  }
+
+  const completedTests = tests.filter(t => 
+    t.status === 'passed' || t.status === 'failed' || t.status === 'warning' || t.status === 'skipped'
+  )
+  const passedTests = tests.filter(t => t.status === 'passed')
+  const failedTests = tests.filter(t => t.status === 'failed')
+  const warningTests = tests.filter(t => t.status === 'warning')
+  
+  const overallHealth = completedTests.length > 0 
+    ? (passedTests.length / completedTests.length) * 100 
+    : 0
 
   return (
     <div className="space-y-6">
-      <BackButton onBack={() => onNavigate('settings')} />
-      
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">System Diagnostics</h1>
-          <p className="text-white/60 mt-1 text-sm">
-            Test integrations and generate support reports
+          <h1 className="text-3xl font-semibold tracking-tight">System Diagnostics</h1>
+          <p className="text-muted-foreground mt-1">
+            Comprehensive system health checks and support export
           </p>
         </div>
         
-        <div className="flex gap-2">
-          {report && (
-            <>
-              <Button
-                onClick={handleCopyReport}
-                variant="outline"
-                className="flex items-center gap-2"
-                style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  color: 'white',
-                }}
-              >
-                <ClipboardText size={16} />
-                Copy Report
-              </Button>
-              <Button
-                onClick={handleDownloadBundle}
-                variant="outline"
-                className="flex items-center gap-2"
-                style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  color: 'white',
-                }}
-              >
-                <Download size={16} />
-                Download Bundle
-              </Button>
-            </>
-          )}
+        <div className="flex gap-3">
           <Button
-            onClick={handleRunTests}
+            onClick={runAllTests}
             disabled={isRunning}
-            className="flex items-center gap-2"
-            style={{
-              background: 'linear-gradient(135deg, #b8860b 0%, #ffd700 100%)',
-              color: 'black',
-            }}
+            className="gap-2"
           >
-            <ArrowsClockwise size={16} className={isRunning ? 'animate-spin' : ''} />
-            {isRunning ? 'Running...' : 'Run All Tests'}
+            {isRunning ? (
+              <>
+                <ArrowClockwise className="h-4 w-4 animate-spin" />
+                Running...
+              </>
+            ) : (
+              <>
+                <Play className="h-4 w-4" weight="fill" />
+                Run All Tests
+              </>
+            )}
+          </Button>
+          
+          <Button
+            onClick={handleExportBundle}
+            variant="outline"
+            disabled={completedTests.length === 0}
+            className="gap-2"
+          >
+            <DownloadSimple className="h-4 w-4" />
+            Export Bundle
           </Button>
         </div>
       </div>
 
-      {report && (
-        <div className="grid grid-cols-4 gap-4">
-          <Card style={cardStyle}>
+      {isRunning && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Running tests...</span>
+                <span className="font-mono font-semibold">{Math.round(progress)}%</span>
+              </div>
+              <Progress value={progress} className="h-2" />
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {completedTests.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card>
             <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Total</p>
-                <p className="text-3xl font-bold text-white">{report.summary.total}</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <CheckCircle className="h-4 w-4" />
+                  <span className="text-xs uppercase tracking-wide font-medium">Overall Health</span>
+                </div>
+                <div className="text-3xl font-bold font-mono tabular-nums">
+                  {overallHealth.toFixed(0)}%
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card style={cardStyle}>
+          <Card>
             <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-xs text-green-400/80 uppercase tracking-wider mb-1">Passed</p>
-                <p className="text-3xl font-bold text-green-400">{report.summary.passed}</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-success">
+                  <CheckCircle className="h-4 w-4" />
+                  <span className="text-xs uppercase tracking-wide font-medium">Passed</span>
+                </div>
+                <div className="text-3xl font-bold font-mono tabular-nums text-success">
+                  {passedTests.length}
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card style={cardStyle}>
+          <Card>
             <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-xs text-red-400/80 uppercase tracking-wider mb-1">Failed</p>
-                <p className="text-3xl font-bold text-red-400">{report.summary.failed}</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-warning">
+                  <WarningCircle className="h-4 w-4" />
+                  <span className="text-xs uppercase tracking-wide font-medium">Warnings</span>
+                </div>
+                <div className="text-3xl font-bold font-mono tabular-nums text-warning">
+                  {warningTests.length}
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card style={cardStyle}>
+          <Card>
             <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-xs text-yellow-400/80 uppercase tracking-wider mb-1">Warnings</p>
-                <p className="text-3xl font-bold text-yellow-400">{report.summary.warnings}</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-danger">
+                  <XCircle className="h-4 w-4" />
+                  <span className="text-xs uppercase tracking-wide font-medium">Failed</span>
+                </div>
+                <div className="text-3xl font-bold font-mono tabular-nums text-danger">
+                  {failedTests.length}
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
       )}
 
-      <Card style={cardStyle}>
-        <CardHeader className="pb-3 border-b border-white/8">
-          <CardTitle className="text-white text-base">Test Results</CardTitle>
-          <CardDescription className="text-white/50 text-xs">
-            {report ? `Last run: ${new Date(report.timestamp).toLocaleString()}` : 'No tests run yet'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4 pb-4">
-          {!report && (
-            <div className="text-center py-12">
-              <Clock size={48} className="mx-auto mb-4 text-white/20" />
-              <p className="text-white/50 text-sm">Click "Run All Tests" to begin diagnostics</p>
-            </div>
-          )}
-          
-          {report && report.checks.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-white/50 text-sm">No test results available</p>
-            </div>
-          )}
-          
-          {report && report.checks.length > 0 && (
-            <div className="space-y-3">
-              {report.checks.map((check) => (
-                <div
-                  key={check.id}
-                  className="p-4 rounded-lg"
-                  style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                  }}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      <StatusIcon status={check.status} />
-                      <div>
-                        <p className="text-sm font-medium text-white">{check.name}</p>
-                        <p className="text-xs text-white/50 mt-0.5">{check.message}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {check.latency_ms !== undefined && (
-                        <span className="text-xs text-white/40 font-mono">{check.latency_ms}ms</span>
-                      )}
-                      <StatusBadge status={check.status} />
+      {failedTests.length > 0 && (
+        <Alert className="border-danger bg-danger/5">
+          <XCircle className="h-5 w-5 text-danger" />
+          <AlertDescription className="ml-2">
+            <span className="font-semibold">{failedTests.length} critical issue(s) detected.</span>
+            {' '}Review failed tests below and follow recommendations.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <div className="space-y-6">
+        {categories.length > 0 ? (
+          categories.map((category) => (
+            <Card key={category.id}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {getCategoryIcon(category.id)}
+                    <div>
+                      <CardTitle className="text-lg uppercase tracking-wide">
+                        {category.name}
+                      </CardTitle>
+                      <CardDescription className="font-mono text-xs mt-1">
+                        {category.tests.filter(t => t.status === 'passed').length} / {category.tests.length} passed
+                      </CardDescription>
                     </div>
                   </div>
                   
-                  {check.fix_hint && (
-                    <div
-                      className="mt-2 p-2 rounded text-xs"
-                      style={{
-                        background: 'rgba(234,179,8,0.1)',
-                        border: '1px solid rgba(234,179,8,0.2)',
-                        color: 'rgb(250,204,21)',
-                      }}
-                    >
-                      <strong>💡 How to fix:</strong> {check.fix_hint}
-                    </div>
-                  )}
-                  
-                  {check.details && Object.keys(check.details).length > 0 && (
-                    <details className="mt-2">
-                      <summary className="text-xs text-white/40 cursor-pointer hover:text-white/60 transition-colors">
-                        Show details
-                      </summary>
-                      <pre className="mt-2 p-2 rounded bg-black/40 text-xs text-white/60 overflow-auto">
-                        {JSON.stringify(check.details, null, 2)}
-                      </pre>
-                    </details>
-                  )}
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl font-bold font-mono tabular-nums">
+                      {category.health.toFixed(0)}%
+                    </span>
+                  </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              </CardHeader>
+              
+              <CardContent className="space-y-3">
+                {category.tests.map((test) => (
+                  <div key={test.id}>
+                    <div className="flex items-start gap-3 p-4 rounded-lg border bg-card/50">
+                      <div className="mt-0.5">
+                        {getStatusIcon(test.status)}
+                      </div>
+                      
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <div className="font-medium">{test.name}</div>
+                            {test.duration !== undefined && (
+                              <div className="text-xs text-muted-foreground font-mono mt-1">
+                                <Clock className="h-3 w-3 inline mr-1" />
+                                {test.duration.toFixed(2)}ms
+                              </div>
+                            )}
+                          </div>
+                          
+                          {getStatusBadge(test.status)}
+                        </div>
+                        
+                        {test.error && (
+                          <div className="text-sm text-danger font-mono bg-danger/5 px-3 py-2 rounded border border-danger/20">
+                            {test.error}
+                          </div>
+                        )}
+                        
+                        {test.recommendation && (
+                          <div className="text-sm text-muted-foreground bg-muted/50 px-3 py-2 rounded border">
+                            <span className="font-semibold">Recommendation:</span> {test.recommendation}
+                          </div>
+                        )}
+                        
+                        {test.details && Object.keys(test.details).length > 0 && (
+                          <div className="text-xs font-mono bg-muted/30 px-3 py-2 rounded border">
+                            <div className="space-y-1">
+                              {Object.entries(test.details).map(([key, value]) => (
+                                <div key={key} className="flex gap-2">
+                                  <span className="text-muted-foreground">{key}:</span>
+                                  <span className="font-semibold">
+                                    {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <Card>
+            <CardContent className="py-12">
+              <div className="text-center space-y-3">
+                <Play className="h-12 w-12 mx-auto text-muted-foreground" />
+                <div>
+                  <div className="font-semibold text-lg">No tests run yet</div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Click "Run All Tests" to start comprehensive system diagnostics
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   )
 }

@@ -7,16 +7,16 @@
   }
   
   body {
-    font-family: 'Montserrat', 'Inter', sans-serif;
+    font-family: 'Inter', 'Montserrat', sans-serif;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Space Grotesk', 'Montserrat', sans-serif;
     font-weight: 600;
   }
   
   code, pre, .font-mono {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'JetBrains Mono', 'Source Code Pro', monospace;
   }
 }
 
