@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
 import { Toaster, toast } from 'sonner'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Sidebar } from '@/components/Sidebar'
 import { TopBar } from '@/components/TopBar'
 import { MobileMenu } from '@/components/MobileMenu'
@@ -25,21 +23,11 @@ import { RoadmapPage } from '@/pages/RoadmapPage'
 import { AutomationSchedulerPage } from '@/pages/AutomationSchedulerPage'
 import { ScraperPage } from '@/pages/ScraperPage'
 import { AgentPage } from '@/pages/AgentPage'
-import { ErrorFallback } from '@/ErrorFallback'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useRealtimeLeads } from '@/hooks/useRealtimeLeads'
 import { api } from '@/lib/api'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5,
-      retry: 1,
-    },
-  },
-})
-
-function AppContent() {
+function App() {
   const [currentPage, setCurrentPage] = useState('home')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -110,44 +98,36 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {!isMobile && (
-        <Sidebar
-          currentPage={currentPage}
-          onNavigate={handleNavigate}
-          collapsed={sidebarCollapsed}
-        />
-      )}
-      
-      <div className="flex-1 flex flex-col">
-        <TopBar onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)} />
-        <ConnectionStatus />
+    <>
+      <div className="min-h-screen bg-background flex">
+        {!isMobile && (
+          <Sidebar
+            currentPage={currentPage}
+            onNavigate={handleNavigate}
+            collapsed={sidebarCollapsed}
+          />
+        )}
         
-        <main className="flex-1 overflow-auto p-6 md:p-8">
-          {renderPage()}
-        </main>
+        <div className="flex-1 flex flex-col">
+          <TopBar onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)} />
+          <ConnectionStatus />
+          
+          <main className="flex-1 overflow-auto p-6 md:p-8">
+            {renderPage()}
+          </main>
+        </div>
+
+        {isMobile && (
+          <MobileMenu
+            isOpen={mobileMenuOpen}
+            onClose={() => setMobileMenuOpen(false)}
+            currentPage={currentPage}
+            onNavigate={handleNavigate}
+          />
+        )}
       </div>
-
-      {isMobile && (
-        <MobileMenu
-          isOpen={mobileMenuOpen}
-          onClose={() => setMobileMenuOpen(false)}
-          currentPage={currentPage}
-          onNavigate={handleNavigate}
-        />
-      )}
-    </div>
-  )
-}
-
-function App() {
-  return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <QueryClientProvider client={queryClient}>
-        <AppContent />
-        <Toaster position="top-right" />
-      </QueryClientProvider>
-    </ErrorBoundary>
+      <Toaster position="top-right" />
+    </>
   )
 }
 
