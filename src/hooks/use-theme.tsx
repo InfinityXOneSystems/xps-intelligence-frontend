@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 
 type Theme = 'light' | 'dark'
@@ -13,27 +13,15 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeKV] = useKV<Theme>('app-theme', 'dark')
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!mounted) return
-
     const root = window.document.documentElement
     root.classList.remove('light', 'dark')
     root.classList.add(theme || 'dark')
-  }, [theme, mounted])
+  }, [theme])
 
   const toggleTheme = () => {
     setThemeKV((currentTheme) => currentTheme === 'light' ? 'dark' : 'light')
-  }
-
-  if (!mounted) {
-    return null
   }
 
   return (
