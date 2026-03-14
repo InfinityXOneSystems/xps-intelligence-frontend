@@ -1,5 +1,5 @@
 import type { AgentRole } from '@/lib/agentTypes'
-import { API_BASE } from '@/lib/config'
+import { API_CONFIG } from '@/lib/config'
 
 export interface ChatMessage {
   id: string
@@ -56,7 +56,7 @@ const MOCK_HISTORY: ChatMessage[] = [
 
 export async function sendMessage(request: SendMessageRequest): Promise<SendMessageResponse> {
   try {
-    const res = await fetch(`${API_BASE}/chat/send`, {
+    const res = await fetch(`${API_CONFIG.API_URL}/chat/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request),
@@ -83,7 +83,7 @@ export async function sendMessage(request: SendMessageRequest): Promise<SendMess
 
 export async function getChatHistory(sessionId?: string): Promise<ChatMessage[]> {
   try {
-    const url = sessionId ? `${API_BASE}/chat/history?sessionId=${sessionId}` : `${API_BASE}/chat/history`
+    const url = sessionId ? `${API_CONFIG.API_URL}/chat/history?sessionId=${sessionId}` : `${API_CONFIG.API_URL}/chat/history`
     const res = await fetch(url)
     if (!res.ok) throw new Error('API unavailable')
     return res.json()
@@ -94,7 +94,7 @@ export async function getChatHistory(sessionId?: string): Promise<ChatMessage[]>
 
 export async function clearHistory(sessionId?: string): Promise<{ success: boolean }> {
   try {
-    const res = await fetch(`${API_BASE}/chat/history`, {
+    const res = await fetch(`${API_CONFIG.API_URL}/chat/history`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId }),
@@ -108,7 +108,7 @@ export async function clearHistory(sessionId?: string): Promise<{ success: boole
 
 export async function getAgentStatus(): Promise<AgentStatus[]> {
   try {
-    const res = await fetch(`${API_BASE}/agents/status`)
+    const res = await fetch(`${API_CONFIG.API_URL}/agents/status`)
     if (!res.ok) throw new Error('API unavailable')
     return res.json()
   } catch {
@@ -133,7 +133,7 @@ export async function executeAgentCommand(
   params?: Record<string, unknown>
 ): Promise<{ taskId: string; status: string; message: string }> {
   try {
-    const res = await fetch(`${API_BASE}/agents/${agentRole}/execute`, {
+    const res = await fetch(`${API_CONFIG.API_URL}/agents/${agentRole}/execute`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ command, params }),
@@ -151,7 +151,7 @@ export async function executeAgentCommand(
 
 export async function getAgentChat(agentRole: AgentRole): Promise<ChatMessage[]> {
   try {
-    const res = await fetch(`${API_BASE}/agents/${agentRole}/chat`)
+    const res = await fetch(`${API_CONFIG.API_URL}/agents/${agentRole}/chat`)
     if (!res.ok) throw new Error('API unavailable')
     return res.json()
   } catch {

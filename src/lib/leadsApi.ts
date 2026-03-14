@@ -1,9 +1,15 @@
 import { api } from './api'
 import type { Lead, DashboardMetrics, ScraperConfig, ScraperLog } from '@/types/lead'
+import { generateDemoLeads } from '@/lib/mockData'
 
 export const leadsApi = {
   async getAll(): Promise<Lead[]> {
-    return api.get<Lead[]>('/leads')
+    try {
+      return await api.get<Lead[]>('/leads')
+    } catch (error) {
+      console.warn('Backend unavailable, using demo data')
+      return generateDemoLeads()
+    }
   },
 
   async getById(id: string): Promise<Lead> {

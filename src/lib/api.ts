@@ -46,6 +46,7 @@ class ApiClient {
         ...(token && { Authorization: "Bearer " + token }),
         ...options.headers,
       },
+      signal: AbortSignal.timeout(10000),
     }
 
     try {
