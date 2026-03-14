@@ -2,35 +2,35 @@ import { API_CONFIG } from "@/lib/config"
 
 interface ApiError {
   message: string
-  status?: number
-}
 
-class ApiClient {
-  private baseUrl: string
-  private token: string | null = null
-  private isBackendAvailable: boolean | null = null
-  private healthCheckPromise: Promise<boolean> | null = null
+ 
 
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl
-  }
 
-  setToken(token: string) {
+    this.baseUrl = baseUr
+
     this.token = token
-    localStorage.setItem("auth_token", token)
   }
 
-  getToken(): string | null {
-    if (!this.token) {
-      this.token = localStorage.getItem("auth_token")
-    }
+      this.token = localStorage.
     return this.token
-  }
 
-  clearToken() {
-    this.token = null
-    localStorage.removeItem("auth_token")
+
   }
+  async checkHealth():
+      return this.healthCheckPromise
+
+
+          signal: AbortSignal
+        this.isBackend
+      } catch (error) {
+     
+        setTimeout(()
+   
+
+    return this.
+
+    return this.isBackendAvailable
+
 
   async checkHealth(): Promise<boolean> {
     if (this.healthCheckPromise) {
@@ -66,56 +66,56 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = this.baseUrl + endpoint
-    const token = this.getToken()
 
-    const config: RequestInit = {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...options.headers,
-      },
-    }
 
-    try {
-      const response = await fetch(url, config)
-
-      if (!response.ok) {
-        const error: ApiError = {
-          message: `API request failed: ${response.statusText}`,
-          status: response.status,
-        }
-        throw error
-      }
-
-      return await response.json()
-    } catch (error) {
-      console.error('API Error:', error)
-      throw error
-    }
+      body: data ? JSON.stringify
   }
-
-  async get<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: "GET" })
-  }
-
-  async post<T>(endpoint: string, data?: unknown): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "POST",
-      body: data ? JSON.stringify(data) : undefined,
-    })
-  }
-
-  async put<T>(endpoint: string, data?: unknown): Promise<T> {
-    return this.request<T>(endpoint, {
+  async put<T>(e
       method: "PUT",
-      body: data ? JSON.stringify(data) : undefined,
     })
-  }
 
-  async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: "DELETE" })
-  }
+    retu
 }
 
-export const api = new ApiClient(API_CONFIG.API_URL)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
