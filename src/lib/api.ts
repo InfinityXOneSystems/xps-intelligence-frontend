@@ -2,35 +2,27 @@ import { API_CONFIG } from "@/lib/config"
 
 interface ApiError {
   message: string
+  status?: number
+}
 
- 
+class ApiClient {
+  private baseUrl: string
+  private token: string | null = null
+  private healthCheckPromise: Promise<boolean> | null = null
+  private isBackendAvailable: boolean | null = null
 
+  constructor(baseUrl: string, token?: string) {
+    this.baseUrl = baseUrl
+    this.token = token || null
+  }
 
-    this.baseUrl = baseUr
-
+  setToken(token: string) {
     this.token = token
   }
 
-      this.token = localStorage.
+  getToken(): string | null {
     return this.token
-
-
   }
-  async checkHealth():
-      return this.healthCheckPromise
-
-
-          signal: AbortSignal
-        this.isBackend
-      } catch (error) {
-     
-        setTimeout(()
-   
-
-    return this.
-
-    return this.isBackendAvailable
-
 
   async checkHealth(): Promise<boolean> {
     if (this.healthCheckPromise) {
@@ -67,55 +59,59 @@ interface ApiError {
   ): Promise<T> {
     const url = this.baseUrl + endpoint
 
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
 
-      body: data ? JSON.stringify
-  }
-  async put<T>(e
-      method: "PUT",
+    if (options.headers) {
+      Object.assign(headers, options.headers)
+    }
+
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
     })
 
-    retu
+    if (!response.ok) {
+      const error: ApiError = {
+        message: `HTTP error! status: ${response.status}`,
+        status: response.status,
+      }
+      throw error
+    }
+
+    return response.json()
+  }
+
+  async get<T>(endpoint: string): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'GET',
+    })
+  }
+
+  async post<T>(endpoint: string, data?: unknown): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'POST',
+      body: data ? JSON.stringify(data) : undefined,
+    })
+  }
+
+  async put<T>(endpoint: string, data?: unknown): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PUT',
+      body: data ? JSON.stringify(data) : undefined,
+    })
+  }
+
+  async delete<T>(endpoint: string): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'DELETE',
+    })
+  }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const api = new ApiClient(API_CONFIG.API_URL)
