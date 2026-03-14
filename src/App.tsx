@@ -26,6 +26,7 @@ import { ContractorsPage } from '@/pages/ContractorsPage'
 import { AutomationPage } from '@/pages/AutomationPage'
 import { ReportsPage } from '@/pages/ReportsPage'
 import { DocsPage } from '@/pages/DocsPage'
+import { DiagnosticsPage } from '@/pages/DiagnosticsPage'
 import { useLeads } from '@/hooks/useLeadsApi'
 import { wsClient } from '@/lib/websocket'
 
@@ -108,6 +109,8 @@ function App() {
         return <ReportsPage onNavigate={setCurrentPage} />
       case 'docs':
         return <DocsPage onNavigate={setCurrentPage} />
+      case 'diagnostics':
+        return <DiagnosticsPage onNavigate={setCurrentPage} />
       default:
         return <HomePage onNavigate={setCurrentPage} />
     }
