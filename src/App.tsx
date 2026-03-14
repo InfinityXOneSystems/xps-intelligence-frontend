@@ -1,161 +1,136 @@
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Toaster } from '@/components/ui/sonner'
 import { toast } from 'sonner'
-import { ThemeProvider } from '@/hooks/use-theme'
-import { useIsMobile } from '@/hooks/use-mobile'
-import { Sidebar } from '@/components/Sidebar'
-import { TopBar } from '@/components/TopBar'
-import { MobileMenu } from '@/components/MobileMenu'
-import { AIChatPanel } from '@/components/AIChatPanel'
-import { HomePage } from '@/pages/HomePage'
-import { DashboardPage } from '@/pages/DashboardPage'
-import { LeadsPage } from '@/pages/LeadsPage'
-import { ScraperPage } from '@/pages/ScraperPage'
-import { CanvasPage } from '@/pages/CanvasPage'
-import { SettingsPage } from '@/pages/SettingsPage'
-import { ProspectsPage } from '@/pages/ProspectsPage'
-import { LeaderboardPage } from '@/pages/LeaderboardPage'
-import { RoadmapPage } from '@/pages/RoadmapPage'
-import { AgentPage } from '@/pages/AgentPage'
-import { SystemLogsPage } from '@/pages/SystemLogsPage'
-import { TaskQueuePage } from '@/pages/TaskQueuePage'
-import { CodeEditorPage } from '@/pages/CodeEditorPage'
-import { SandboxPage } from '@/pages/SandboxPage'
-import { PipelinePage } from '@/pages/PipelinePage'
-import { ContractorsPage } from '@/pages/ContractorsPage'
-import { AutomationPage } from '@/pages/AutomationPage'
-import { ReportsPage } from '@/pages/ReportsPage'
-import { DocsPage } from '@/pages/DocsPage'
-import { DiagnosticsPage } from '@/pages/DiagnosticsPage'
-import { useLeads } from '@/hooks/useLeadsApi'
-import { wsClient } from '@/lib/websocket'
+import { Button } from '@/components/ui/button'
+import { Plus } from '@phosphor-icons/react'
+import { TestEntry } from '@/types/test'
+import { calculateStatistics } from '@/lib/test-utils'
+import { StatsOverview } from '@/components/test-tracker/StatsOverview'
+import { TrendChart } from '@/components/test-tracker/TrendChart'
+import { TestHistoryList } from '@/components/test-tracker/TestHistoryList'
+import { TestFormDialog } from '@/components/test-tracker/TestFormDialog'
+import { FilterSearch } from '@/components/test-tracker/FilterSearch'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home')
-  const [showChat, setShowChat] = useState(true)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const isMobile = useIsMobile()
-  
-  const { data: _leads = [], isLoading, error } = useLeads()
+  const [tests, setTests] = useKV<TestEntry[]>('test-history', [])
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editingTest, setEditingTest] = useState<TestEntry | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    const authToken = localStorage.getItem('auth_token')
-    if (authToken && !wsClient.isConnected()) {
-      wsClient.connect()
-    }
-  }, [])
+  const sortedTests = useMemo(() => {
+    if (!tests) return []
+    return [...tests].sort((a, b) => 
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    )
+  }, [tests])
 
-  useEffect(() => {
-    if (error) {
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://xpsintelligencesystem-production.up.railway.app/api'
-      toast.warning('Backend unavailable — running in demo mode', {
-        description: `Could not reach ${apiUrl}. Showing demo data.`,
-        duration: 8000,
-        id: 'api-connection-error',
-      })
-    }
-  }, [error])
-
-  const LEADS_REQUIRED_PAGES = new Set(['home', 'dashboard', 'leads', 'prospects', 'leaderboard'])
-
-  const renderPage = () => {
-    if (LEADS_REQUIRED_PAGES.has(currentPage) && isLoading) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading leads...</p>
-          </div>
-        </div>
-      )
-    }
+  const filteredTests = useMemo(() => {
+    if (!searchQuery.trim()) return sortedTests
     
-    switch (currentPage) {
-      case 'home':
-        return <HomePage onNavigate={setCurrentPage} />
-      case 'dashboard':
-        return <DashboardPage onNavigate={setCurrentPage} />
-      case 'leads':
-        return <LeadsPage onNavigate={setCurrentPage} />
-      case 'prospects':
-        return <ProspectsPage onNavigate={setCurrentPage} />
-      case 'scraper':
-        return <ScraperPage onNavigate={setCurrentPage} />
-      case 'canvas':
-        return <CanvasPage onNavigate={setCurrentPage} />
-      case 'contractors':
-        return <ContractorsPage onNavigate={setCurrentPage} />
-      case 'pipeline':
-        return <PipelinePage onNavigate={setCurrentPage} />
-      case 'leaderboard':
-        return <LeaderboardPage onNavigate={setCurrentPage} />
-      case 'roadmap':
-        return <RoadmapPage onNavigate={setCurrentPage} />
-      case 'settings':
-        return <SettingsPage onNavigate={setCurrentPage} />
-      case 'agent':
-        return <AgentPage onNavigate={setCurrentPage} />
-      case 'logs':
-        return <SystemLogsPage onNavigate={setCurrentPage} />
-      case 'tasks':
-        return <TaskQueuePage onNavigate={setCurrentPage} />
-      case 'editor':
-        return <CodeEditorPage onNavigate={setCurrentPage} />
-      case 'sandbox':
-        return <SandboxPage onNavigate={setCurrentPage} />
-      case 'automation':
-        return <AutomationPage onNavigate={setCurrentPage} />
-      case 'reports':
-        return <ReportsPage onNavigate={setCurrentPage} />
-      case 'docs':
-        return <DocsPage onNavigate={setCurrentPage} />
-      case 'diagnostics':
-        return <DiagnosticsPage onNavigate={setCurrentPage} />
-      default:
-        return <HomePage onNavigate={setCurrentPage} />
+    const query = searchQuery.toLowerCase()
+    return sortedTests.filter(test => 
+      test.name.toLowerCase().includes(query)
+    )
+  }, [sortedTests, searchQuery])
+
+  const stats = useMemo(() => calculateStatistics(sortedTests), [sortedTests])
+
+  const handleAddTest = (test: TestEntry) => {
+    setTests((currentTests) => [...(currentTests || []), test])
+    toast.success('Test added successfully', {
+      description: `${test.name}: ${test.score}%`,
+    })
+  }
+
+  const handleEditTest = (test: TestEntry) => {
+    setTests((currentTests) =>
+      (currentTests || []).map(t => t.id === test.id ? test : t)
+    )
+    setEditingTest(null)
+    toast.success('Test updated successfully')
+  }
+
+  const handleDeleteTest = (id: string) => {
+    const test = (tests || []).find(t => t.id === id)
+    setTests((currentTests) => (currentTests || []).filter(t => t.id !== id))
+    toast.success('Test deleted', {
+      description: test ? `${test.name} removed from history` : undefined,
+    })
+  }
+
+  const openEditDialog = (test: TestEntry) => {
+    setEditingTest(test)
+    setDialogOpen(true)
+  }
+
+  const handleDialogClose = (open: boolean) => {
+    setDialogOpen(open)
+    if (!open) {
+      setEditingTest(null)
     }
   }
 
   return (
-    <ThemeProvider>
-      <div className="h-screen w-screen flex flex-col overflow-hidden relative bg-background text-foreground transition-colors duration-300">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(34,197,94,0.08),transparent_50%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_80%,rgba(234,179,8,0.06),transparent_50%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(239,68,68,0.04),transparent_60%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(34,197,94,0.02)_0%,transparent_25%,rgba(234,179,8,0.015)_50%,transparent_75%,rgba(239,68,68,0.01)_100%)] pointer-events-none" />
-        
-        <div className="relative flex-1 flex overflow-hidden">
-          {!isMobile && <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />}
-          
-          {isMobile && (
-            <MobileMenu 
-              isOpen={mobileMenuOpen}
-              onClose={() => setMobileMenuOpen(false)}
-              currentPage={currentPage}
-              onNavigate={setCurrentPage}
-            />
-          )}
-          
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <TopBar onMenuClick={() => setMobileMenuOpen(true)} />
-            
-            <main className="flex-1 overflow-y-auto p-6 md:p-12">
-              <div className="max-w-[1800px] mx-auto">
-                {renderPage()}
-              </div>
-            </main>
+    <div className="min-h-screen bg-background">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,oklch(0.62_0.18_200_/_0.08),transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,oklch(0.45_0.15_250_/_0.06),transparent_50%)] pointer-events-none" />
+      
+      <div className="relative max-w-7xl mx-auto px-6 py-12 space-y-8">
+        <div className="space-y-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+            Test History Tracker
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Track your test performance and monitor progress over time
+          </p>
+        </div>
+
+        <StatsOverview stats={stats} />
+
+        <TrendChart tests={sortedTests} />
+
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex-1 w-full sm:max-w-md">
+              <FilterSearch 
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
+            </div>
+            <Button 
+              onClick={() => setDialogOpen(true)}
+              size="lg"
+              className="w-full sm:w-auto hover:scale-105 transition-transform"
+            >
+              <Plus className="mr-2" />
+              Add Test
+            </Button>
           </div>
 
-          {showChat && !isMobile && (
-            <AIChatPanel 
-              onClose={() => setShowChat(false)}
-            />
+          {searchQuery && (
+            <div className="text-sm text-muted-foreground">
+              Showing {filteredTests.length} of {(tests || []).length} test{(tests || []).length !== 1 ? 's' : ''}
+            </div>
           )}
+
+          <TestHistoryList 
+            tests={filteredTests}
+            onEdit={openEditDialog}
+            onDelete={handleDeleteTest}
+          />
         </div>
+
+        <TestFormDialog
+          open={dialogOpen}
+          onOpenChange={handleDialogClose}
+          onSubmit={editingTest ? handleEditTest : handleAddTest}
+          editTest={editingTest}
+        />
 
         <Toaster position="top-right" />
       </div>
-    </ThemeProvider>
+    </div>
   )
 }
 
