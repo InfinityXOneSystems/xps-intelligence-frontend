@@ -38,6 +38,7 @@ interface DiagnosticsPageProps {
 export function DiagnosticsPage({ onNavigate }: DiagnosticsPageProps) {
   const [tests, setTests] = useState<DiagnosticTest[]>(getDefaultTests())
   const [isRunning, setIsRunning] = useState(false)
+  const [runningTests, setRunningTests] = useState<Set<string>>(new Set())
   const [progress, setProgress] = useState(0)
   const [categories, setCategories] = useState<DiagnosticCategory[]>([])
 
@@ -72,6 +73,53 @@ export function DiagnosticsPage({ onNavigate }: DiagnosticsPageProps) {
       toast.warning(`Diagnostics complete: ${warnings} warning(s)`)
     } else {
       toast.success('All diagnostics passed!')
+    }
+  }
+
+  const runSingleTest = async (testId: string) => {
+    const testToRun = tests.find(t => t.id === testId)
+    if (!testToRun) return
+
+    setRunningTests(prev => new Set(prev).add(testId))
+    
+    setTests(prevTests => 
+      prevTests.map(t => 
+        t.id === testId ? { ...t, status: 'running' as const } : t
+      )
+    )
+
+    try {
+      const result = await runDiagnosticTest(testToRun)
+      
+      setTests(prevTests => 
+        prevTests.map(t => t.id === testId ? result : t)
+      )
+      
+      setCategories(categorizTests(
+        tests.map(t => t.id === testId ? result : t)
+      ))
+
+      if (result.status === 'failed') {
+        toast.error(`Test failed: ${result.name}`, {
+          description: result.error,
+        })
+      } else if (result.status === 'warning') {
+        toast.warning(`Test completed with warning: ${result.name}`, {
+          description: result.error || 'Check details for more information',
+        })
+      } else {
+        toast.success(`Test passed: ${result.name}`)
+      }
+    } catch (err) {
+      toast.error(`Failed to run test: ${testToRun.name}`, {
+        description: err instanceof Error ? err.message : 'Unknown error',
+      })
+    } finally {
+      setRunningTests(prev => {
+        const next = new Set(prev)
+        next.delete(testId)
+        return next
+      })
     }
   }
 
@@ -323,7 +371,21 @@ export function DiagnosticsPage({ onNavigate }: DiagnosticsPageProps) {
                             )}
                           </div>
                           
-                          {getStatusBadge(test.status)}
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(test.status)}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => runSingleTest(test.id)}
+                              disabled={isRunning || runningTests.has(test.id)}
+                              className="h-7 w-7 p-0"
+                              title="Re-run this test"
+                            >
+                              <ArrowClockwise 
+                                className={`h-4 w-4 ${runningTests.has(test.id) ? 'animate-spin' : ''}`} 
+                              />
+                            </Button>
+                          </div>
                         </div>
                         
                         {test.error && (

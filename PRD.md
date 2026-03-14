@@ -89,6 +89,13 @@ This is an enterprise-grade AI operating system with glassmorphic UI, animated s
 - **Progression**: Check user role → Set permissions → Filter data queries → Hide/show UI elements → Enforce on actions
 - **Success criteria**: Sales reps only see assigned leads, admins have full access, unauthorized actions are blocked
 
+### Individual Test Re-run Capability
+- **Functionality**: Re-run individual diagnostic tests without executing the full test suite
+- **Purpose**: Enable quick debugging of specific issues and validation of fixes without waiting for all tests
+- **Trigger**: Clicking re-run button on individual test card
+- **Progression**: Click test re-run button → Update test status to running → Execute single test → Update test result → Show success/failure toast
+- **Success criteria**: Individual tests execute independently in under 3 seconds, status updates in real-time, test results persist in UI
+
 ## Edge Case Handling
 
 - **Empty Data States**: Display helpful empty states with CTA to run scraper or add first lead
