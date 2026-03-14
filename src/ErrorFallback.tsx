@@ -5,13 +5,13 @@ import { type FallbackProps } from "react-error-boundary";
 import { AlertTriangleIcon, RefreshCwIcon } from "lucide-react";
 
 export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
-  if (import.meta.env.DEV) throw error;
+  console.error("Application Error:", error);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Alert variant="destructive" className="mb-6">
-          <AlertTriangleIcon />
+          <AlertTriangleIcon className="h-4 w-4" />
           <AlertTitle>This spark has encountered a runtime error</AlertTitle>
           <AlertDescription>
             Something unexpected happened while running the application. The error details are shown below. Contact the spark author and let them know about this issue.
@@ -23,6 +23,14 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
           <pre className="text-xs text-destructive bg-muted/50 p-3 rounded border overflow-auto max-h-32">
             {error instanceof Error ? error.message : String(error)}
           </pre>
+          {error instanceof Error && error.stack && (
+            <details className="mt-2">
+              <summary className="text-xs cursor-pointer text-muted-foreground hover:text-foreground">Stack Trace</summary>
+              <pre className="text-xs text-muted-foreground bg-muted/50 p-3 rounded border overflow-auto max-h-48 mt-2">
+                {error.stack}
+              </pre>
+            </details>
+          )}
         </div>
         
         <Button 
@@ -30,7 +38,7 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
           className="w-full"
           variant="outline"
         >
-          <RefreshCwIcon />
+          <RefreshCwIcon className="h-4 w-4 mr-2" />
           Try Again
         </Button>
       </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Toaster, toast } from 'sonner'
+import { ThemeProvider } from '@/hooks/use-theme'
 import { Sidebar } from '@/components/Sidebar'
 import { TopBar } from '@/components/TopBar'
 import { MobileMenu } from '@/components/MobileMenu'
@@ -27,7 +28,7 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { useRealtimeLeads } from '@/hooks/useRealtimeLeads'
 import { api } from '@/lib/api'
 
-function App() {
+function AppContent() {
   const [currentPage, setCurrentPage] = useState('home')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -128,6 +129,14 @@ function App() {
       </div>
       <Toaster position="top-right" />
     </>
+  )
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   )
 }
 

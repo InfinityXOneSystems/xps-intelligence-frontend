@@ -59,9 +59,10 @@ Category: ${lead.category || 'contractor'}
 Keep it under 150 words, friendly but professional. Include a compelling subject line.`
 
       const email = await window.spark.llm(promptText, 'gpt-4o-mini')
-      toast.success('Email generated! Check AI chat panel.')
-      console.log(email)
-    } catch {
+      toast.success('Email generated!')
+      console.log('Generated Email:', email)
+    } catch (error) {
+      console.error('Email generation failed:', error)
       toast.error('Failed to generate email')
     }
   }
