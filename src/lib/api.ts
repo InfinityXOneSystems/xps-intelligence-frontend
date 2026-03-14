@@ -1,11 +1,9 @@
 import { API_CONFIG } from "@/lib/config"
 
 interface ApiError {
-
-
-  private baseUrl
-  private isBack
-
+  message: string
+  status?: number
+}
 
 class ApiClient {
   private baseUrl: string
@@ -74,60 +72,50 @@ class ApiClient {
       ...options,
       headers: {
         "Content-Type": "application/json",
-          message: `API request failed: ${response.statusText}`
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...options.headers,
+      },
+    }
+
+    try {
+      const response = await fetch(url, config)
+
+      if (!response.ok) {
+        const error: ApiError = {
+          message: `API request failed: ${response.statusText}`,
+          status: response.status,
         }
+        throw error
       }
-     
 
+      return await response.json()
+    } catch (error) {
+      console.error('API Error:', error)
+      throw error
+    }
   }
+
   async get<T>(endpoint: string): Promise<T> {
-
+    return this.request<T>(endpoint, { method: "GET" })
   }
-  async post<T>(endpoint: string,
+
+  async post<T>(endpoint: string, data?: unknown): Promise<T> {
+    return this.request<T>(endpoint, {
       method: "POST",
+      body: data ? JSON.stringify(data) : undefined,
     })
-
-    return this.req
-      b
-
-  async delete<T>(endpoint: string
-      method: "DELETE
   }
-  asy
-   
 
+  async put<T>(endpoint: string, data?: unknown): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: "PUT",
+      body: data ? JSON.stringify(data) : undefined,
+    })
+  }
+
+  async delete<T>(endpoint: string): Promise<T> {
+    return this.request<T>(endpoint, { method: "DELETE" })
+  }
 }
-export const api = new ApiClient(API_B
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const api = new ApiClient(API_CONFIG.API_URL)
