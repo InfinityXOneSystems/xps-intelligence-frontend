@@ -1,11 +1,11 @@
-﻿import { API_CONFIG } from "@/lib/config"
+import { API_CONFIG } from "@/lib/config"
 
 const API_BASE_URL = API_CONFIG.API_URL
 
+interface ApiError {
+  message: string
   status: number
-
-  private baseUr
- 
+}
 
 class ApiClient {
   private baseUrl: string
@@ -74,57 +74,60 @@ class ApiClient {
       ...options,
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.headers,
+      },
+    }
 
-        const error: ApiErr
-        
+    try {
+      const response = await fetch(url, config)
+
+      if (!response.ok) {
+        const error: ApiError = {
+          message: `API request failed: ${response.statusText}`,
+          status: response.status,
+        }
         throw error
-
-
+      }
 
       return await response.json()
-
+    } catch (error) {
       throw error
+    }
   }
+
   async get<T>(endpoint: string): Promise<T> {
-  }
-  async p
-      method: "POST
+    return this.request<T>(endpoint, {
+      method: "GET",
     })
-
-    return this.request<T>(endpoint,
-      body: JSON.stringify(da
   }
 
+  async post<T>(endpoint: string, data?: unknown): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
   }
 
+  async put<T>(endpoint: string, data?: unknown): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    })
+  }
 
+  async delete<T>(endpoint: string): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: "DELETE",
+    })
+  }
 
+  async patch<T>(endpoint: string, data?: unknown): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    })
+  }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const api = new ApiClient(API_BASE_URL)
