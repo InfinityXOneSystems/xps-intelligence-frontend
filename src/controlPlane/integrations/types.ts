@@ -2,34 +2,55 @@ export type IntegrationProvider = 'github' | 'supabase' | 'vercel' | 'railway' |
 
 export type IntegrationStatus = 'connected' | 'disconnected' | 'error' | 'testing'
 
+export interface IntegrationMetadata {
   provider: IntegrationProvider
-  status: IntegrationSta
+  status: IntegrationStatus
   last_error?: string
   display_name?: string
   updated_at: string
-
-  id: string
-  name: string
-  icon: string
-  metadata?: Integra
 }
-e
 
+export interface IntegrationAction {
+  id: string
+  label: string
+  description: string
+  endpoint: string
   requiresConnection: boolean
-  method?: '
+  method?: 'GET' | 'POST' | 'DELETE'
+}
 
-  provider: In
-  config?: Record<str
+export interface Integration {
+  id: string
+  provider: IntegrationProvider
+  name: string
+  description: string
+  icon: string
+  status: IntegrationStatus
+  actions: IntegrationAction[]
+  metadata?: IntegrationMetadata
+}
 
+export interface ConnectPayload {
+  provider: IntegrationProvider
+  config?: Record<string, string>
+}
+
+export interface TestResult {
   ok: boolean
   message: string
   latency_ms?: number
+}
 
-
+export interface ApiResponse<T = unknown> {
+  ok: boolean
+  data?: T
   error?: {
-    message:
-    hint?: stri
+    code: string
+    message: string
+    hint?: string
+  }
   traceId: string
+}
 
 
 

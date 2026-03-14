@@ -75,6 +75,13 @@ This is an enterprise-grade AI operating system with glassmorphic UI, animated s
 - **Progression**: Open command palette → Type command → Show suggestions → Execute → Provide feedback → Close
 - **Success criteria**: Opens within 100ms, commands execute reliably, suggestions are contextually relevant
 
+### Control Plane Integration Hub
+- **Functionality**: Centralized provider connection management with visual status cards
+- **Purpose**: Enable admins to connect and manage cloud service integrations (GitHub, Vercel, Supabase, Railway, Groq) from a single interface
+- **Trigger**: Navigate to Settings → Control Plane section
+- **Progression**: View provider cards → Click "Connect" → Enter API token → Test connection → Access provider-specific actions → Disconnect when needed
+- **Success criteria**: All integrations connect successfully with valid tokens, status updates in real-time, actions execute within 3 seconds, errors display helpful hints
+
 ### Role-Based Access Control
 - **Functionality**: Filter leads and features based on user role (Admin vs Sales Rep)
 - **Purpose**: Ensure sales reps only access their assigned leads while admins see all
@@ -92,6 +99,7 @@ This is an enterprise-grade AI operating system with glassmorphic UI, animated s
 - **Network Offline**: Queue actions for retry, show offline indicator via PWA, use cached data from service worker
 - **Large Datasets**: Implement virtual scrolling for tables, pagination for charts, lazy load profiles
 - **Chat API Timeout**: Show timeout message with retry, allow canceling long-running requests
+- **Integration Connection Failures**: Display connection status with clear error messages, provide token validation hints, support reconnection attempts
 - **Service Worker Registration Failure**: Gracefully degrade to online-only mode, log error for debugging
 - **Theme Switch Mid-Interaction**: Ensure smooth transitions without disrupting user workflows, maintain component state
 - **Browser PWA Support**: Detect capabilities and provide appropriate install prompts or fallback messaging

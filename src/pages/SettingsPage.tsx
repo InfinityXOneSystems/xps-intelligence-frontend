@@ -25,6 +25,7 @@ import {
   CreditCard,
   Plugs,
   Warning,
+  CloudArrowUp,
 } from '@phosphor-icons/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -33,6 +34,7 @@ import { Switch } from '@/components/ui/switch'
 import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
 import { BackButton } from '@/components/BackButton'
+import { ControlPlanePanel } from '@/components/ControlPlanePanel'
 import { toast } from 'sonner'
 import {
   loadSettings,
@@ -45,6 +47,7 @@ import type { AgentSettings, ToolCategory, ToolDefinition } from '@/types/tools'
 
 type ExtendedCategory =
   | ToolCategory
+  | 'control_plane'
   | 'local_machine'
   | 'agent_config'
   | 'automation'
@@ -62,6 +65,12 @@ const TOOL_CATEGORIES = new Set<string>([
 ])
 
 const CATEGORIES: { key: ExtendedCategory; label: string; icon: React.ReactNode; description: string }[] = [
+  {
+    key: 'control_plane',
+    label: 'Control Plane',
+    icon: <CloudArrowUp size={18} />,
+    description: 'Cloud provider integrations & connection management',
+  },
   {
     key: 'ai_models',
     label: 'AI Models',
@@ -1264,7 +1273,7 @@ function AdvancedPanel() {
 }
 
 export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => void }) {
-  const [activeCategory, setActiveCategory] = useState<ExtendedCategory>('ai_models')
+  const [activeCategory, setActiveCategory] = useState<ExtendedCategory>('control_plane')
   const [settings, setSettings] = useState<AgentSettings>(loadSettings)
   const [tools, setTools] = useState<ToolDefinition[]>(loadToolRegistry)
   const [saved, setSaved] = useState(false)
@@ -1295,6 +1304,8 @@ export function SettingsPage({ onNavigate }: { onNavigate: (page: string) => voi
       onToolToggle: handleToolToggle,
     }
     switch (activeCategory) {
+      case 'control_plane':
+        return <ControlPlanePanel />
       case 'ai_models':
         return <AIModelsPanel {...props} />
       case 'agent_runtime':
