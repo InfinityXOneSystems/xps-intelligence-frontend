@@ -271,9 +271,33 @@ User query: ${currentInput}
 
 Provide a helpful response. If the task requires a tool, call it. Keep the explanation concise.`
 
-      addActivity('thinking', 'Querying AI model…')
+      addActivity('thinking', 'Querying Groq AI model…')
 
-      const response = await window.spark.llm(promptText, 'gpt-4o-mini')
+      let response: string
+      try {
+        const apiResponse = await fetch('/api/llm/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            message: promptText, 
+            model: 'llama-3.3-70b-versatile' 
+          }),
+          signal: AbortSignal.timeout(30000),
+        })
+
+        if (!apiResponse.ok) {
+          const errorData = await apiResponse.json().catch(() => ({}))
+          throw new Error(errorData.error?.message || 'Failed to get response from AI')
+        }
+
+        const data = await apiResponse.json()
+        response = data.data?.reply || 'No response received'
+        addActivity('success', 'Received response from Groq AI')
+      } catch (err) {
+        console.error('Groq API error:', err)
+        addActivity('error', 'Groq API unavailable, using fallback')
+        response = await window.spark.llm(promptText, 'gpt-4o-mini')
+      }
 
       // Match tool call syntax: [TOOL_CALL: tool_name | param1=value1 | param2=value2]
       const TOOL_CALL_PATTERN = /\[TOOL_CALL:\s*([^|\]]+)(?:\s*\|([^\]]*))?\]/g
@@ -313,7 +337,8 @@ Provide a helpful response. If the task requires a tool, call it. Keep the expla
       }
 
       setMessages((prev) => [...prev, assistantMessage])
-    } catch {
+    } catch (err) {
+      console.error('Chat error:', err)
       addActivity('error', 'Error processing request')
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
