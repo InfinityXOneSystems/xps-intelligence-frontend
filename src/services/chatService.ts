@@ -1,5 +1,6 @@
 import type { AgentRole } from '@/lib/agentTypes'
 import { API_CONFIG } from '@/lib/config'
+import { postJson } from '@/lib/http/safeJson'
 
 export interface ChatMessage {
   id: string
@@ -62,16 +63,16 @@ const MOCK_HISTORY: ChatMessage[] = [
 ]
 
 export async function sendMessage(request: SendMessageRequest): Promise<SendMessageResponse> {
-  try {
-    const res = await fetch(`${API_CONFIG.API_URL}/chat/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request),
-    })
-    if (!res.ok) throw new Error('API unavailable')
-    return res.json()
-  } catch {
-    const sessionId = request.sessionId || crypto.randomUUID()
+  // Use the same-origin Vercel serverless endpoint to avoid cross-origin HTML
+  // error pages being returned and breaking res.json() parsing.
+  const result = await postJson<{ ok: boolean; data?: { reply: string } }>(
+    '/api/llm/chat',
+    { message: request.message, model: 'llama-3.3-70b-versatile', stream: false }
+  )
+
+  const sessionId = request.sessionId || crypto.randomUUID()
+
+  if (result.ok && result.data?.data?.reply) {
     return {
       id: crypto.randomUUID(),
       sessionId,
@@ -79,12 +80,30 @@ export async function sendMessage(request: SendMessageRequest): Promise<SendMess
       reply: {
         id: crypto.randomUUID(),
         role: 'assistant',
-        content: `[Mock] Received: "${request.message}". Connect to the backend API to get real agent responses.`,
+        content: result.data.data.reply,
         agentRole: request.agentRole || 'PlannerAgent',
         timestamp: new Date().toISOString(),
         status: 'sent',
       },
     }
+  }
+
+  // Graceful fallback with descriptive message so the failure is visible.
+  const errorMsg = result.ok
+    ? 'Empty response from AI'
+    : `Chat unavailable: ${result.message}${result.code ? ` (${result.code})` : ''}`
+  return {
+    id: crypto.randomUUID(),
+    sessionId,
+    agentRole: request.agentRole || 'PlannerAgent',
+    reply: {
+      id: crypto.randomUUID(),
+      role: 'assistant',
+      content: `[Offline] ${errorMsg}`,
+      agentRole: request.agentRole || 'PlannerAgent',
+      timestamp: new Date().toISOString(),
+      status: 'error',
+    },
   }
 }
 
@@ -104,8 +123,14 @@ export async function sendStreamingMessage(
     })
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      throw new Error(errorData.error?.message || 'Failed to get response from AI')
+      // Safely parse: the response might be HTML (Vercel error page) not JSON.
+      const errText = await response.text().catch(() => '')
+      let errMsg = 'Failed to get response from AI'
+      try {
+        const errJson = JSON.parse(errText)
+        errMsg = errJson?.error?.message || errJson?.message || errMsg
+      } catch { /* body was not JSON — keep default message */ }
+      throw new Error(errMsg)
     }
 
     const reader = response.body?.getReader()
