@@ -22,4 +22,12 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src')
     }
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    alias: {
+      '@': resolve(projectRoot, 'src'),
+    },
+  },
 });
