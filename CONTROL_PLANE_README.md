@@ -29,9 +29,11 @@ This repository now includes the foundational architecture for an **Admin Contro
 
 #### LLM Chat
 - `POST /api/llm/chat` - Groq LLM integration for AI chat
+  - **Supports streaming responses** for real-time AI replies
   - Validates message input
   - Handles timeouts (30s)
-  - Returns structured responses
+  - Returns structured responses (JSON or SSE stream)
+  - See [docs/STREAMING_IMPLEMENTATION.md](docs/STREAMING_IMPLEMENTATION.md) for details
 
 #### Diagnostics
 - `GET /api/diagnostics/status` - Quick health check

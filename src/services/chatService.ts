@@ -23,6 +23,7 @@ export interface SendMessageRequest {
   message: string
   agentRole?: AgentRole
   sessionId?: string
+  stream?: boolean
 }
 
 export interface SendMessageResponse {
@@ -30,6 +31,12 @@ export interface SendMessageResponse {
   reply: ChatMessage
   agentRole: AgentRole
   sessionId: string
+}
+
+export interface StreamingCallbacks {
+  onChunk?: (content: string) => void
+  onComplete?: (fullContent: string) => void
+  onError?: (error: Error) => void
 }
 
 const MOCK_HISTORY: ChatMessage[] = [
@@ -78,6 +85,75 @@ export async function sendMessage(request: SendMessageRequest): Promise<SendMess
         status: 'sent',
       },
     }
+  }
+}
+
+export async function sendStreamingMessage(
+  request: SendMessageRequest,
+  callbacks: StreamingCallbacks
+): Promise<void> {
+  try {
+    const response = await fetch('/api/llm/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: request.message,
+        model: 'llama-3.3-70b-versatile',
+        stream: true,
+      }),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.error?.message || 'Failed to get response from AI')
+    }
+
+    const reader = response.body?.getReader()
+    const decoder = new TextDecoder()
+
+    if (!reader) {
+      throw new Error('No response stream available')
+    }
+
+    let fullContent = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+
+      if (done) break
+
+      const chunk = decoder.decode(value, { stream: true })
+      const lines = chunk.split('\n')
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.slice(6))
+
+            if (data.error) {
+              throw new Error(data.error)
+            }
+
+            if (data.content) {
+              fullContent += data.content
+              callbacks.onChunk?.(data.content)
+            }
+
+            if (data.done) {
+              break
+            }
+          } catch (e) {
+            console.error('Error parsing SSE data:', e)
+          }
+        }
+      }
+    }
+
+    callbacks.onComplete?.(fullContent)
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error('Unknown error occurred')
+    callbacks.onError?.(err)
+    throw err
   }
 }
 

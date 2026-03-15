@@ -254,6 +254,15 @@ export function AIChatPanel({ onClose }: AIChatPanelProps) {
 
     addActivity('thinking', `Processing: "${currentInput.slice(0, 60)}${currentInput.length > 60 ? '…' : ''}"`)
 
+    const assistantMessageId = (Date.now() + 1).toString()
+    const assistantMessage: Message = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date(),
+    }
+    setMessages((prev) => [...prev, assistantMessage])
+
     try {
       const toolList = enabledTools
         .map((t) => `- ${t.name}: ${t.description} (params: ${t.parameters.map((p) => p.name).join(', ')})`)
@@ -273,14 +282,15 @@ Provide a helpful response. If the task requires a tool, call it. Keep the expla
 
       addActivity('thinking', 'Querying Groq AI model…')
 
-      let response: string
+      let response = ''
       try {
         const apiResponse = await fetch('/api/llm/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             message: promptText, 
-            model: 'llama-3.3-70b-versatile' 
+            model: 'llama-3.3-70b-versatile',
+            stream: true
           }),
           signal: AbortSignal.timeout(30000),
         })
@@ -290,13 +300,65 @@ Provide a helpful response. If the task requires a tool, call it. Keep the expla
           throw new Error(errorData.error?.message || 'Failed to get response from AI')
         }
 
-        const data = await apiResponse.json()
-        response = data.data?.reply || 'No response received'
-        addActivity('success', 'Received response from Groq AI')
+        const reader = apiResponse.body?.getReader()
+        const decoder = new TextDecoder()
+
+        if (!reader) {
+          throw new Error('No response stream available')
+        }
+
+        addActivity('success', 'Streaming response from Groq AI…')
+
+        while (true) {
+          const { done, value } = await reader.read()
+          
+          if (done) break
+
+          const chunk = decoder.decode(value, { stream: true })
+          const lines = chunk.split('\n')
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6))
+                
+                if (data.error) {
+                  throw new Error(data.error)
+                }
+                
+                if (data.content) {
+                  response += data.content
+                  setMessages((prev) =>
+                    prev.map((msg) =>
+                      msg.id === assistantMessageId
+                        ? { ...msg, content: response }
+                        : msg
+                    )
+                  )
+                }
+
+                if (data.done) {
+                  break
+                }
+              } catch (e) {
+                console.error('Error parsing SSE data:', e)
+              }
+            }
+          }
+        }
+
+        addActivity('success', 'Stream complete')
       } catch (err) {
         console.error('Groq API error:', err)
         addActivity('error', 'Groq API unavailable, using fallback')
         response = await window.spark.llm(promptText, 'gpt-4o-mini')
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMessageId
+              ? { ...msg, content: response }
+              : msg
+          )
+        )
       }
 
       // Match tool call syntax: [TOOL_CALL: tool_name | param1=value1 | param2=value2]
@@ -325,28 +387,26 @@ Provide a helpful response. If the task requires a tool, call it. Keep the expla
 
       if (toolResults.length > 0) {
         addActivity('info', `${toolResults.length} tool(s) executed`)
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMessageId
+              ? { ...msg, content: cleanResponse.trim() }
+              : msg
+          )
+        )
       }
 
       addActivity('success', 'Response ready')
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: cleanResponse.trim(),
-        timestamp: new Date(),
-      }
-
-      setMessages((prev) => [...prev, assistantMessage])
     } catch (err) {
       console.error('Chat error:', err)
       addActivity('error', 'Error processing request')
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, errorMessage])
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === assistantMessageId
+            ? { ...msg, content: 'Sorry, I encountered an error. Please try again.' }
+            : msg
+        )
+      )
     } finally {
       setIsLoading(false)
     }
